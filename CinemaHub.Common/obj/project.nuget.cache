@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "GVjuf2j6s/A/SiXdtIuqlhnGyWzoeJgCPkVq7LHbMf4Gs1h+rsUsGuAJLo53XRs785qyVAJrVYYdH+ZAJFoYHw==",
+  "success": true,
+  "projectFilePath": "D:\\Coding\\CinemaHub\\CinemaHub.Common\\CinemaHub.Common.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\moni0\\.nuget\\packages\\stylecop.analyzers\\1.2.0-beta.205\\stylecop.analyzers.1.2.0-beta.205.nupkg.sha512",
+    "C:\\Users\\moni0\\.nuget\\packages\\stylecop.analyzers.unstable\\1.2.0.205\\stylecop.analyzers.unstable.1.2.0.205.nupkg.sha512"
+  ],
+  "logs": []
+}

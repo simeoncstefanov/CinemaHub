@@ -354,6 +354,7 @@ MigrationBackup/
 
 # Custom ignores
 **/wwwroot/lib/
+**/webroot/images/posters/
 Web/CinemaHub.Web/wwwroot/images/posters/
 appsettings.Production.json
 *.min.css

@@ -24,7 +24,31 @@
         {
         }
 
-        public DbSet<Setting> Settings { get; set; }
+        public DbSet<Media> Media { get; set; }
+
+        public DbSet<Movie> Movies { get; set; }
+
+        public DbSet<Show> Shows { get; set; }
+
+        public DbSet<Keyword> Keywords { get; set; }
+
+        public DbSet<Discussion> Discussions { get; set; }
+
+        public DbSet<Comment> Comments { get; set; }
+
+        public DbSet<Review> Reviews { get; set; }
+
+        public DbSet<Season> Seasons { get; set; }
+
+        public DbSet<MediaWatcher> MediaWatchers { get; set; }
+
+        public DbSet<Episode> Episodes { get; set; }
+
+        public DbSet<Genre> Genres { get; set; }
+
+        public DbSet<MediaImage> MediaImages { get; set; }
+
+        public DbSet<MediaKeyword> MediaKeywords { get; set; }
 
         public override int SaveChanges() => this.SaveChanges(true);
 
@@ -49,7 +73,7 @@
         {
             // Needed for Identity models configuration
             base.OnModelCreating(builder);
-
+   
             this.ConfigureUserIdentityRelations(builder);
 
             EntityIndexesConfiguration.Configure(builder);

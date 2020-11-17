@@ -36,4 +36,9 @@
     <ProjectReference Include="..\CinemaHub.Web.Infrastructure\CinemaHub.Web.Infrastructure.csproj" />
     <ProjectReference Include="..\CinemaHub.Web.ViewModels\CinemaHub.Web.ViewModels.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\Administration\Controllers\" />
+    <Folder Include="wwwroot\images\posters\" />
+  </ItemGroup>
 </Project>

@@ -33,5 +33,13 @@ namespace CinemaHub.Data.Models
         public virtual ICollection<IdentityUserClaim<string>> Claims { get; set; }
 
         public virtual ICollection<IdentityUserLogin<string>> Logins { get; set; }
+
+        public virtual ICollection<MediaWatcher> Watchlist { get; set; }
+
+        public virtual ICollection<Discussion> Discussions { get; set; }
+
+        public virtual ICollection<Comment> Comments { get; set; }
+
+        public virtual ICollection<Review> Reviews { get; set; }
     }
 }

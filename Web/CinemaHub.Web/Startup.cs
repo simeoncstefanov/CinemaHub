@@ -8,7 +8,6 @@
     using CinemaHub.Data.Models;
     using CinemaHub.Data.Repositories;
     using CinemaHub.Data.Seeding;
-    using CinemaHub.Services.Data;
     using CinemaHub.Services.Mapping;
     using CinemaHub.Services.Messaging;
     using CinemaHub.Web.ViewModels;
@@ -63,7 +62,6 @@
 
             // Application services
             services.AddTransient<IEmailSender, NullMessageSender>();
-            services.AddTransient<ISettingsService, SettingsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -76,7 +74,7 @@
             {
                 var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 dbContext.Database.Migrate();
-                new ApplicationDbContextSeeder().SeedAsync(dbContext, serviceScope.ServiceProvider).GetAwaiter().GetResult();
+                new ApplicationDbContextSeeder().SeedAsync(dbContext, serviceScope.ServiceProvider, env.WebRootPath).GetAwaiter().GetResult();
             }
 
             if (env.IsDevelopment())

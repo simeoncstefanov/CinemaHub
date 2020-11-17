@@ -1,15 +1,11 @@
-namespace CinemaHub.Data.Tests
+﻿namespace CinemaHub.Data.Tests
 {
     using System;
 
+    using CinemaHub.Data.Seeding;
     using Xunit;
 
-    public class NoviesSeederTests
+    public class MoviesSeederTests
     {
-        [Fact]
-        public void Test1()
-        {
-
-        }
     }
 }

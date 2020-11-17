@@ -15,7 +15,7 @@ namespace CinemaHub.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.0")
+                .HasAnnotation("ProductVersion", "3.1.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -139,12 +139,151 @@ namespace CinemaHub.Data.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("CinemaHub.Data.Models.Setting", b =>
+            modelBuilder.Entity("CinemaHub.Data.Models.Comment", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatorId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DiscussionId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("DiscussionId");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.Discussion", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatorId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsLocked")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MediaId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("MediaId");
+
+                    b.ToTable("Discussions");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.Episode", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EpisodeNumber")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Overview")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SeasonId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("SeasonId");
+
+                    b.ToTable("Episodes");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.Genre", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ApiId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Genres");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.Keyword", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -159,16 +298,265 @@ namespace CinemaHub.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Value")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("IsDeleted");
 
-                    b.ToTable("Settings");
+                    b.ToTable("Keywords");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.Media", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Budget")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Imdb")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDetailFull")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Language")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MediaType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MovieApiId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Overview")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ReleaseDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RuntimeSeconds")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Media");
+
+                    b.HasDiscriminator<string>("MediaType").HasValue("Media");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.MediaGenre", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("GenreId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("MediaId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GenreId");
+
+                    b.HasIndex("MediaId");
+
+                    b.ToTable("MediaGenre");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.MediaImage", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Extension")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ImageType")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MediaId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("MediaId");
+
+                    b.ToTable("MediaImages");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.MediaKeyword", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("KeywordId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("MediaId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("KeywordId");
+
+                    b.HasIndex("MediaId");
+
+                    b.ToTable("MediaKeywords");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.MediaWatcher", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("MediaId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("WatchType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MediaId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("MediaWatchers");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.Review", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatorId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MediaId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReviewText")
+                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(10000);
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("MediaId");
+
+                    b.ToTable("Reviews");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.Season", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EpisodeCount")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Overview")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ReleaseTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("SeasonOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ShowId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("ShowId");
+
+                    b.ToTable("Seasons");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -273,6 +661,107 @@ namespace CinemaHub.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.Movie", b =>
+                {
+                    b.HasBaseType("CinemaHub.Data.Models.Media");
+
+                    b.HasDiscriminator().HasValue("Movie");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.Show", b =>
+                {
+                    b.HasBaseType("CinemaHub.Data.Models.Media");
+
+                    b.HasDiscriminator().HasValue("Show");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.Comment", b =>
+                {
+                    b.HasOne("CinemaHub.Data.Models.ApplicationUser", "Creator")
+                        .WithMany("Comments")
+                        .HasForeignKey("CreatorId");
+
+                    b.HasOne("CinemaHub.Data.Models.Discussion", "Discussion")
+                        .WithMany("Comments")
+                        .HasForeignKey("DiscussionId");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.Discussion", b =>
+                {
+                    b.HasOne("CinemaHub.Data.Models.ApplicationUser", "Creator")
+                        .WithMany("Discussions")
+                        .HasForeignKey("CreatorId");
+
+                    b.HasOne("CinemaHub.Data.Models.Media", "Media")
+                        .WithMany("Discussions")
+                        .HasForeignKey("MediaId");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.Episode", b =>
+                {
+                    b.HasOne("CinemaHub.Data.Models.Season", "Season")
+                        .WithMany("Episodes")
+                        .HasForeignKey("SeasonId");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.MediaGenre", b =>
+                {
+                    b.HasOne("CinemaHub.Data.Models.Genre", "Genre")
+                        .WithMany("MediaGenres")
+                        .HasForeignKey("GenreId");
+
+                    b.HasOne("CinemaHub.Data.Models.Media", "Media")
+                        .WithMany("Genres")
+                        .HasForeignKey("MediaId");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.MediaImage", b =>
+                {
+                    b.HasOne("CinemaHub.Data.Models.Media", "Media")
+                        .WithMany("Images")
+                        .HasForeignKey("MediaId");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.MediaKeyword", b =>
+                {
+                    b.HasOne("CinemaHub.Data.Models.Keyword", "Keyword")
+                        .WithMany("Media")
+                        .HasForeignKey("KeywordId");
+
+                    b.HasOne("CinemaHub.Data.Models.Media", "Media")
+                        .WithMany("Keywords")
+                        .HasForeignKey("MediaId");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.MediaWatcher", b =>
+                {
+                    b.HasOne("CinemaHub.Data.Models.Media", "Media")
+                        .WithMany("Watchers")
+                        .HasForeignKey("MediaId");
+
+                    b.HasOne("CinemaHub.Data.Models.ApplicationUser", "User")
+                        .WithMany("Watchlist")
+                        .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.Review", b =>
+                {
+                    b.HasOne("CinemaHub.Data.Models.ApplicationUser", "Creator")
+                        .WithMany("Reviews")
+                        .HasForeignKey("CreatorId");
+
+                    b.HasOne("CinemaHub.Data.Models.Media", "Media")
+                        .WithMany("Reviews")
+                        .HasForeignKey("MediaId");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.Season", b =>
+                {
+                    b.HasOne("CinemaHub.Data.Models.Show", "Show")
+                        .WithMany("Seasons")
+                        .HasForeignKey("ShowId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

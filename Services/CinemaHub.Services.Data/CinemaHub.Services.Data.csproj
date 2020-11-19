@@ -22,6 +22,7 @@
     <ProjectReference Include="..\..\Data\CinemaHub.Data.Common\CinemaHub.Data.Common.csproj" />
     <ProjectReference Include="..\..\Data\CinemaHub.Data.Models\CinemaHub.Data.Models.csproj" />
     <ProjectReference Include="..\CinemaHub.Services.Mapping\CinemaHub.Services.Mapping.csproj" />
+    <ProjectReference Include="..\CinemaHub.Services\CinemaHub.Services.csproj" />
   </ItemGroup>
 
 </Project>

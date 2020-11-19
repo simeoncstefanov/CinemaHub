@@ -12,6 +12,7 @@ $(window).on('load', function() { // makes sure the whole site is loaded
 			vidDefer[i].setAttribute('src',vidDefer[i].getAttribute('data-src'));
 		} 
 	}
+	setTimeout(window.scroll(0, 0), 10000);
 })
 $(function(){
 	'use strict';

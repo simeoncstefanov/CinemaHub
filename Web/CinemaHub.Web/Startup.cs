@@ -8,10 +8,12 @@
     using CinemaHub.Data.Models;
     using CinemaHub.Data.Repositories;
     using CinemaHub.Data.Seeding;
+    using CinemaHub.Services;
+    using CinemaHub.Services.Data;
+    using CinemaHub.Services.Data.Models;
     using CinemaHub.Services.Mapping;
     using CinemaHub.Services.Messaging;
     using CinemaHub.Web.ViewModels;
-
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
@@ -60,8 +62,11 @@
             services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
             services.AddScoped<IDbQueryRunner, DbQueryRunner>();
 
+            services.AddTransient<IMediaService, MediaService>();
+
             // Application services
             services.AddTransient<IEmailSender, NullMessageSender>();
+            services.AddTransient<IMovieAPIService, MovieAPIService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

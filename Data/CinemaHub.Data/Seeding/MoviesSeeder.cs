@@ -16,7 +16,7 @@
 
     public class MoviesSeeder : ISeeder
     {
-        private const int pages = 30;
+        private const int Pages = 3;
         private readonly HttpClient client;
         private readonly string rootPath;
 
@@ -33,24 +33,27 @@
                 return;
             }
 
-            for (int i = 1; i <= pages; i++)
+            for (int i = 1; i <= Pages; i++)
             {
                 var result = await this.GetMediaJsonAsync(i);
 
                 foreach (var movie in result.Movies)
                 {
-                    if (!DateTime.TryParse(movie.ReleaseDate, out DateTime movieReleaseDate))
-                    {
-                        movie.ReleaseDate = null;
-                    }
-
                     Movie dbMovie = new Movie()
                     {
                         Title = movie.Title,
                         Overview = movie.Overview,
-                        ReleaseDate = DateTime.Parse(movie.ReleaseDate),
                         MovieApiId = movie.MovieApiId,
                     };
+
+                    if (!DateTime.TryParse(movie.ReleaseDate, out DateTime movieReleaseDate))
+                    {
+                        dbMovie = null;
+                    }
+                    else
+                    {
+                        dbMovie.ReleaseDate = movieReleaseDate;
+                    }
 
                     var genres = dbContext.Genres.Where(x => movie.GenresIds.Contains(x.ApiId));
 
@@ -79,7 +82,6 @@
                     await dbContext.MediaImages.AddAsync(image);
                     await dbContext.SaveChangesAsync();
                 }
-
             }
         }
 
@@ -100,7 +102,6 @@
             await response.Content.CopyToAsync(fileStream);
 
             return imagePath;
-
         }
     }
 }

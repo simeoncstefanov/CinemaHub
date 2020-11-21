@@ -12,7 +12,7 @@
     {
         Task<IEnumerable<MediaGridDTO>> GetPageElementsAsync(int page, int elementsPerPage);
 
-        void SearchMedia(string searchInput, MediaEnum mediaType);
+        int SearchMedia(string searchInput, MediaEnum mediaType);
 
         void SortBy(SortTypeEnum sortType);
 

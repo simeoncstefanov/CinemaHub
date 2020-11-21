@@ -25,10 +25,13 @@
         {
             this.mediaRepository = mediaRepository;
             this.genreRepository = genreRepository;
+            this.apiService = apiService;
             this.mediaQuery = this.mediaRepository.All();
         }
 
-        public void SearchMedia(string searchInput, MediaEnum mediaType)
+        public int ResultsFound { get; private set; }
+
+        public int SearchMedia(string searchInput, MediaEnum mediaType)
         {
             if (mediaType.ToString() == nameof(Movie))
             {
@@ -41,12 +44,16 @@
 
             if (string.IsNullOrEmpty(searchInput))
             {
-                return;
+                searchInput = string.Empty;
             }
 
             // TODO: IMPROVE SEARCH IMPLEMENTATION
             this.mediaQuery = this.mediaQuery.Where(x => x.Title.Contains(searchInput)
                 || x.Keywords.Any(x => x.Keyword.Name.Contains(searchInput)));
+
+            int resultsCount = this.mediaQuery.Count();
+            this.ResultsFound = resultsCount;
+            return resultsCount;
         }
 
         public void SortBy(SortTypeEnum sortType)
@@ -60,7 +67,6 @@
                     this.mediaQuery = this.mediaQuery.OrderBy(x => x.Watchers.Count);
                     break;
             }
-
         }
 
         public void SortByDescending(SortTypeEnum sortType)
@@ -92,7 +98,8 @@
                     Title = x.Title,
                     ImagePath = x.Images.FirstOrDefault(x => x.ImageType == ImageType.Poster).Path,
                     MediaType = x.GetType().Name,
-                }) 
+                    ResultsFound = this.ResultsFound,
+                })
                 .ToListAsync();
 
             return medias;
@@ -108,7 +115,7 @@
 
             if (media is null)
             {
-                throw new ArgumentException($"Movie with id {id} does not exist!");
+                return null;
             }
 
             if (media.IsDetailFull == false)
@@ -129,6 +136,7 @@
                 ReleaseDate = media.ReleaseDate,
                 Id = media.Id,
                 Language = media.Language,
+                MediaType = media.GetType().Name,
             };
         }
     }

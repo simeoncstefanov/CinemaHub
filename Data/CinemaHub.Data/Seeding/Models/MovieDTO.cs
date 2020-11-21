@@ -31,5 +31,23 @@
 
         [JsonProperty("genre_ids")]
         public List<int> GenresIds { get; set; }
+
+        [JsonProperty("first_air_date")]
+        private string FirstAirDate
+        {
+            set
+            {
+                this.ReleaseDate = value;
+            }
+        }
+
+        [JsonProperty("name")]
+        private string ShowName
+        {
+            set
+            {
+                this.Title = value;
+            }
+        }
     }
 }

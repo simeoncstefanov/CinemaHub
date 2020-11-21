@@ -99,6 +99,7 @@ namespace CinemaHub.Data.Migrations
                     Imdb = table.Column<int>(nullable: false),
                     MovieApiId = table.Column<int>(nullable: false),
                     IsDetailFull = table.Column<bool>(nullable: false),
+                    YoutubeTrailer = table.Column<string>(nullable: true),
                     MediaType = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
@@ -282,8 +283,8 @@ namespace CinemaHub.Data.Migrations
                     Path = table.Column<string>(nullable: false),
                     Extension = table.Column<string>(nullable: false),
                     ImageType = table.Column<int>(nullable: false),
-                    Title = table.Column<string>(maxLength: 30, nullable: true),
-                    Description = table.Column<string>(maxLength: 550, nullable: true),
+                    Title = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
                     MediaId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>

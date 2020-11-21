@@ -14,13 +14,13 @@
     using CinemaHub.Data.Seeding.Models;
     using Microsoft.Extensions.Configuration;
 
-    public class MoviesSeeder : ISeeder
+    public class ShowsSeeder : ISeeder
     {
-        private const int Pages = 10;
+        private const int Pages = 3;
         private readonly HttpClient client;
         private readonly string rootPath;
 
-        public MoviesSeeder(string rootPath)
+        public ShowsSeeder(string rootPath)
         {
             this.client = new HttpClient();
             this.rootPath = rootPath;
@@ -28,7 +28,7 @@
 
         public async Task SeedAsync(ApplicationDbContext dbContext, IServiceProvider serviceProvider, string rootPath)
         {
-            if (dbContext.Movies.Any())
+            if (dbContext.Shows.Any())
             {
                 return;
             }
@@ -45,7 +45,7 @@
 
                 foreach (var movie in result.Movies)
                 {
-                    Movie dbMovie = new Movie()
+                    Show dbMovie = new Show()
                     {
                         Title = movie.Title,
                         Overview = movie.Overview,
@@ -72,7 +72,7 @@
                         });
                     }
 
-                    await dbContext.Movies.AddAsync(dbMovie);
+                    await dbContext.Shows.AddAsync(dbMovie);
 
                     var imagePath = await this.DownloadImageAsync("https://image.tmdb.org/t/p/w500/" + movie.PosterPath, dbMovie.Id);
 
@@ -93,7 +93,7 @@
 
         public async Task<ResultDTO> GetMediaJsonAsync(int page)
         {
-            var content = await this.client.GetStringAsync($"https://api.themoviedb.org/3/movie/popular?api_key=238b937765146aa0e189640d869591e7&language=en-US&page={page}");
+            var content = await this.client.GetStringAsync($"https://api.themoviedb.org/3/tv/popular?api_key=238b937765146aa0e189640d869591e7&language=en-US&page={page}");
             var result = Newtonsoft.Json.JsonConvert.DeserializeObject<ResultDTO>(content);
             return result;
         }

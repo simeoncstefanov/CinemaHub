@@ -43,10 +43,13 @@
 
         public int Imdb { get; set; }
 
+        [Required]
         public int MovieApiId { get; set; }
 
         [Required]
         public bool IsDetailFull { get; set; }
+
+        public string YoutubeTrailer { get; set; }
 
         public virtual ICollection<MediaGenre> Genres { get; set; }
 

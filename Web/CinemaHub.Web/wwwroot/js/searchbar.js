@@ -41,26 +41,28 @@ function autocomplete(inp, arr) {
         this.parentNode.appendChild(a);
         /*for each item in the array...*/
         for (i = 0; i < arr.length; i++) {
-            /*check if the item starts with the same letters as the text field value:*/
-            
+            val = val.toLowerCase().trim();
+            var title = arr[i].title
+            var indexStrong = title.toLowerCase().indexOf(val);
                 /*create a DIV element for each matching element:*/
-                b = document.createElement("DIV");
-                /*make the matching letters bold:*/
-                b.innerHTML = "<strong>" + arr[i].title.substr(0, val.length) + "</strong>";
-                b.innerHTML += arr[i].title.substr(val.length);
+            b = document.createElement("DIV");
+            b.innerHTML += '<img width="5%" height="5%"  src="' + arr[i].imagePath + '" />'
+            b.innerHTML += " " + title.substr(0, indexStrong)
+            b.innerHTML += "<strong>" + title.substr(indexStrong, val.length) + "</string>";
+            b.innerHTML += title.substr(indexStrong + val.length, title.length - indexStrong + val.length);
                 /*insert a input field that will hold the current array item's value:*/
-                b.innerHTML += "<input type='hidden' value='" + arr[i].id + "'>";
+            b.innerHTML += "<input type='hidden' value='" + "/Media/" + arr[i].mediaType + "s/" + arr[i].id + "'>";
                 /*execute a function when someone clicks on the item value (DIV element):*/
-                var mediaType = arr[i].mediaType;
-                b.addEventListener("click", function (e) {
-                    /*insert the value for the autocomplete text field:*/
-                    window.location.replace("/Media/" + mediaType + "s/" + this.getElementsByTagName("input")[0].value);
+
+            b.addEventListener("click", function (e) {
+            /*insert the value for the autocomplete text field:*/
+                window.location.replace(this.getElementsByTagName("input")[0].value);
                     /*close the list of autocompleted values,
                     (or any other open lists of autocompleted values:*/
-                    closeAllLists();
-                });
-                a.appendChild(b);
-            
+                closeAllLists();
+            });
+
+            a.appendChild(b);        
         }
     });
 
@@ -88,26 +90,28 @@ function autocomplete(inp, arr) {
         this.parentNode.appendChild(a);
         /*for each item in the array...*/
         for (i = 0; i < arr.length; i++) {
-            /*check if the item starts with the same letters as the text field value:*/
-
+            val = val.toLowerCase().trim();
+            var title = arr[i].title
+            var indexStrong = title.toLowerCase().indexOf(val);
             /*create a DIV element for each matching element:*/
             b = document.createElement("DIV");
-            /*make the matching letters bold:*/
-            b.innerHTML = "<strong>" + arr[i].title.substr(0, val.length) + "</strong>";
-            b.innerHTML += arr[i].title.substr(val.length);
+            b.innerHTML += '<img width="5%" height="5%"  src="' + arr[i].imagePath + '" />'
+            b.innerHTML += " " + title.substr(0, indexStrong)
+            b.innerHTML += "<strong>" + title.substr(indexStrong, val.length) + "</string>";
+            b.innerHTML += title.substr(indexStrong + val.length, title.length - indexStrong + val.length);
             /*insert a input field that will hold the current array item's value:*/
-            b.innerHTML += "<input type='hidden' value='" + arr[i].id + "'>";
+            b.innerHTML += "<input type='hidden' value='" + "/Media/" + arr[i].mediaType + "s/" + arr[i].id + "'>";
             /*execute a function when someone clicks on the item value (DIV element):*/
+
             b.addEventListener("click", function (e) {
                 /*insert the value for the autocomplete text field:*/
-
-                window.location.replace("/Media/" + arr[i].mediaType + "s/" + this.getElementsByTagName("input")[0].value);
+                window.location.replace(this.getElementsByTagName("input")[0].value);
                 /*close the list of autocompleted values,
                 (or any other open lists of autocompleted values:*/
                 closeAllLists();
             });
-            a.appendChild(b);
 
+            a.appendChild(b);
         }
     });
 

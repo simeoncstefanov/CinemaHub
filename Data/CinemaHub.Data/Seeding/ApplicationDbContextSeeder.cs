@@ -29,6 +29,7 @@
                               new RolesSeeder(),
                               new GenreSeeder(),
                               new MoviesSeeder(rootPath),
+                              new ShowsSeeder(rootPath),
                           };
 
             foreach (var seeder in seeders)

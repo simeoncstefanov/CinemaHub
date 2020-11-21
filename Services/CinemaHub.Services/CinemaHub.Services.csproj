@@ -18,4 +18,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Data\CinemaHub.Data.Common\CinemaHub.Data.Common.csproj" />
+    <ProjectReference Include="..\..\Data\CinemaHub.Data.Models\CinemaHub.Data.Models.csproj" />
+  </ItemGroup>
+
 </Project>

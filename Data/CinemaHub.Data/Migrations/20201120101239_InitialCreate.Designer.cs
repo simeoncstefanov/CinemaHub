@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CinemaHub.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201116214545_RemoveMediaImageCap")]
-    partial class RemoveMediaImageCap
+    [Migration("20201120101239_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -346,6 +346,9 @@ namespace CinemaHub.Data.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("YoutubeTrailer")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

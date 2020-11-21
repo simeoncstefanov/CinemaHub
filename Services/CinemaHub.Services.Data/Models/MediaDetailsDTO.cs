@@ -30,6 +30,8 @@
 
         public string PosterPath { get; set; }
 
+        public string MediaType { get; set; }
+
         public List<string> Genres { get; set; }
 
         public List<string> Keywords { get; set; }

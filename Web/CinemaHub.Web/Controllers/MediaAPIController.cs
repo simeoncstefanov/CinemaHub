@@ -25,8 +25,8 @@
         public async Task<IEnumerable<MediaGridDTO>> Get(string query)
         {
             this.mediaService.SearchMedia(query, MediaEnum.All);
-
-            return await this.mediaService.GetPageElementsAsync(1, 15);
+            var media = await this.mediaService.GetPageElementsAsync(1, 10);
+            return media;
         }
     }
 }

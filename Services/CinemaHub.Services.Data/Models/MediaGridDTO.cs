@@ -23,5 +23,6 @@
 
         public string MediaType { get; set; }
 
+        public int ResultsFound { get; set; }
     }
 }

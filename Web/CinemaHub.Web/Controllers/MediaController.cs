@@ -19,24 +19,66 @@
             this.mediaService = mediaService;
         }
 
-        [HttpGet("Movies/Media/{id}")]
-        public async Task<IActionResult> Movies(string id)
+        [HttpGet("Media/Movies/{id}")]
+        public async Task<IActionResult> MoviesDetails(string id)
         {
             var viewModel = await this.mediaService.GetMovieDetailsAsync(id);
-            return this.View("MovieDetails", viewModel);
+            if (viewModel.MediaType != "Movie" || viewModel is null)
+            {
+                // TODO: ADD ERROR VIEW;
+                return this.NotFound();
+            }
+
+            return this.View("MediaDetails", viewModel);
         }
 
-        public async Task<IActionResult> Movies([FromQuery] int page = 1)
+        [HttpGet("Media/Shows/{id}")]
+        public async Task<IActionResult> ShowsDetails(string id)
         {
+            var viewModel = await this.mediaService.GetMovieDetailsAsync(id);
+            if (viewModel.MediaType != "Show" || viewModel is null)
+            {
+                // TODO: ADD ERROR VIEW;
+                return this.NotFound();
+            }
+
+            return this.View("MediaDetails", viewModel);
+        }
+
+        public async Task<IActionResult> Movies([FromForm] string query, [FromQuery] int page = 1)
+        {
+            double resultsFound = (double)this.mediaService.SearchMedia(query, MediaEnum.Movie);
             var viewModel = await this.mediaService.GetPageElementsAsync(page, 20);
 
-            return this.View(viewModel);
+            var model = new MediaGridViewModel()
+            {
+                ResultsFound = (int)resultsFound,
+                ElementsPerPage = 20,
+                Medias = viewModel,
+                MediaType = "Show",
+                TotalPages = (int)Math.Ceiling(resultsFound / 20.0),
+                CurrentPage = page,
+            };
+
+            return this.View(model);
         }
 
-        public IActionResult Shows()
+        public async Task<IActionResult> Shows([FromForm] string query, [FromQuery] int page = 1)
         {
-            return this.View();
-        }
+            double resultsFound = (double)this.mediaService.SearchMedia(query, MediaEnum.Show);
+            var viewModel = await this.mediaService.GetPageElementsAsync(page, 20);
 
+            var model = new MediaGridViewModel()
+            {
+                ResultsFound = (int)resultsFound,
+                ElementsPerPage = 20,
+                Medias = viewModel,
+                MediaType = "Show",
+                TotalPages = (int)Math.Ceiling(resultsFound / 20.0),
+                CurrentPage = page,
+            };
+
+            return this.View(model);
+        }
     }
 }

@@ -73,7 +73,6 @@
         {
             // Needed for Identity models configuration
             base.OnModelCreating(builder);
-   
             this.ConfigureUserIdentityRelations(builder);
 
             EntityIndexesConfiguration.Configure(builder);

@@ -18,10 +18,5 @@
         public MediaServicesTests()
         {
         }
-
-        [Fact]
-        public void ServiceReturnsRightAmountElementsOnPagination()
-        { 
-        }      
     }
 }

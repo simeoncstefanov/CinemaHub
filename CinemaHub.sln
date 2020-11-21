@@ -39,7 +39,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CinemaHub.Web.Tests", "Test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CinemaHub.Web.ViewModels", "Web\CinemaHub.Web.ViewModels\CinemaHub.Web.ViewModels.csproj", "{13B7AACB-9C85-4409-8D4B-95A67D0DFFF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CinemaHub.Data.Tests", "Tests\CinemaHub.Data.Tests\CinemaHub.Data.Tests.csproj", "{4378A4A3-2B27-4A8D-8C27-CE4EEF22B537}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CinemaHub.Data.Tests", "Tests\CinemaHub.Data.Tests\CinemaHub.Data.Tests.csproj", "{4378A4A3-2B27-4A8D-8C27-CE4EEF22B537}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

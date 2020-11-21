@@ -42,6 +42,11 @@
 
   <ItemGroup>
     <Folder Include="Areas\Administration\Controllers\" />
+    <Folder Include="Views\Shared\Partial\" />
     <Folder Include="wwwroot\images\posters\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 </Project>

@@ -14,7 +14,7 @@
     {
         private readonly IRepository<Keyword> keywordRep;
 
-        public KeywordService(IRepository<Keyword> keywordRep)
+        public KeywordService(IRepository<Keyword> keywordRep, IRepository<Media> mediaRepository)
         {
             this.keywordRep = keywordRep;
         }

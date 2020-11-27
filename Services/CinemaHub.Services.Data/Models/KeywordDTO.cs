@@ -1,6 +1,7 @@
 ﻿namespace CinemaHub.Services.Data.Models
 {
     using Newtonsoft.Json;
+
     public class KeywordDTO
     {
         [JsonProperty("value")]
@@ -8,6 +9,5 @@
 
         [JsonProperty("id")]
         public int Id { get; set; }
-
     }
 }

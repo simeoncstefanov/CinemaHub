@@ -17,8 +17,8 @@
             </li>
         }
         <li class="nav-item">
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@(this.Url.Action("Index", "Home", new { area = string.Empty }))">
-                <button type="submit" class="btn btn-default lv1 add-font">Logout</button>
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@this.Context.Request.Path">
+                <button type="submit" class="btn btn-default lv1 add-font signoutbtn">Logout</button>
             </form>
         </li>
     }

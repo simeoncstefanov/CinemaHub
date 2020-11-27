@@ -17,11 +17,11 @@
         public string Id { get; set; }
 
         [Required]
-        [MinLength(3)]
+        [MinLength(3, ErrorMessage = "Title should be at least 3 characters long")]
         public string Title { get; set; }
 
         [Required]
-        [MinLength(20)]
+        [MinLength(20, ErrorMessage = "Overview should be at least 20 characters long")]
         public string Overview { get; set; }
 
         public string Language { get; set; }
@@ -32,25 +32,27 @@
         public string ReleaseDateString => this.ReleaseDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 
         [Required]
+        [Range(0, int.MaxValue, ErrorMessage = "Runtime should be more than 0")]
         public int Runtime { get; set; }
 
         [Required]
+        [Range(0, int.MaxValue, ErrorMessage = "Budget should be more than 0")]
         public int Budget { get; set; }
 
-        [Required]
         public string YoutubeTrailerUrl { get; set; }
 
         public IFormFile PosterImageFile { get; set; }
 
         public string PosterPath { get; set; }
 
+        [Required]
         public string MediaType { get; set; }
 
         [Required]
         public string Genres { get; set; }
 
         public string Keywords { get; set; }
-
+ 
         public IEnumerable<KeywordViewModel> KeywordsList { get; set; }
 
         public void CreateMappings(IProfileExpression configuration)
@@ -65,6 +67,14 @@
                 .ForMember(x => x.Genres, opt =>
                     opt.MapFrom(x =>
                         string.Join(", ", x.Genres.Select(x => x.Genre.Name))))
+                .ForMember(x => x.KeywordsList, opt =>
+                    opt.MapFrom(x =>
+                        x.Keywords.Select(x => new KeywordViewModel()
+                        {
+                            Id = x.Keyword.Id,
+                            Value = x.Keyword.Name,
+                        })))
                 .ForMember(x => x.Keywords, opt => opt.Ignore());
+        }
     }
 }

@@ -48,15 +48,15 @@ var populateGrid = function(json) {
     {
         var media = json.results[result];
         movieList.innerHTML += `<div class="movie-item-style-2 movie-item-style-1">
-    <img src="${media.imagePath}" alt="">
-    <div class="hvr-inner">
-        <a href="Media/${media.mediaType + "s"}/${media.id}> Read more <i class="ion-android-arrow-dropright"></i> </a>
-    </div>
-    <div class="mv-item-infor">
-        <h6><a href="Media/${media.mediaType + "s"}/${media.id}>${media.title}</a></h6>
-        <p class="rate"><i class="ion-android-star"></i><span>8.1</span> /10</p>
-    </div>
-</div>`
+                                    <img src="${media.imagePath}" alt="">
+                                    <div class="hvr-inner">
+                                        <a href="/Media/${media.mediaType + "s"}/${media.id}"> Read more <i class="ion-android-arrow-dropright"></i> </a>
+                                    </div>
+                                    <div class="mv-item-infor">
+                                        <h6><a href="/Media/${media.mediaType + "s"}/${media.id}">${media.title}</a></h6>
+                                        <p class="rate"><i class="ion-android-star"></i><span>8.1</span> /10</p>
+                                    </div>
+                                </div>`
     };
 
     pagination.innerHTML = "Page "+json.currentPage+" of "+json.pages;

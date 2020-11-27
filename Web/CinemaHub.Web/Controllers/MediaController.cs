@@ -19,11 +19,13 @@
     {
         private const int DefaultPerPage = 20;
         private readonly IMediaService mediaService;
+        private readonly IKeywordService keywordService;
         private readonly UserManager<ApplicationUser> userManager;
 
-        public MediaController(IMediaService mediaService, UserManager<ApplicationUser> userManager)
+        public MediaController(IMediaService mediaService, IKeywordService keywordService, UserManager<ApplicationUser> userManager)
         {
             this.mediaService = mediaService;
+            this.keywordService = keywordService;
             this.userManager = userManager;
         }
 
@@ -76,19 +78,26 @@
             return this.View(media);
         }
 
+        // Edits or adds new movie if there is no id in the input model
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Edit(MediaDetailsInputModel edit)
         {
-            if (!this.ModelState.IsValid)
-            {
-                var yes = this.ModelState.Values;
-                return this.View(edit);
-            }
-
             var user = await this.userManager.GetUserAsync(this.User);
 
-            await this.mediaService.EditDetailsAsync(edit, user.Id, "");
+            if (!this.ModelState.IsValid)
+            {
+                this.View(edit);
+            }
+
+            try
+            {
+                await this.mediaService.EditDetailsAsync(edit, user.Id, "");
+            }
+            catch (Exception ex)
+            {
+                this.ModelState.AddModelError(string.Empty, ex.Message);
+            }
 
             return this.Redirect("/");
         }

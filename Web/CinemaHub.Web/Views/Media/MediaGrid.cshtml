@@ -19,8 +19,11 @@
                         <option value="date">Release date Descending</option>
                         <option value="date">Release date Ascending</option>
                     </select>
-                    <a href="movielist.html" class="list"><i class="ion-ios-list-outline "></i></a>
-                    <a href="moviegrid.html" class="grid"><i class="ion-grid active"></i></a>
+
+                    @if (this.SignInManager.IsSignedIn(this.User))
+                    {
+                        <a asp-controller="Media" asp-action="Add" class="red-button">Add</a>
+                    }
                 </div>
                 <div class="flex-wrap-movielist">
                 </div>
@@ -40,7 +43,7 @@
                 <div class="sidebar">
                     <div class="searh-form">
                         <h4 class="sb-title">Search for movie</h4>
-                        <partial name="~/Views/Shared/Partial/FilterSidebar.cshtml" model="Model"/>
+                        <partial name="~/Views/Shared/Partial/FilterSidebar.cshtml" model="Model" />
                     </div>
                 </div>
             </div>

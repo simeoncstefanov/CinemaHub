@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CinemaHub.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201126212852_InitialCreate")]
+    [Migration("20201127170929_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -434,20 +434,13 @@ namespace CinemaHub.Data.Migrations
 
             modelBuilder.Entity("CinemaHub.Data.Models.MediaKeyword", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
                     b.Property<int>("KeywordId")
                         .HasColumnType("int");
 
                     b.Property<string>("MediaId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("KeywordId");
+                    b.HasKey("KeywordId", "MediaId");
 
                     b.HasIndex("MediaId");
 
@@ -741,7 +734,9 @@ namespace CinemaHub.Data.Migrations
 
                     b.HasOne("CinemaHub.Data.Models.Media", "Media")
                         .WithMany("Keywords")
-                        .HasForeignKey("MediaId");
+                        .HasForeignKey("MediaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CinemaHub.Data.Models.MediaWatcher", b =>

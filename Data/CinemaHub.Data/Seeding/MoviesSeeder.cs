@@ -65,46 +65,28 @@
 
                     foreach (var genre in genres)
                     {
-                        try
-                        {
                             dbMovie.Genres.Add(new MediaGenre()
                             {
                                 Genre = genre,
                                 Media = dbMovie,
                             });
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("dadad");
-                            ; 
-
-                        }
                     }
 
-                    try
+                    await dbContext.Movies.AddAsync(dbMovie);
+
+                    var imagePath = await this.DownloadImageAsync("https://image.tmdb.org/t/p/w500/" + movie.PosterPath, dbMovie.Id);
+
+                    MediaImage image = new MediaImage()
                     {
-                        await dbContext.Movies.AddAsync(dbMovie);
+                        Media = dbMovie,
+                        ImageType = Data.Models.Enums.ImageType.Poster,
+                        Path = imagePath,
+                        Extension = System.IO.Path.GetExtension(imagePath),
+                        Title = dbMovie.Title + " - Poster",
+                    };
 
-                        var imagePath = await this.DownloadImageAsync("https://image.tmdb.org/t/p/w500/" + movie.PosterPath, dbMovie.Id);
-
-                        MediaImage image = new MediaImage()
-                        {
-                            Media = dbMovie,
-                            ImageType = Data.Models.Enums.ImageType.Poster,
-                            Path = imagePath,
-                            Extension = System.IO.Path.GetExtension(imagePath),
-                            Title = dbMovie.Title + " - Poster",
-                        };
-
-                        await dbContext.MediaImages.AddAsync(image);
-                        await dbContext.SaveChangesAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("dadad");
-                        ;
-                    }
-
+                    await dbContext.MediaImages.AddAsync(image);
+                    await dbContext.SaveChangesAsync();
                 }
             }
         }

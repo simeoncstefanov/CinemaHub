@@ -8,9 +8,6 @@
 
     public class MediaKeyword
     {
-        [Key]
-        public int Id { get; set; }
-
         [ForeignKey(nameof(Keyword))]
         public int KeywordId { get; set; }
 

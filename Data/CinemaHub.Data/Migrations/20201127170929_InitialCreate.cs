@@ -303,14 +303,12 @@ namespace CinemaHub.Data.Migrations
                 name: "MediaKeywords",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
                     KeywordId = table.Column<int>(nullable: false),
-                    MediaId = table.Column<string>(nullable: true)
+                    MediaId = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MediaKeywords", x => x.Id);
+                    table.PrimaryKey("PK_MediaKeywords", x => new { x.KeywordId, x.MediaId });
                     table.ForeignKey(
                         name: "FK_MediaKeywords_Keywords_KeywordId",
                         column: x => x.KeywordId,
@@ -578,11 +576,6 @@ namespace CinemaHub.Data.Migrations
                 name: "IX_MediaImages_MediaId",
                 table: "MediaImages",
                 column: "MediaId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_MediaKeywords_KeywordId",
-                table: "MediaKeywords",
-                column: "KeywordId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MediaKeywords_MediaId",

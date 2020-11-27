@@ -79,6 +79,9 @@
 
             var entityTypes = builder.Model.GetEntityTypes().ToList();
 
+            builder.Entity<MediaKeyword>()
+                .HasKey(x => new { x.KeywordId, x.MediaId });
+
             // Set global query filter for not deleted entities only
             var deletableEntityTypes = entityTypes
                 .Where(et => et.ClrType != null && typeof(IDeletableEntity).IsAssignableFrom(et.ClrType));

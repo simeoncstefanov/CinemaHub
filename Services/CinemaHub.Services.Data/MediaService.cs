@@ -17,22 +17,26 @@
     using CinemaHub.Services.Data.Models;
     using Microsoft.EntityFrameworkCore;
     using CinemaHub.Web.ViewModels.Media;
+    using Microsoft.AspNetCore.Http;
 
     public class MediaService : IMediaService
     {
         private readonly IRepository<Media> mediaRepository;
         private readonly IRepository<Genre> genreRepository;
         private readonly IRepository<Keyword> keywordRepository;
+        private readonly IRepository<MediaKeyword> mediaKeywordRepository;
         private IQueryable<Media> mediaQuery;
 
         public MediaService(
             IRepository<Media> mediaRepository,
             IRepository<Genre> genreRepository,
-            IRepository<Keyword> keywordRepository)
+            IRepository<Keyword> keywordRepository,
+            IRepository<MediaKeyword> mediaKeywordRepository)
         {
             this.mediaRepository = mediaRepository;
             this.genreRepository = genreRepository;
             this.keywordRepository = keywordRepository;
+            this.mediaKeywordRepository = mediaKeywordRepository;
             this.mediaQuery = this.mediaRepository.All();
         }
 
@@ -64,7 +68,6 @@
                 ResultsPerPage = elementsPerPage,
                 CurrentPage = page,
             };
-
         }
 
         public async Task<T> GetDetailsAsync<T>(string id)
@@ -79,11 +82,6 @@
                 .To<T>()
                 .FirstOrDefault();
 
-            if (media is null)
-            {
-                throw new InvalidOperationException($"Media with id {id} not found");
-            }
-
             return media;
         }
 
@@ -92,10 +90,15 @@
             var media = this.mediaRepository.All()
                 .Include(x => x.Genres)
                 .ThenInclude(x => x.Genre)
+                .Include(x => x.Keywords)
                 .FirstOrDefault(x => x.Id == inputModel.Id);
+
+            bool isAdd = false;
 
             if (media is null)
             {
+                isAdd = true;
+
                 string qualifiedName = $"CinemaHub.Data.Models.{inputModel.MediaType}, CinemaHub.Data.Models, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
                 var type = Type.GetType(qualifiedName);
                 media = (Media)Activator.CreateInstance(type);
@@ -127,46 +130,54 @@
             // Add all the remaining genres
             foreach (var genre in genres)
             {
-                genresDb.Add(new MediaGenre()
+                media.Genres.Add(new MediaGenre()
                 {
                     Media = media,
                     Genre = this.genreRepository.All().Where(x => x.Name == genre).FirstOrDefault(),
                 });
             }
 
-            var keywords = Newtonsoft.Json.JsonConvert.DeserializeObject<List<KeywordDTO>>(inputModel.Keywords);
-            var dbKeywordsIds = media.Keywords.Select(x => x.Id).ToList();
+            var keywords = inputModel.Keywords != null ? Newtonsoft.Json.JsonConvert.DeserializeObject<List<KeywordDTO>>(inputModel.Keywords) : new List<KeywordDTO>();
+            var dbKeywordsIds = media.Keywords.Select(x => x.KeywordId).ToList();
 
-            // Create all keywords which do not exist then add every keyword from the inputModel
+            // if id is 0 it does not exist. 
             foreach (var keyword in keywords)
             {
-                var keywordDb = this.keywordRepository.All().FirstOrDefault(x => x.Id == keyword.Id);
-
-                if (keywordDb is null)
+                if (keyword.Id == 0)
                 {
-                    keywordDb = new Keyword() { Name = keyword.Value };
+                    var keywordDb = new Keyword() { Name = keyword.Value };
                     await this.keywordRepository.AddAsync(keywordDb);
+
+                    media.Keywords.Add(new MediaKeyword()
+                    {
+                        Keyword = keywordDb,
+                        Media = media,
+                    });
+                    continue;
                 }
 
                 if (!dbKeywordsIds.Contains(keyword.Id))
                 {
                     media.Keywords.Add(new MediaKeyword()
                     {
-                        Keyword = keywordDb,
+                        KeywordId = keyword.Id,
                         Media = media,
                     });
                 }
-
-                dbKeywordsIds.Remove(keyword.Id);
+                dbKeywordsIds.Remove(keyword.Id);  // Keywords which are removed from dbKeywordsIds won't be deleted
             }
 
             // Delete all the keywords which are not in the inputModel
             foreach (var id in dbKeywordsIds)
             {
-                var keyword = media.Keywords.FirstOrDefault(x => x.KeywordId == id);
-                media.Keywords.Remove(keyword);
+                var mediaKeyword = media.Keywords.FirstOrDefault(x => x.KeywordId == id);
+                this.mediaKeywordRepository.Delete(mediaKeyword);
             }
 
+            if (isAdd)
+            {
+                await this.mediaRepository.AddAsync(media);
+            }
             await this.mediaRepository.SaveChangesAsync();
         }
 
@@ -211,5 +222,8 @@
             }
         }
 
+        private async Task DownloadImage(IFormFile image, string rootPath)
+        {
+        }
     }
 }

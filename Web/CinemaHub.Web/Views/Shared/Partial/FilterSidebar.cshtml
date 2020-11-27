@@ -1,0 +1,56 @@
+﻿@model CinemaHub.Web.ViewModels.Media.MediaGridViewModel;
+<form class="form-style-1" asp-controller="Media" asp-action="@this.ViewContext.RouteData.Values["Action"].ToString()" method="post">
+    <input type="hidden" id="MediaType" value="@Model.MediaType" />
+    <div class="row">
+        <div class="col-md-12 form-it">
+            <label>Movie name</label>
+            <input id="SearchQuery" type="text" placeholder="Enter keywords" />
+        </div>
+        <div class="col-md-12 form-it">
+            <label>Genres & Subgenres</label>
+            <div class="group-ip">
+                <select id="Keywords" name="skills" multiple="" class="ui fluid dropdown">
+                    <option value="">Enter to filter genres</option>
+                    <option value="Action1">Action 1</option>
+                    <option value="Action2">Action 2</option>
+                    <option value="Action3">Action 3</option>
+                    <option value="Action4">Action 4</option>
+                    <option value="Action5">Action 5</option>
+                </select>
+            </div>
+            <input type="hidden" id="Genres" value="" />
+        </div>
+        <div class="col-md-12 form-it">
+            <label>Rating Range</label>
+            <select>
+                <option value="range">-- Select the rating range below --</option>
+                <option value="saab">-- Select the rating range below --</option>
+            </select>
+        </div>
+        <div class="col-md-12 form-it">
+            <label>Release Year</label>
+            <div class="row">
+                <div class="col-md-6">
+                    <select>
+                        <option value="range">From</option>
+                        <option value="number">10</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <select>
+                        <option value="range">To</option>
+                        <option value="number">20</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 ">
+            <input class="submit" id="searchSubmit" type="submit" value="submit">
+        </div>
+        <input class="hidden" id="Page" value="" />
+    </div>
+</form>
+
+@section Scripts {
+    <script src="~/js/mediagrid.js"></script>
+} 

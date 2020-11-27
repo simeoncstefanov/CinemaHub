@@ -5,24 +5,44 @@
     using System.Linq;
     using System.Threading.Tasks;
 
+    using CinemaHub.Data.Models;
     using CinemaHub.Services.Data;
+    using CinemaHub.Services.Data.Models;
     using CinemaHub.Web.ViewModels;
     using CinemaHub.Web.ViewModels.Media;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
+    using Newtonsoft.Json;
 
     public class MediaController : BaseController
     {
+        private const int DefaultPerPage = 20;
         private readonly IMediaService mediaService;
+        private readonly UserManager<ApplicationUser> userManager;
 
-        public MediaController(IMediaService mediaService)
+        public MediaController(IMediaService mediaService, UserManager<ApplicationUser> userManager)
         {
             this.mediaService = mediaService;
+            this.userManager = userManager;
         }
 
-        [HttpGet("Media/Movies/{id}")]
-        public async Task<IActionResult> MoviesDetails(string id)
+        // both controllers get the searched media with ajax
+        [Route("/[controller]/[action]")]
+        public async Task<IActionResult> Movies()
         {
-            var viewModel = await this.mediaService.GetMovieDetailsAsync(id);
+            return this.View(new MediaGridViewModel() { MediaType = "Movie" });
+        }
+
+        [Route("/[controller]/[action]")]
+        public async Task<IActionResult> Shows()
+        {
+            return this.View(new MediaGridViewModel() { MediaType = "Show" });
+        }
+
+        public async Task<IActionResult> Movies(string id)
+        {
+            var viewModel = await this.mediaService.GetDetailsAsync<MediaDetailsViewModel>(id);
             if (viewModel.MediaType != "Movie" || viewModel is null)
             {
                 // TODO: ADD ERROR VIEW;
@@ -32,10 +52,9 @@
             return this.View("MediaDetails", viewModel);
         }
 
-        [HttpGet("Media/Shows/{id}")]
-        public async Task<IActionResult> ShowsDetails(string id)
+        public async Task<IActionResult> Shows(string id)
         {
-            var viewModel = await this.mediaService.GetMovieDetailsAsync(id);
+            var viewModel = await this.mediaService.GetDetailsAsync<MediaDetailsViewModel>(id);
             if (viewModel.MediaType != "Show" || viewModel is null)
             {
                 // TODO: ADD ERROR VIEW;
@@ -45,40 +64,33 @@
             return this.View("MediaDetails", viewModel);
         }
 
-        public async Task<IActionResult> Movies([FromForm] string query, [FromQuery] int page = 1)
+        [Authorize]
+        public async Task<IActionResult> Add()
         {
-            double resultsFound = (double)this.mediaService.SearchMedia(query, MediaEnum.Movie);
-            var viewModel = await this.mediaService.GetPageElementsAsync(page, 20);
-
-            var model = new MediaGridViewModel()
-            {
-                ResultsFound = (int)resultsFound,
-                ElementsPerPage = 20,
-                Medias = viewModel,
-                MediaType = "Show",
-                TotalPages = (int)Math.Ceiling(resultsFound / 20.0),
-                CurrentPage = page,
-            };
-
-            return this.View(model);
+            return this.View(new MediaDetailsInputModel());
         }
 
-        public async Task<IActionResult> Shows([FromForm] string query, [FromQuery] int page = 1)
+        public async Task<IActionResult> Edit(string id)
         {
-            double resultsFound = (double)this.mediaService.SearchMedia(query, MediaEnum.Show);
-            var viewModel = await this.mediaService.GetPageElementsAsync(page, 20);
+            var media = await this.mediaService.GetDetailsAsync<MediaDetailsInputModel>(id);
+            return this.View(media);
+        }
 
-            var model = new MediaGridViewModel()
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Edit(MediaDetailsInputModel edit)
+        {
+            if (!this.ModelState.IsValid)
             {
-                ResultsFound = (int)resultsFound,
-                ElementsPerPage = 20,
-                Medias = viewModel,
-                MediaType = "Show",
-                TotalPages = (int)Math.Ceiling(resultsFound / 20.0),
-                CurrentPage = page,
-            };
+                var yes = this.ModelState.Values;
+                return this.View(edit);
+            }
 
-            return this.View(model);
+            var user = await this.userManager.GetUserAsync(this.User);
+
+            await this.mediaService.EditDetailsAsync(edit, user.Id, "");
+
+            return this.Redirect("/");
         }
     }
 }

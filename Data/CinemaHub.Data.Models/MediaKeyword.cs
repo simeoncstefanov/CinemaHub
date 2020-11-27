@@ -12,7 +12,7 @@
         public int Id { get; set; }
 
         [ForeignKey(nameof(Keyword))]
-        public string KeywordId { get; set; }
+        public int KeywordId { get; set; }
 
         public Keyword Keyword { get; set; }
 

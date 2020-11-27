@@ -54,7 +54,7 @@
 
                     if (!DateTime.TryParse(movie.ReleaseDate, out DateTime movieReleaseDate))
                     {
-                        dbMovie = null;
+                        dbMovie.ReleaseDate = null;
                     }
                     else
                     {
@@ -65,28 +65,46 @@
 
                     foreach (var genre in genres)
                     {
-                        dbMovie.Genres.Add(new MediaGenre()
+                        try
                         {
-                            Genre = genre,
-                            Media = dbMovie,
-                        });
+                            dbMovie.Genres.Add(new MediaGenre()
+                            {
+                                Genre = genre,
+                                Media = dbMovie,
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("dadad");
+                            ; 
+
+                        }
                     }
 
-                    await dbContext.Movies.AddAsync(dbMovie);
-
-                    var imagePath = await this.DownloadImageAsync("https://image.tmdb.org/t/p/w500/" + movie.PosterPath, dbMovie.Id);
-
-                    MediaImage image = new MediaImage()
+                    try
                     {
-                        Media = dbMovie,
-                        ImageType = Data.Models.Enums.ImageType.Poster,
-                        Path = imagePath,
-                        Extension = System.IO.Path.GetExtension(imagePath),
-                        Title = dbMovie.Title + " - Poster",
-                    };
+                        await dbContext.Movies.AddAsync(dbMovie);
 
-                    await dbContext.MediaImages.AddAsync(image);
-                    await dbContext.SaveChangesAsync();
+                        var imagePath = await this.DownloadImageAsync("https://image.tmdb.org/t/p/w500/" + movie.PosterPath, dbMovie.Id);
+
+                        MediaImage image = new MediaImage()
+                        {
+                            Media = dbMovie,
+                            ImageType = Data.Models.Enums.ImageType.Poster,
+                            Path = imagePath,
+                            Extension = System.IO.Path.GetExtension(imagePath),
+                            Title = dbMovie.Title + " - Poster",
+                        };
+
+                        await dbContext.MediaImages.AddAsync(image);
+                        await dbContext.SaveChangesAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("dadad");
+                        ;
+                    }
+
                 }
             }
         }

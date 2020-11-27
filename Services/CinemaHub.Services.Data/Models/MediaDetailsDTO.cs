@@ -16,7 +16,7 @@
 
         public DateTime? ReleaseDate { get; set; }
 
-        public int RuntimeSeconds { get; set; }
+        public int Runtime { get; set; }
 
         public int Budget { get; set; }
 

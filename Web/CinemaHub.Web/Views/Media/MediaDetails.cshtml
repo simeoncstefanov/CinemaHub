@@ -1,15 +1,10 @@
-﻿@model CinemaHub.Services.Data.Models.MediaDetailsDTO
+﻿@model CinemaHub.Web.ViewModels.Media.MediaDetailsViewModel;
 @section Hero
 {
     <div class="hero mv-single-hero">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <!-- <h1> movie listing - list</h1>
-                    <ul class="breadcumb">
-                        <li class="active"><a href="#">Home</a></li>
-                        <li> <span class="ion-ios-arrow-right"></span> movie listing</li>
-                    </ul> -->
                 </div>
             </div>
         </div>
@@ -41,7 +36,7 @@
             </div>
             <div class="col-md-8 col-sm-12 col-xs-12">
                 <div class="movie-single-ct main-content">
-                    <h1 class="bd-hd">@Model.Title<span> @Model.ReleaseDate.Value.Year</span></h1>
+                    <h1 class="bd-hd">@Model.Title<span> @Model.ReleaseDateString.Substring(0, 4)</span></h1>
                     <div class="social-btn">
                         <a href="#" class="parent-btn"><i class="ion-heart"></i> Add to Watchlist</a>
                         <div class="hover-bnt">

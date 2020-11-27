@@ -1,0 +1,44 @@
+﻿@model CinemaHub.Web.ViewModels.Account.LoginInputModel;
+
+<div class="login-wrapper" id="login-content">
+    <div class="login-content">
+        <a href="#" class="close">x</a>
+        <h3>Login</h3>
+        <form asp-controller="Account" asp-action="Login" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="row">
+                <label asp-for="Email">
+                    Username:
+                    <input type="text" asp-for="Email" id="username" required="required" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </label>
+            </div>
+            <div class="row">
+                <label asp-for="Password">
+                    Password:
+                    <input type="password" asp-for="Password" id="password" placeholder="******" required="required" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </label>
+            </div>
+            <div class="row">
+                <div class="remember">
+                    <div>
+                        <input type="checkbox" asp-for="RememberMe"><span>Remember me</span>
+                    </div>
+                    <a href="#">Forget password ?</a>
+                </div>
+            </div>
+            <div class="row">
+                <button type="submit">Login</button>
+            </div>
+            @Html.Hidden("returnUrl", Model.ReturnUrl);
+        </form>
+        <div class="row">
+            <p>Or via social</p>
+            <div class="social-btn-2">
+                <a class="fb" href="#"><i class="ion-social-facebook"></i>Facebook</a>
+                <a class="tw" href="#"><i class="ion-social-twitter"></i>twitter</a>
+            </div>
+        </div>
+    </div>
+</div>

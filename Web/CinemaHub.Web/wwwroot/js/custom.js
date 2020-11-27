@@ -12,8 +12,29 @@ $(window).on('load', function() { // makes sure the whole site is loaded
 			vidDefer[i].setAttribute('src',vidDefer[i].getAttribute('data-src'));
 		} 
 	}
-	setTimeout(window.scroll(0, 0), 10000);
-})
+	
+	var urlElements = window.location.href.split('/');	
+	var lastElement = urlElements[urlElements.length - 1].split('?')[0];
+	
+	var loginct = $( "#login-content" );
+	var overlay = $(".overlay");
+	
+	if (lastElement == "login") {
+    	loginct.parents(overlay).addClass("openform");
+		$(document).on('click', function(e){
+		var target = $(e.target);
+		if ($(target).hasClass("overlay")){
+				$(target).find(loginct).each( function(){
+					$(this).removeClass("openform");
+				});
+				setTimeout( function(){
+					$(target).removeClass("openform");
+				}, 350);
+			}	
+		});
+    }
+});
+
 $(function(){
 	'use strict';
 	// js for dropdown menu
@@ -467,23 +488,8 @@ $(function(){
 				}, 350);
 			}	
 		});
-    });
-    //pop up for signup form
-    signupLink.on('click', function(event){
-    	event.preventDefault();
-    	signupct.parents(overlay).addClass("openform");
-		$(document).on('click', function(e){
-		var target = $(e.target);
-		if ($(target).hasClass("overlay")){
-				$(target).find(signupct).each( function(){
-					$(this).removeClass("openform");
-				});
-				setTimeout( function(){
-					$(target).removeClass("openform");
-				}, 350);
-			}	
-		});
-    });
+	});
+
     // close popup for mobile
     var closebt = $(".close");
    	closebt.on('click', function(e){
@@ -562,8 +568,7 @@ $(function(){
 		  }
 		});
 	}
-	// $(window).on('load',function() {
 
-	// });
 
 });
+

@@ -37,7 +37,7 @@
         public DateTime? ReleaseDate { get; set; }
 
         [Required]
-        public int RuntimeSeconds { get; set; }
+        public int Runtime { get; set; }
 
         public int Budget { get; set; }
 
@@ -49,7 +49,7 @@
         [Required]
         public bool IsDetailFull { get; set; }
 
-        public string YoutubeTrailer { get; set; }
+        public string YoutubeTrailerUrl { get; set; }
 
         public virtual ICollection<MediaGenre> Genres { get; set; }
 

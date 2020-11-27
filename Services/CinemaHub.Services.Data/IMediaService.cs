@@ -7,17 +7,16 @@
 
     using CinemaHub.Data.Models;
     using CinemaHub.Services.Data.Models;
+    using CinemaHub.Web.ViewModels.Media;
 
     public interface IMediaService
     {
-        Task<IEnumerable<MediaGridDTO>> GetPageElementsAsync(int page, int elementsPerPage);
+        Task<MediaResultDTO> GetPageAsync(int page, int elementsPerPage);
 
-        int SearchMedia(string searchInput, MediaEnum mediaType);
+        Task ApplyQueryAsync(MediaQueryDTO query);
 
-        void SortBy(SortTypeEnum sortType);
+        Task<T> GetDetailsAsync<T>(string id);
 
-        void SortByDescending(SortTypeEnum sortType);
-
-        Task<MediaDetailsDTO> GetMovieDetailsAsync(string id);
+        Task EditDetailsAsync(MediaDetailsInputModel mediaDetails, string userId, string rootPath);
     }
 }

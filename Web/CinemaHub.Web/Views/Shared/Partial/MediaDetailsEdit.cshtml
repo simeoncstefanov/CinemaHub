@@ -1,0 +1,94 @@
+﻿@model CinemaHub.Web.ViewModels.Media.MediaDetailsInputModel
+
+@{
+    var keywordFormatted = "[";
+    foreach (var keyword in Model.Keywords.Split(", "))
+    {
+        keywordFormatted += $"\"{keyword.""
+    }
+}
+<p> </p>
+<div class="container">
+    <form method="post" asp-controller="Media" asp-action="Edit">
+        <div class="row">
+            <div class="col-md-4 col-sm-12 col-xs-12">
+                <div class="form-row">
+                    <div class="movie-img">
+                        <img id="img-src" src="@Model.PosterPath" alt="">
+                    </div>
+                </div>
+                <p> </p>
+                <div class="form-row">
+                    <label  asp-for="PosterImageFile"><p>Upload Poster</p></label>
+                    <input type="file" asp-for="PosterImageFile" onchange="loadFile(event)" />
+                </div>
+            </div>
+            <div class="col-md-8 col-sm-12 col-xs-12">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label asp-for="Title"><p>Title</p></label>
+                        <input type="text" class="form-control" asp-for="Title" placeholder="Inception" value="@Model.Title">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label asp-for="Genres"><p>Genres</p></label>
+                        <input asp-for="Genres" class="form-control" value='@Model.Genres'>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-3">
+                        <label asp-for="MediaType"><p>Media Type</p></label>
+                        <select  asp-for="MediaType" class="form-control">
+                            @if (Model.MediaType == "Show")
+                            {
+                                <option>Movie</option>
+                                <option selected>TV Show</option>
+                            }
+                            else
+                            {
+                                <option selected>Movie</option>
+                                <option>TV Show</option>
+                            }
+                        </select>
+
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label asp-for="Runtime"><p>Runtime</p></label>
+                        <input type="number" class="form-control" asp-for="Runtime" value="@Model.Runtime">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label asp-for="ReleaseDate"><p>Release Date</p></label>
+                        <input asp-for="ReleaseDate" type="date" class="form-control" value="@Model.ReleaseDateString">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label asp-for="Budget"><p>Budget</p></label>
+                        <input asp-for="Budget" type="number" class="form-control" value="@Model.Budget">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12 col-sm-12 col-xs-12">
+                        <label asp-for="YoutubeTrailerUrl" ><p>Youtube Trailer Link</p></label>
+                        <input type="text" class="form-control" asp-for="YoutubeTrailerUrl" value="@Model.YoutubeTrailerUrl">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12 col-sm-12 col-xs-12">
+                        <label asp-for="Overview"><p>Overview</p></label>
+                        <textarea asp-for="Overview" style="height: 100%; " rows="9">@Model.Overview</textarea>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-12 col-sm-12 col-xs-12">
+                        <label asp-for="Keywords"><p>Keywords</p></label>
+                        <input asp-for="Keywords" value='@Model.Keywords' class="form-control">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <input type="submit" value="Submit"/>
+        </div>
+    </form>
+</div>

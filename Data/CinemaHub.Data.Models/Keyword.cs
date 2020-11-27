@@ -7,17 +7,16 @@
 
     using CinemaHub.Data.Common.Models;
 
-    public class Keyword : BaseDeletableModel<string>
+    public class Keyword : BaseDeletableModel<int>
     {
         public Keyword()
         {
-            this.Id = Guid.NewGuid().ToString();
-            this.Media = new HashSet<MediaKeyword>();
+            this.Medias = new HashSet<MediaKeyword>();
         }
 
         [Required]
         public string Name { get; set; }
 
-        public virtual ICollection<MediaKeyword> Media { get; set; }
+        public virtual ICollection<MediaKeyword> Medias { get; set; }
     }
 }

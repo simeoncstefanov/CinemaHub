@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CinemaHub.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201120101239_InitialCreate")]
+    [Migration("20201126212852_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -284,8 +284,10 @@ namespace CinemaHub.Data.Migrations
 
             modelBuilder.Entity("CinemaHub.Data.Models.Keyword", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -341,14 +343,14 @@ namespace CinemaHub.Data.Migrations
                     b.Property<DateTime?>("ReleaseDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("RuntimeSeconds")
+                    b.Property<int>("Runtime")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("YoutubeTrailer")
+                    b.Property<string>("YoutubeTrailerUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -437,8 +439,8 @@ namespace CinemaHub.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("KeywordId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("KeywordId")
+                        .HasColumnType("int");
 
                     b.Property<string>("MediaId")
                         .HasColumnType("nvarchar(450)");
@@ -732,8 +734,10 @@ namespace CinemaHub.Data.Migrations
             modelBuilder.Entity("CinemaHub.Data.Models.MediaKeyword", b =>
                 {
                     b.HasOne("CinemaHub.Data.Models.Keyword", "Keyword")
-                        .WithMany("Media")
-                        .HasForeignKey("KeywordId");
+                        .WithMany("Medias")
+                        .HasForeignKey("KeywordId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("CinemaHub.Data.Models.Media", "Media")
                         .WithMany("Keywords")

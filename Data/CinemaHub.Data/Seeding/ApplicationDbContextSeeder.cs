@@ -28,6 +28,7 @@
                           {
                               new RolesSeeder(),
                               new GenreSeeder(),
+                              new KeywordsSeeder(),
                               new MoviesSeeder(rootPath),
                               new ShowsSeeder(rootPath),
                           };

@@ -1,7 +1,10 @@
 ﻿namespace CinemaHub.Web
 {
     using System.Reflection;
+    using System.Threading.Tasks;
 
+    using AutoMapper;
+    using CinemaHub.Common;
     using CinemaHub.Data;
     using CinemaHub.Data.Common;
     using CinemaHub.Data.Common.Repositories;
@@ -14,6 +17,7 @@
     using CinemaHub.Services.Mapping;
     using CinemaHub.Services.Messaging;
     using CinemaHub.Web.ViewModels;
+    using CinemaHub.Web.ViewModels.Media;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
@@ -48,11 +52,18 @@
                         options.MinimumSameSitePolicy = SameSiteMode.None;
                     });
 
+            services.ConfigureApplicationCookie(
+                options =>
+                    {
+                        options.LoginPath = "/login";
+                    });
+
             services.AddControllersWithViews(
                 options =>
                     {
                         options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                     }).AddRazorRuntimeCompilation();
+
             services.AddRazorPages();
 
             services.AddSingleton(this.configuration);
@@ -67,12 +78,14 @@
             // Application services
             services.AddTransient<IEmailSender, NullMessageSender>();
             services.AddTransient<IMovieAPIService, MovieAPIService>();
+            services.AddTransient<IKeywordService, KeywordService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             AutoMapperConfig.RegisterMappings(typeof(ErrorViewModel).GetTypeInfo().Assembly);
+            AutoMapperConfig.RegisterMappings(typeof(MediaDetailsViewModel).GetTypeInfo().Assembly);
 
             // Seed data on application startup
             using (var serviceScope = app.ApplicationServices.CreateScope())

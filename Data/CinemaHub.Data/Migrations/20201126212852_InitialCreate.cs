@@ -73,7 +73,8 @@ namespace CinemaHub.Data.Migrations
                 name: "Keywords",
                 columns: table => new
                 {
-                    Id = table.Column<string>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: true),
                     IsDeleted = table.Column<bool>(nullable: false),
@@ -94,12 +95,12 @@ namespace CinemaHub.Data.Migrations
                     Overview = table.Column<string>(nullable: false),
                     Language = table.Column<string>(nullable: true),
                     ReleaseDate = table.Column<DateTime>(nullable: true),
-                    RuntimeSeconds = table.Column<int>(nullable: false),
+                    Runtime = table.Column<int>(nullable: false),
                     Budget = table.Column<int>(nullable: false),
                     Imdb = table.Column<int>(nullable: false),
                     MovieApiId = table.Column<int>(nullable: false),
                     IsDetailFull = table.Column<bool>(nullable: false),
-                    YoutubeTrailer = table.Column<string>(nullable: true),
+                    YoutubeTrailerUrl = table.Column<string>(nullable: true),
                     MediaType = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
@@ -304,7 +305,7 @@ namespace CinemaHub.Data.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    KeywordId = table.Column<string>(nullable: true),
+                    KeywordId = table.Column<int>(nullable: false),
                     MediaId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>

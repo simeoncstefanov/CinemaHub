@@ -24,9 +24,18 @@
         [HttpGet]
         public async Task<IEnumerable<MediaGridDTO>> Get(string query)
         {
-            this.mediaService.SearchMedia(query, MediaEnum.All);
-            var media = await this.mediaService.GetPageElementsAsync(1, 10);
-            return media;
+            await this.mediaService.ApplyQueryAsync(new MediaQueryDTO() { SearchQuery = query });
+            var media = await this.mediaService.GetPageAsync(1, 10);
+            return media.Results;
+        }
+
+        [IgnoreAntiforgeryToken]
+        [HttpPost]
+        public async Task<MediaResultDTO> Query([FromBody] MediaQueryDTO query)
+        {
+            await this.mediaService.ApplyQueryAsync(query);
+            var result = await this.mediaService.GetPageAsync(query.Page, query.ElementsPerPage);
+            return result;
         }
     }
 }

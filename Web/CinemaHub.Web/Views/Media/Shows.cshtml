@@ -1,7 +1,5 @@
-﻿@model CinemaHub.Web.ViewModels.Media.MediaGridViewModel;
-
-@{
+﻿@{
     this.ViewData["Title"] = "TV Shows";
 }
 
-@await Component.InvokeAsync("MediaGrid", new { model = Model });
+<partial name="MediaGrid.cshtml" />

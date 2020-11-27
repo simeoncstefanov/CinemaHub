@@ -22,7 +22,5 @@
         public string ImagePath { get; set; }
 
         public string MediaType { get; set; }
-
-        public int ResultsFound { get; set; }
     }
 }

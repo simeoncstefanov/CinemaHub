@@ -1,0 +1,24 @@
+﻿@model CinemaHub.Web.ViewModels.Media.MediaDetailsInputModel;
+@{
+    this.ViewData["Title"] = "Edit Movie";
+}
+
+@section Styles {
+    <link href="~/lib/tagify/tagify.css" rel="stylesheet" />
+}
+
+<partial name="~/Views/Shared/Partial/MediaDetailsEdit.cshtml" model="Model" />
+
+@section Scripts {
+    <script>
+
+        var loadFile = function (event) {
+            console.log('da');
+            var image = document.getElementById('img-src');
+            image.src = URL.createObjectURL(event.target.files[0]);
+        };
+
+    </script>
+
+    <script src="~/lib/tagify/tagify.min.js" asp-append-version="true"></script>
+}

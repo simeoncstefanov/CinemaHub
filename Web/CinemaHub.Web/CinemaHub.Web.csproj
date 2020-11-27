@@ -50,8 +50,4 @@
     <Folder Include="Areas\Administration\Controllers\" />
     <Folder Include="wwwroot\images\posters\" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\..\.editorconfig" Link=".editorconfig" />
-  </ItemGroup>
 </Project>

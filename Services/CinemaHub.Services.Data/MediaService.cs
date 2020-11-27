@@ -2,29 +2,35 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Text;
     using System.Threading.Tasks;
 
     using AutoMapper;
+    using CinemaHub.Common;
     using CinemaHub.Data;
     using CinemaHub.Data.Common.Repositories;
     using CinemaHub.Data.Models;
     using CinemaHub.Data.Models.Enums;
-    using CinemaHub.Services.Mapping;
     using CinemaHub.Services;
     using CinemaHub.Services.Data.Models;
-    using Microsoft.EntityFrameworkCore;
+    using CinemaHub.Services.Mapping;
     using CinemaHub.Web.ViewModels.Media;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.EntityFrameworkCore;
 
     public class MediaService : IMediaService
     {
         private readonly IRepository<Media> mediaRepository;
+
         private readonly IRepository<Genre> genreRepository;
+
         private readonly IRepository<Keyword> keywordRepository;
+
         private readonly IRepository<MediaKeyword> mediaKeywordRepository;
+
         private IQueryable<Media> mediaQuery;
 
         public MediaService(
@@ -46,41 +52,37 @@
         {
             int paginationCount = (page - 1) * elementsPerPage;
 
-            var medias = await this.mediaQuery
-                .Skip(paginationCount)
-                .Take(elementsPerPage)
-                .Select(x => new MediaGridDTO()
-                {
-                    Id = x.Id,
-                    IsDetailFull = x.IsDetailFull,
-                    MovieApiId = x.MovieApiId,
-                    Overview = x.Overview,
-                    Title = x.Title,
-                    ImagePath = x.Images.FirstOrDefault(x => x.ImageType == ImageType.Poster).Path,
-                    MediaType = x.GetType().Name,
-                })
-                .ToListAsync();
+            var medias = await this.mediaQuery.Skip(paginationCount).Take(elementsPerPage).Select(
+                             x => new MediaGridDTO()
+                                      {
+                                          Id = x.Id,
+                                          IsDetailFull = x.IsDetailFull,
+                                          MovieApiId = x.MovieApiId,
+                                          Overview = x.Overview,
+                                          Title = x.Title,
+                                          ImagePath =
+                                              x.Images.FirstOrDefault(x => x.ImageType == ImageType.Poster).Path,
+                                          MediaType = x.GetType().Name,
+                                      }).ToListAsync();
 
             return new MediaResultDTO()
-            {
-                ResultCount = this.ResultsFound,
-                Results = medias,
-                ResultsPerPage = elementsPerPage,
-                CurrentPage = page,
-            };
+                       {
+                           ResultCount = this.ResultsFound,
+                           Results = medias,
+                           ResultsPerPage = elementsPerPage,
+                           CurrentPage = page,
+                       };
         }
 
         public async Task<T> GetDetailsAsync<T>(string id)
         {
-            var media = this.mediaRepository.All()
+            var media = await this.mediaRepository.All()
                 .Include(x => x.Genres)
                 .ThenInclude(x => x.Genre)
                 .Include(x => x.Images)
                 .Include(x => x.Keywords)
-                .ThenInclude(x => x.Keyword)
                 .Where(x => x.Id == id)
-                .To<T>()
-                .FirstOrDefault();
+                .To<T>().FirstOrDefaultAsync();
 
             return media;
         }
@@ -91,19 +93,30 @@
                 .Include(x => x.Genres)
                 .ThenInclude(x => x.Genre)
                 .Include(x => x.Keywords)
+                .Include(x => x.Images)
                 .FirstOrDefault(x => x.Id == inputModel.Id);
 
             bool isAdd = false;
 
-            if (media is null)
+            // Hacky way to check if the type we try to add create exists
+            if (media == null)
             {
                 isAdd = true;
+                string qualifiedName =
+                    $"CinemaHub.Data.Models.{inputModel.MediaType}, CinemaHub.Data.Models, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
-                string qualifiedName = $"CinemaHub.Data.Models.{inputModel.MediaType}, CinemaHub.Data.Models, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-                var type = Type.GetType(qualifiedName);
-                media = (Media)Activator.CreateInstance(type);
+                try
+                {
+                    var type = Type.GetType(qualifiedName);
+                    media = (Media)Activator.CreateInstance(type);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"{inputModel.MediaType} does not exist");
+                }
             }
 
+            // if the media exists replace all its fields, if it does not set the fields
             media.Title = inputModel.Title;
             media.Overview = inputModel.Overview;
             media.IsDetailFull = true;
@@ -124,23 +137,36 @@
                     media.Genres.Remove(genre);
                     continue;
                 }
+
                 genres.Remove(genre.Genre.Name);
             }
 
             // Add all the remaining genres
             foreach (var genre in genres)
             {
-                media.Genres.Add(new MediaGenre()
+                try
                 {
-                    Media = media,
-                    Genre = this.genreRepository.All().Where(x => x.Name == genre).FirstOrDefault(),
-                });
+                    media.Genres.Add(
+                        new MediaGenre()
+                            {
+                                Media = media,
+                                Genre = this.genreRepository.All().FirstOrDefault(x => x.Name == genre),
+                            });
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Genre with the name \"{genre}\" does not exist");
+                }
             }
 
-            var keywords = inputModel.Keywords != null ? Newtonsoft.Json.JsonConvert.DeserializeObject<List<KeywordDTO>>(inputModel.Keywords) : new List<KeywordDTO>();
+            // If there are no keywords everything will be removed
+            var keywords = inputModel.Keywords != null
+                               ? Newtonsoft.Json.JsonConvert.DeserializeObject<List<KeywordDTO>>(inputModel.Keywords)
+                               : new List<KeywordDTO>();
+
             var dbKeywordsIds = media.Keywords.Select(x => x.KeywordId).ToList();
 
-            // if id is 0 it does not exist. 
+            // if [keyword.Id] is 0 it does not exist.
             foreach (var keyword in keywords)
             {
                 if (keyword.Id == 0)
@@ -148,32 +174,49 @@
                     var keywordDb = new Keyword() { Name = keyword.Value };
                     await this.keywordRepository.AddAsync(keywordDb);
 
-                    media.Keywords.Add(new MediaKeyword()
-                    {
-                        Keyword = keywordDb,
-                        Media = media,
-                    });
+                    media.Keywords.Add(new MediaKeyword() { Keyword = keywordDb, Media = media, });
                     continue;
                 }
 
                 if (!dbKeywordsIds.Contains(keyword.Id))
                 {
-                    media.Keywords.Add(new MediaKeyword()
-                    {
-                        KeywordId = keyword.Id,
-                        Media = media,
-                    });
+                    media.Keywords.Add(new MediaKeyword() { KeywordId = keyword.Id, Media = media, });
                 }
-                dbKeywordsIds.Remove(keyword.Id);  // Keywords which are removed from dbKeywordsIds won't be deleted
+
+                dbKeywordsIds.Remove(keyword.Id); // Keywords which are removed from [dbKeywordsIds] won't be deleted
             }
 
-            // Delete all the keywords which are not in the inputModel
+            // Delete all the keywords which have remained in [dbKeywordsIds]
             foreach (var id in dbKeywordsIds)
             {
                 var mediaKeyword = media.Keywords.FirstOrDefault(x => x.KeywordId == id);
                 this.mediaKeywordRepository.Delete(mediaKeyword);
             }
 
+            // Add/Replaces image poster
+            var image = inputModel.PosterImageFile;
+            if (image != null)
+            {
+                try
+                {
+                    var mediaImage = await this.DownloadPosterImage(image, rootPath, media);
+
+
+                    var posterImage = media.Images.FirstOrDefault(x => x.ImageType == ImageType.Poster);
+                    if (posterImage != null)
+                    {
+                        media.Images.Remove(posterImage);
+                    }
+                    media.Images.Add(mediaImage);
+
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+
+            // [isAdd] is set to true if [inputModel.Id] is null (creating new media)
             if (isAdd)
             {
                 await this.mediaRepository.AddAsync(media);
@@ -222,8 +265,54 @@
             }
         }
 
-        private async Task DownloadImage(IFormFile image, string rootPath)
+        private async Task<MediaImage> DownloadPosterImage(IFormFile image, string rootPath, Media media)
         {
+            Directory.CreateDirectory($"{rootPath}/images/posters/");
+
+            // Check if extension is allowed
+            var extension = Path.GetExtension(image.FileName).TrimStart('.');
+            var imageFileSignatures = GlobalConstants.ImageFileSignatures;
+
+            if (!imageFileSignatures.Any(x => x.Key == extension))
+            {
+                throw new Exception($"Invalid image extension {extension}");
+            }
+
+            // Check file's header bytes for the given extension's file signature
+            using (Stream readStream = image.OpenReadStream())
+            {
+                using var binaryReader = new BinaryReader(readStream);
+
+                var signatures = imageFileSignatures[extension];
+                var headerBytesToCheck = signatures.Max(x => x.Length);
+
+                var headerBytes = binaryReader.ReadBytes(headerBytesToCheck);
+
+                bool isValidImage = signatures.Any(signatureBytes =>
+                    headerBytes.Take(signatureBytes.Length)
+                    .SequenceEqual(signatureBytes));
+
+                if (!isValidImage)
+                {
+                    throw new Exception($"Invalid file format");
+                }
+            }
+
+            // Creates the image and returns the db entity binded to it
+            var imageDb = new MediaImage()
+                                   {
+                                       MediaId = media.Id,
+                                       ImageType = ImageType.Poster,
+                                       Path = $"\\images\\posters\\poster-{media.Id}.{extension}",
+                                       Extension = extension,
+                                       Title = media.Title + " - Poster",
+                                   };
+
+            var physicalPath = rootPath + imageDb.Path;
+            using var fileStream = new FileStream(physicalPath, FileMode.Create);
+            await image.CopyToAsync(fileStream);
+
+            return imageDb;
         }
     }
 }

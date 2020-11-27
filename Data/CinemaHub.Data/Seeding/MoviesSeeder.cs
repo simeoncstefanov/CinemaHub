@@ -104,8 +104,12 @@
             var imagePath = "\\images\\posters\\" +
                 $"poster-{movieGuid}{System.IO.Path.GetExtension(url)}";
 
-            using var fileStream = new FileStream(this.rootPath + imagePath, FileMode.CreateNew);
-            await response.Content.CopyToAsync(fileStream);
+            await using var fileStream = new FileStream(this.rootPath + imagePath, FileMode.CreateNew);
+
+            if (response != null)
+            {
+                await response.Content.CopyToAsync(fileStream);
+            }
 
             return imagePath;
         }

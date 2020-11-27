@@ -2,7 +2,7 @@
 
 @{
     var keywordsJson = string.Empty;
-    if (Model.Keywords != null)
+    if (Model.KeywordsList != null)
     {
         keywordsJson = Newtonsoft.Json.JsonConvert.SerializeObject(Model.KeywordsList);
     }
@@ -15,7 +15,7 @@
 
 <p> </p>
 <div class="container">
-    <form method="post" asp-controller="Media" asp-action="Edit">
+    <form method="post" asp-controller="Media" asp-action="Edit" enctype="multipart/form-data">
         <div class="row">
             <div class="col-md-4 col-sm-12 col-xs-12">
                 <div class="form-row">
@@ -25,7 +25,7 @@
                 </div>
                 <p> </p>
                 <div class="form-row">
-                    <label  asp-for="PosterImageFile"><p>Upload Poster</p></label>
+                    <label asp-for="PosterImageFile"><p>Upload Poster</p></label>
                     <input type="file" asp-for="PosterImageFile" onchange="loadFile(event)" />
                 </div>
             </div>

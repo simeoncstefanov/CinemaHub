@@ -11,7 +11,6 @@
         [Route("/")]
         public IActionResult Index(string returnUrl = null)
         {
-            ;
             return this.View();
         }
 

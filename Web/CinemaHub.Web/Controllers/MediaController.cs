@@ -11,6 +11,7 @@
     using CinemaHub.Web.ViewModels;
     using CinemaHub.Web.ViewModels.Media;
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Newtonsoft.Json;
@@ -19,14 +20,16 @@
     {
         private const int DefaultPerPage = 20;
         private readonly IMediaService mediaService;
-        private readonly IKeywordService keywordService;
         private readonly UserManager<ApplicationUser> userManager;
+        private readonly IWebHostEnvironment webHostEnvironment;
 
-        public MediaController(IMediaService mediaService, IKeywordService keywordService, UserManager<ApplicationUser> userManager)
+        public MediaController(IMediaService mediaService,
+                               IWebHostEnvironment webHostEnvironment, 
+                               UserManager<ApplicationUser> userManager)
         {
             this.mediaService = mediaService;
-            this.keywordService = keywordService;
             this.userManager = userManager;
+            this.webHostEnvironment = webHostEnvironment;
         }
 
         // both controllers get the searched media with ajax
@@ -72,6 +75,7 @@
             return this.View(new MediaDetailsInputModel());
         }
 
+        [Authorize]
         public async Task<IActionResult> Edit(string id)
         {
             var media = await this.mediaService.GetDetailsAsync<MediaDetailsInputModel>(id);
@@ -92,7 +96,7 @@
 
             try
             {
-                await this.mediaService.EditDetailsAsync(edit, user.Id, "");
+                await this.mediaService.EditDetailsAsync(edit, user.Id, this.webHostEnvironment.WebRootPath);
             }
             catch (Exception ex)
             {

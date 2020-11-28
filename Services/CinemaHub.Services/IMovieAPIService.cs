@@ -6,6 +6,8 @@
 
     public interface IMovieAPIService
     {
-        Task<MovieApiDTO> GetMediaResources(string apiId);
+        Task InsertMovieDetails(string title);
+
+        Task InsertShowDetails(string title);
     }
 }

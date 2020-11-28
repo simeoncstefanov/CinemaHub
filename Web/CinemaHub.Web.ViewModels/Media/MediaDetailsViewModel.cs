@@ -20,7 +20,7 @@
 
         public string Language { get; set; }
 
-        public string ReleaseDateString { get; set; }
+        public DateTime ReleaseDate { get; set; }
 
         public int Runtime { get; set; }
 
@@ -36,23 +36,20 @@
 
         public List<string> GenresList { get; set; }
 
+        public IEnumerable<KeywordViewModel> Keywords { get; set; }
+
         public void CreateMappings(IProfileExpression configuration)
         {
             configuration.CreateMap<Media, MediaDetailsViewModel>()
-                .ForMember(x => x.MediaType, opt =>
-                    opt.MapFrom(x => x.GetType().Name))
-                .ForMember(x => x.PosterPath, opt =>
-                    opt.MapFrom(x =>
-                        x.Images.Where(x => x.ImageType == ImageType.Poster)
-                        .FirstOrDefault().Path))
-                .ForMember(x => x.GenresList, opt =>
-                    opt.MapFrom(x =>
-                        x.Genres.Select(x => x.Genre.Name)
-                        .ToList()))
-                .ForMember(x => x.ReleaseDateString, opt =>
-                    opt.MapFrom(x =>
-                        x.ReleaseDate.HasValue ? x.ReleaseDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) :
-                        null));
+                .ForMember(x => x.MediaType, opt => opt.MapFrom(x => x.GetType().Name)).ForMember(
+                    x => x.PosterPath,
+                    opt => opt.MapFrom(x => x.Images.Where(x => x.ImageType == ImageType.Poster).FirstOrDefault().Path))
+                .ForMember(x => x.GenresList, opt => opt.MapFrom(x => x.Genres.Select(x => x.Genre.Name).ToList()))
+                .ForMember(
+                    x => x.Keywords,
+                    opt => opt.MapFrom(
+                        x => x.Keywords.Select(
+                            x => new KeywordViewModel() { Id = x.Keyword.Id, Value = x.Keyword.Name, })));
         }
     }
 }

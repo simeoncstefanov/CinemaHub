@@ -69,6 +69,11 @@
             return this.View("MediaDetails", viewModel);
         }
 
+        public async Task<IActionResult> All(string query)
+        {
+            return this.View("Error");
+        }
+
         [Authorize]
         public async Task<IActionResult> Add()
         {

@@ -28,6 +28,9 @@
 
         public async Task SeedAsync(ApplicationDbContext dbContext, IServiceProvider serviceProvider, string rootPath)
         {
+            var posterPath = rootPath + "\\images\\posters\\";
+            var backdropPath = rootPath + "\\images\\backdrops\\";
+
             if (dbContext.Movies.Any())
             {
                 return;

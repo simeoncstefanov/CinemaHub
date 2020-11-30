@@ -22,18 +22,22 @@
         private const int DefaultPerPage = 20;
         private readonly IMediaService mediaService;
         private readonly IMovieAPIService apiService;
+
+        private readonly IReviewsService reviewsService;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IWebHostEnvironment webHostEnvironment;
 
         public MediaController(IMediaService mediaService,
                                IMovieAPIService apiService,
-                               IWebHostEnvironment webHostEnvironment, 
+                               IWebHostEnvironment webHostEnvironment,
+                               IReviewsService reviewsService,
                                UserManager<ApplicationUser> userManager)
         {
             this.mediaService = mediaService;
             this.userManager = userManager;
             this.webHostEnvironment = webHostEnvironment;
             this.apiService = apiService;
+            this.reviewsService = reviewsService;
         }
 
         // both controllers get the searched media with ajax
@@ -68,20 +72,26 @@
                 return this.NotFound();
             }
 
+            var ratings = await this.reviewsService.GetRatingAverageCount(id);
+            viewModel.AverageRating = ratings.Item1;
+            viewModel.RatingCount = ratings.Item2;
+            if (user != null)
+            {
+                viewModel.CurrentUserRating = await this.reviewsService.GetRatingForMedia(user.Id, id);
+            }
             return this.View("MediaDetails", viewModel);
         }
 
         public async Task<IActionResult> Shows(string id)
         {
-
             var user = await this.userManager.GetUserAsync(this.User);
 
             // Fills the details if the information is not full because of the weird api
             var title = this.mediaService.GetTitleWithoutDetailsAsync(id);
             if (title != null)
             {
-                var apiInputModel = await this.apiService.GetDetailsFromApiAsync(id, "Show", title);
-                await this.mediaService.EditDetailsAsync(apiInputModel, user.Id, this.webHostEnvironment.WebRootPath);
+                var apiInputModel = await this.apiService.GetDetailsFromApiAsync(title, "Show", id);
+                await this.mediaService.EditDetailsAsync(apiInputModel, "", this.webHostEnvironment.WebRootPath);
             }
 
             var viewModel = await this.mediaService.GetDetailsAsync<MediaDetailsViewModel>(id);
@@ -91,6 +101,10 @@
                 return this.NotFound();
             }
 
+            var ratings = await this.reviewsService.GetRatingAverageCount(id);
+            viewModel.AverageRating = ratings.Item1;
+            viewModel.AverageRating = ratings.Item2;
+            viewModel.CurrentUserRating = await this.reviewsService.GetRatingForMedia(user.Id, id);
             return this.View("MediaDetails", viewModel);
         }
 

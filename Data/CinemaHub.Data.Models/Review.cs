@@ -15,24 +15,15 @@
         }
 
         [Required]
-        [Range(1, 5)]
-        public int Rating { get; set; }
-
-        [Required]
         [MaxLength(50)]
         public string Title { get; set; }
 
         [MaxLength(10000)]
         public string ReviewText { get; set; }
 
-        [ForeignKey(nameof(Media))]
-        public string MediaId { get; set; }
+        [ForeignKey(nameof(Rating))]
+        public string RatingId { get; set; }
 
-        public Media Media { get; set; }
-
-        [ForeignKey(nameof(Creator))]
-        public string CreatorId { get; set; }
-
-        public ApplicationUser Creator { get; set; }
+        public Rating Rating { get; set; }
     }
 }

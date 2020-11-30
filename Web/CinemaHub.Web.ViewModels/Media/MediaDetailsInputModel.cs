@@ -41,7 +41,6 @@
 
         public string YoutubeTrailerUrl { get; set; }
 
-        [Required]
         public IFormFile PosterImageFile { get; set; }
 
         public string PosterPath { get; set; }

@@ -52,7 +52,7 @@
         {
             int paginationCount = (page - 1) * elementsPerPage;
 
-            var medias = await this.mediaQuery.Skip(paginationCount).Take(elementsPerPage).Select(
+            var medias = await this.mediaQuery.Include(x => x.Ratings).Skip(paginationCount).Take(elementsPerPage).Select(
                              x => new MediaGridDTO()
                                       {
                                           Id = x.Id,
@@ -63,6 +63,7 @@
                                           ImagePath =
                                               x.Images.FirstOrDefault(x => x.ImageType == ImageType.Poster).Path,
                                           MediaType = x.GetType().Name,
+                                          Rating = x.Ratings.DefaultIfEmpty().Average(x => x.Score),
                                       }).ToListAsync();
 
             return new MediaResultDTO()
@@ -77,10 +78,6 @@
         public async Task<T> GetDetailsAsync<T>(string id)
         {
             var media = await this.mediaRepository.All()
-                .Include(x => x.Genres)
-                .ThenInclude(x => x.Genre)
-                .Include(x => x.Images)
-                .Include(x => x.Keywords)
                 .Where(x => x.Id == id)
                 .To<T>().FirstOrDefaultAsync();
 
@@ -266,6 +263,26 @@
             }
         }
 
+        public string GetTitleWithoutDetailsAsync(string id)
+        {
+            try
+            {
+                var media = this.mediaRepository.All().Where(x => x.Id == id).FirstOrDefault();
+                if (!media.IsDetailFull)
+                {
+                    return media.Title;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch
+            {
+                throw new Exception($"Id {id} does not exist");
+            }
+        }
+
         private async Task<MediaImage> DownloadPosterImage(IFormFile image, string rootPath, Media media)
         {
             Directory.CreateDirectory($"{rootPath}/images/posters/");
@@ -314,26 +331,6 @@
             await image.CopyToAsync(fileStream);
 
             return imageDb;
-        }
-
-        public string GetTitleWithoutDetailsAsync(string id)
-        {
-            try
-            {
-                var media = this.mediaRepository.All().Where(x => x.Id == id).FirstOrDefault();
-                if (!media.IsDetailFull)
-                {
-                    return media.Title;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch
-            {
-                throw new Exception($"Id {id} does not exist");
-            }
         }
     }
 }

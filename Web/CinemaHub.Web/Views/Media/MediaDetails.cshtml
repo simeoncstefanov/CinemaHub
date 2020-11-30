@@ -16,6 +16,30 @@
         }
     </style>
 }
+
+@section Styles {
+    <style>
+        .rate2 {
+            font-size: 35px;
+            cursor: pointer;
+        }
+
+        .rate-hover-layer {
+            color: #ffa500;
+            cursor: pointer;
+        }
+
+        .rate-base-layer {
+            color: gray;
+            cursor: pointer;
+        }
+
+        .rate-select-layer {
+            color: #d48900;
+            cursor: pointer;
+        }
+    </style>
+}
 <div class="page-single movie-single movie_single">
     <div class="container">
         <div class="row ipad-width2">
@@ -49,22 +73,17 @@
                         <div class="rate">
                             <i class="ion-android-star"></i>
                             <p>
-                                <span>8.1</span> /10<br>
-                                <span class="rv">56 Reviews</span>
+                                <span id="rating-average">@string.Format("{0:F1}", Model.AverageRating)</span> /10<br>
+                                <span id="rating-count" class="rv">@Model.RatingCount Ratings</span>
                             </p>
                         </div>
-                        <div class="rate-star">
-                            <p>Rate This Movie:  </p>
-                            <i class="ion-ios-star"></i>
-                            <i class="ion-ios-star"></i>
-                            <i class="ion-ios-star"></i>
-                            <i class="ion-ios-star"></i>
-                            <i class="ion-ios-star"></i>
-                            <i class="ion-ios-star"></i>
-                            <i class="ion-ios-star"></i>
-                            <i class="ion-ios-star"></i>
-                            <i class="ion-ios-star-outline"></i>
-                        </div>
+                        @if (this.SignInManager.IsSignedIn(this.User))
+                        {
+                            <div class="rate-star">
+                                <div class="rate2"></div>
+                            </div>
+                            <form method="post" id="antiForgeryForm" hidden></form>
+                        }
                     </div>
                     <div class="movie-tabs">
                         <div class="tabs">
@@ -103,10 +122,12 @@
                                             </div>
                                             <div class="sb-it">
                                                 <h6>Genres:</h6>
-                                                <p>@foreach (var genre in Model.GenresList)
-                                                   {
-                                                       <a href="#">@genre</a>
-                                                   }</p>
+                                                <p>
+                                                    @foreach (var genre in Model.GenresList)
+                                                    {
+                                                        <a href="#">@genre</a>
+                                                    }
+                                                </p>
                                             </div>
                                             <div class="sb-it">
                                                 <h6>Release Date:</h6>
@@ -321,7 +342,7 @@
                                                     <h4>JW</h4>
                                                     <a href="#">Joss Whedon</a>
                                                 </div>
-                                                <p>...  Director</p>
+                                                <p>... Director</p>
                                             </div>
                                         </div>
                                         <!-- //== -->
@@ -334,42 +355,42 @@
                                                     <h4>SL</h4>
                                                     <a href="#">Stan Lee</a>
                                                 </div>
-                                                <p>...  (based on Marvel comics)</p>
+                                                <p>... (based on Marvel comics)</p>
                                             </div>
                                             <div class="cast-it">
                                                 <div class="cast-left">
                                                     <h4>JK</h4>
                                                     <a href="#">Jack Kirby</a>
                                                 </div>
-                                                <p>...  (based on Marvel comics)</p>
+                                                <p>... (based on Marvel comics)</p>
                                             </div>
                                             <div class="cast-it">
                                                 <div class="cast-left">
                                                     <h4>JS</h4>
                                                     <a href="#">Joe Simon</a>
                                                 </div>
-                                                <p>...  (character created by: Captain America)</p>
+                                                <p>... (character created by: Captain America)</p>
                                             </div>
                                             <div class="cast-it">
                                                 <div class="cast-left">
                                                     <h4>JS</h4>
                                                     <a href="#">Joe Simon</a>
                                                 </div>
-                                                <p>...  (character created by: Thanos)</p>
+                                                <p>... (character created by: Thanos)</p>
                                             </div>
                                             <div class="cast-it">
                                                 <div class="cast-left">
                                                     <h4>RT</h4>
                                                     <a href="#">Roy Thomas</a>
                                                 </div>
-                                                <p>...  (character created by: Ultron, Vision)</p>
+                                                <p>... (character created by: Ultron, Vision)</p>
                                             </div>
                                             <div class="cast-it">
                                                 <div class="cast-left">
                                                     <h4>JB</h4>
                                                     <a href="#">John Buscema</a>
                                                 </div>
-                                                <p>...  (character created by: Ultron, Vision)</p>
+                                                <p>... (character created by: Ultron, Vision)</p>
                                             </div>
                                         </div>
                                         <!-- //== -->
@@ -382,56 +403,56 @@
                                                     <img src="images/uploads/cast1.jpg" alt="">
                                                     <a href="#">Robert Downey Jr.</a>
                                                 </div>
-                                                <p>...  Robert Downey Jr.</p>
+                                                <p>... Robert Downey Jr.</p>
                                             </div>
                                             <div class="cast-it">
                                                 <div class="cast-left">
                                                     <img src="images/uploads/cast2.jpg" alt="">
                                                     <a href="#">Chris Hemsworth</a>
                                                 </div>
-                                                <p>...  Thor</p>
+                                                <p>... Thor</p>
                                             </div>
                                             <div class="cast-it">
                                                 <div class="cast-left">
                                                     <img src="images/uploads/cast3.jpg" alt="">
                                                     <a href="#">Mark Ruffalo</a>
                                                 </div>
-                                                <p>...  Bruce Banner/ Hulk</p>
+                                                <p>... Bruce Banner/ Hulk</p>
                                             </div>
                                             <div class="cast-it">
                                                 <div class="cast-left">
                                                     <img src="images/uploads/cast4.jpg" alt="">
                                                     <a href="#">Chris Evans</a>
                                                 </div>
-                                                <p>...  Steve Rogers/ Captain America</p>
+                                                <p>... Steve Rogers/ Captain America</p>
                                             </div>
                                             <div class="cast-it">
                                                 <div class="cast-left">
                                                     <img src="images/uploads/cast5.jpg" alt="">
                                                     <a href="#">Scarlett Johansson</a>
                                                 </div>
-                                                <p>...  Natasha Romanoff/ Black Widow</p>
+                                                <p>... Natasha Romanoff/ Black Widow</p>
                                             </div>
                                             <div class="cast-it">
                                                 <div class="cast-left">
                                                     <img src="images/uploads/cast6.jpg" alt="">
                                                     <a href="#">Jeremy Renner</a>
                                                 </div>
-                                                <p>...  Clint Barton/ Hawkeye</p>
+                                                <p>... Clint Barton/ Hawkeye</p>
                                             </div>
                                             <div class="cast-it">
                                                 <div class="cast-left">
                                                     <img src="images/uploads/cast7.jpg" alt="">
                                                     <a href="#">James Spader</a>
                                                 </div>
-                                                <p>...  Ultron</p>
+                                                <p>... Ultron</p>
                                             </div>
                                             <div class="cast-it">
                                                 <div class="cast-left">
                                                     <img src="images/uploads/cast9.jpg" alt="">
                                                     <a href="#">Don Cheadle</a>
                                                 </div>
-                                                <p>...  James Rhodes/ War Machine</p>
+                                                <p>... James Rhodes/ War Machine</p>
                                             </div>
                                         </div>
                                         <!-- //== -->
@@ -444,56 +465,56 @@
                                                     <h4>VA</h4>
                                                     <a href="#">Victoria Alonso</a>
                                                 </div>
-                                                <p>...  executive producer</p>
+                                                <p>... executive producer</p>
                                             </div>
                                             <div class="cast-it">
                                                 <div class="cast-left">
                                                     <h4>MB</h4>
                                                     <a href="#">Mitchel Bell</a>
                                                 </div>
-                                                <p>...  co-producer (as Mitch Bell)</p>
+                                                <p>... co-producer (as Mitch Bell)</p>
                                             </div>
                                             <div class="cast-it">
                                                 <div class="cast-left">
                                                     <h4>JC</h4>
                                                     <a href="#">Jamie Christopher</a>
                                                 </div>
-                                                <p>...  associate producer</p>
+                                                <p>... associate producer</p>
                                             </div>
                                             <div class="cast-it">
                                                 <div class="cast-left">
                                                     <h4>LD</h4>
                                                     <a href="#">Louis D’Esposito</a>
                                                 </div>
-                                                <p>...  executive producer</p>
+                                                <p>... executive producer</p>
                                             </div>
                                             <div class="cast-it">
                                                 <div class="cast-left">
                                                     <h4>JF</h4>
                                                     <a href="#">Jon Favreau</a>
                                                 </div>
-                                                <p>...  executive producer</p>
+                                                <p>... executive producer</p>
                                             </div>
                                             <div class="cast-it">
                                                 <div class="cast-left">
                                                     <h4>KF</h4>
                                                     <a href="#">Kevin Feige</a>
                                                 </div>
-                                                <p>...  producer</p>
+                                                <p>... producer</p>
                                             </div>
                                             <div class="cast-it">
                                                 <div class="cast-left">
                                                     <h4>AF</h4>
                                                     <a href="#">Alan Fine</a>
                                                 </div>
-                                                <p>...  executive producer</p>
+                                                <p>... executive producer</p>
                                             </div>
                                             <div class="cast-it">
                                                 <div class="cast-left">
                                                     <h4>JF</h4>
                                                     <a href="#">Jeffrey Ford</a>
                                                 </div>
-                                                <p>...  associate producer</p>
+                                                <p>... associate producer</p>
                                             </div>
                                         </div>
                                     </div>
@@ -516,7 +537,7 @@
                                                     <a class="fancybox-media hvr-grow" href="https://www.youtube.com/embed/o-0hcF97wy0"><img src="images/uploads/play-vd.png" alt=""></a>
                                                 </div>
                                                 <div class="vd-infor">
-                                                    <h6> <a href="#">Trailer:  Watch New Scenes</a></h6>
+                                                    <h6> <a href="#">Trailer: Watch New Scenes</a></h6>
                                                     <p class="time"> 1: 31</p>
                                                 </div>
                                             </div>
@@ -641,9 +662,9 @@
                                                 <h6><a href="#">oblivion <span>(2012)</span></a></h6>
                                                 <p class="rate"><i class="ion-android-star"></i><span>8.1</span> /10</p>
                                                 <p class="describe">Earth's mightiest heroes must come together and learn to fight as a team if they are to stop the mischievous Loki and his alien army from enslaving humanity...</p>
-                                                <p class="run-time"> Run Time: 2h21’    .     <span>MMPA: PG-13 </span>    .     <span>Release: 1 May 2015</span></p>
+                                                <p class="run-time"> Run Time: 2h21’ . <span>MMPA: PG-13 </span> . <span>Release: 1 May 2015</span></p>
                                                 <p>Director: <a href="#">Joss Whedon</a></p>
-                                                <p>Stars: <a href="#">Robert Downey Jr.,</a> <a href="#">Chris Evans,</a> <a href="#">  Chris Hemsworth</a></p>
+                                                <p>Stars: <a href="#">Robert Downey Jr.,</a> <a href="#">Chris Evans,</a> <a href="#"> Chris Hemsworth</a></p>
                                             </div>
                                         </div>
                                         <div class="movie-item-style-2">
@@ -652,18 +673,18 @@
                                                 <h6><a href="#">into the wild <span>(2014)</span></a></h6>
                                                 <p class="rate"><i class="ion-android-star"></i><span>7.8</span> /10</p>
                                                 <p class="describe">As Steve Rogers struggles to embrace his role in the modern world, he teams up with a fellow Avenger and S.H.I.E.L.D agent, Black Widow, to battle a new threat...</p>
-                                                <p class="run-time"> Run Time: 2h21’    .     <span>MMPA: PG-13 </span>    .     <span>Release: 1 May 2015</span></p>
+                                                <p class="run-time"> Run Time: 2h21’ . <span>MMPA: PG-13 </span> . <span>Release: 1 May 2015</span></p>
                                                 <p>Director: <a href="#">Anthony Russo,</a><a href="#">Joe Russo</a></p>
-                                                <p>Stars: <a href="#">Chris Evans,</a> <a href="#">Samuel L. Jackson,</a> <a href="#">  Scarlett Johansson</a></p>
+                                                <p>Stars: <a href="#">Chris Evans,</a> <a href="#">Samuel L. Jackson,</a> <a href="#"> Scarlett Johansson</a></p>
                                             </div>
                                         </div>
                                         <div class="movie-item-style-2">
                                             <img src="images/uploads/mv3.jpg" alt="">
                                             <div class="mv-item-infor">
-                                                <h6><a href="#">blade runner  <span>(2015)</span></a></h6>
+                                                <h6><a href="#">blade runner <span>(2015)</span></a></h6>
                                                 <p class="rate"><i class="ion-android-star"></i><span>7.3</span> /10</p>
                                                 <p class="describe">Armed with a super-suit with the astonishing ability to shrink in scale but increase in strength, cat burglar Scott Lang must embrace his inner hero and help...</p>
-                                                <p class="run-time"> Run Time: 2h21’    .     <span>MMPA: PG-13 </span>    .     <span>Release: 1 May 2015</span></p>
+                                                <p class="run-time"> Run Time: 2h21’ . <span>MMPA: PG-13 </span> . <span>Release: 1 May 2015</span></p>
                                                 <p>Director: <a href="#">Peyton Reed</a></p>
                                                 <p>Stars: <a href="#">Paul Rudd,</a> <a href="#"> Michael Douglas</a></p>
                                             </div>
@@ -671,23 +692,23 @@
                                         <div class="movie-item-style-2">
                                             <img src="images/uploads/mv4.jpg" alt="">
                                             <div class="mv-item-infor">
-                                                <h6><a href="#">Mulholland pride<span> (2013)  </span></a></h6>
+                                                <h6><a href="#">Mulholland pride<span> (2013) </span></a></h6>
                                                 <p class="rate"><i class="ion-android-star"></i><span>7.2</span> /10</p>
                                                 <p class="describe">When Tony Stark's world is torn apart by a formidable terrorist called the Mandarin, he starts an odyssey of rebuilding and retribution.</p>
-                                                <p class="run-time"> Run Time: 2h21’    .     <span>MMPA: PG-13 </span>    .     <span>Release: 1 May 2015</span></p>
+                                                <p class="run-time"> Run Time: 2h21’ . <span>MMPA: PG-13 </span> . <span>Release: 1 May 2015</span></p>
                                                 <p>Director: <a href="#">Shane Black</a></p>
-                                                <p>Stars: <a href="#">Robert Downey Jr., </a> <a href="#">  Guy Pearce,</a><a href="#">Don Cheadle</a></p>
+                                                <p>Stars: <a href="#">Robert Downey Jr., </a> <a href="#"> Guy Pearce,</a><a href="#">Don Cheadle</a></p>
                                             </div>
                                         </div>
                                         <div class="movie-item-style-2">
                                             <img src="images/uploads/mv5.jpg" alt="">
                                             <div class="mv-item-infor">
-                                                <h6><a href="#">skyfall: evil of boss<span> (2013)  </span></a></h6>
+                                                <h6><a href="#">skyfall: evil of boss<span> (2013) </span></a></h6>
                                                 <p class="rate"><i class="ion-android-star"></i><span>7.0</span> /10</p>
                                                 <p class="describe">When Tony Stark's world is torn apart by a formidable terrorist called the Mandarin, he starts an odyssey of rebuilding and retribution.</p>
-                                                <p class="run-time"> Run Time: 2h21’    .     <span>MMPA: PG-13 </span>    .     <span>Release: 1 May 2015</span></p>
+                                                <p class="run-time"> Run Time: 2h21’ . <span>MMPA: PG-13 </span> . <span>Release: 1 May 2015</span></p>
                                                 <p>Director: <a href="#">Alan Taylor</a></p>
-                                                <p>Stars: <a href="#">Chris Hemsworth,  </a> <a href="#">  Natalie Portman,</a><a href="#">Tom Hiddleston</a></p>
+                                                <p>Stars: <a href="#">Chris Hemsworth, </a> <a href="#"> Natalie Portman,</a><a href="#">Tom Hiddleston</a></p>
                                             </div>
                                         </div>
                                         <div class="topbar-filter">
@@ -713,3 +734,55 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    @if (this.SignInManager.IsSignedIn(this.User))
+    {
+        <script src="~/lib/rater/rater.min.js"></script>
+
+        <script>
+            var options = {
+                max_value: 10,
+                step_size: 1,
+                initial_value: @Model.CurrentUserRating,
+                selected_symbol_type: 'utf8_star',
+                cursor: 'pointer',
+                readonly: false,
+                change_once: false,
+            }
+
+            $(".rate2").rate(options);
+
+            $(".rate2").on("change", function (ev, data) {
+
+                var score = data.to;
+                var antiForgeryToken = $('#antiForgeryForm input[name=__RequestVerificationToken]').val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/api/reviews",
+                    async: false,
+                    headers: {
+                        'X-CSRF-TOKEN': antiForgeryToken
+                    },
+                    data: JSON.stringify({
+                        mediaId: '@Model.Id',
+                        value: score
+                    }),
+                    contentType: "application/json",
+                    success: function (resultData) {
+                        $('#rating-count').text(resultData.totalVotes + " Ratings");
+                        $('#rating-average').text(resultData.averageVote.toFixed(1));
+                    }
+                });
+            });
+
+            $(".rate2").on("updateSuccess", function(ev, data){
+                console.log("This is a custom success event");
+            });
+
+        </script>
+    }
+
+    <script src="~/lib/rater/rater.min.js"></script>
+}

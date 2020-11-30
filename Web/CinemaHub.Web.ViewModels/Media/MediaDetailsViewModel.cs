@@ -41,6 +41,12 @@
 
         public IEnumerable<KeywordViewModel> Keywords { get; set; }
 
+        public double AverageRating { get; set; }
+
+        public int RatingCount { get; set; }
+
+        public int CurrentUserRating { get; set; }
+
         public void CreateMappings(IProfileExpression configuration)
         {
             configuration.CreateMap<Media, MediaDetailsViewModel>()

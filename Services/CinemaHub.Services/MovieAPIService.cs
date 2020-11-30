@@ -63,11 +63,13 @@
                 urlMediaType = "tv";
             }
 
-                // Get the id by searching the title in the api (too lazy to make another model so I use dynamic deserializing)
+            // Get the id by searching the title in the api (too lazy to make another model so I use dynamic deserializing)
+
             var apiId = (string)JObject.Parse(
-                    await this.client.GetStringAsync(
-                        $"https://api.themoviedb.org/3/search/multi?api_key=238b937765146aa0e189640d869591e7&language=en-US&query={title}&page=1&include_adult=false"))
-                ["results"]?[0]["id"];
+                        await this.client.GetStringAsync(
+                            $"https://api.themoviedb.org/3/search/multi?api_key=238b937765146aa0e189640d869591e7&language=en-US&query={title}&page=1&include_adult=false"))
+                    ["results"]?[0]["id"];
+
 
             var mediaString = await this.client.GetStringAsync(
                                   $"https://api.themoviedb.org/3/{urlMediaType}/{apiId}?api_key=238b937765146aa0e189640d869591e7&language=en-US&append_to_response=keywords");

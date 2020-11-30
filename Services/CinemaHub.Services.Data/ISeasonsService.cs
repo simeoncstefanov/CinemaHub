@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CinemaHub.Services.Data
+﻿namespace CinemaHub.Services.Data
 {
-    interface ISeasonsService
+    public interface ISeasonsService
     {
     }
 }

@@ -13,6 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.0" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.205" PrivateAssets="all">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
@@ -21,6 +23,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Data\CinemaHub.Data.Common\CinemaHub.Data.Common.csproj" />
     <ProjectReference Include="..\..\Data\CinemaHub.Data.Models\CinemaHub.Data.Models.csproj" />
+    <ProjectReference Include="..\..\Web\CinemaHub.Web.ViewModels\CinemaHub.Web.ViewModels.csproj" />
+    <ProjectReference Include="..\CinemaHub.Services.Data\CinemaHub.Services.Data.csproj" />
+    <ProjectReference Include="..\CinemaHub.Services.Mapping\CinemaHub.Services.Mapping.csproj" />
   </ItemGroup>
 
 </Project>

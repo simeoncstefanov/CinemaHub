@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
 
     using CinemaHub.Data.Models;
+    using CinemaHub.Services;
     using CinemaHub.Services.Data;
     using CinemaHub.Services.Data.Models;
     using CinemaHub.Web.ViewModels;
@@ -20,16 +21,19 @@
     {
         private const int DefaultPerPage = 20;
         private readonly IMediaService mediaService;
+        private readonly IMovieAPIService apiService;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IWebHostEnvironment webHostEnvironment;
 
         public MediaController(IMediaService mediaService,
+                               IMovieAPIService apiService,
                                IWebHostEnvironment webHostEnvironment, 
                                UserManager<ApplicationUser> userManager)
         {
             this.mediaService = mediaService;
             this.userManager = userManager;
             this.webHostEnvironment = webHostEnvironment;
+            this.apiService = apiService;
         }
 
         // both controllers get the searched media with ajax
@@ -47,6 +51,16 @@
 
         public async Task<IActionResult> Movies(string id)
         {
+            var user = await this.userManager.GetUserAsync(this.User);
+
+            // Fills the details if the information is not full because of the weird api
+            var title = this.mediaService.GetTitleWithoutDetailsAsync(id);
+            if (title != null)
+            {
+                var apiInputModel = await this.apiService.GetDetailsFromApiAsync(title, "Movie", id);
+                await this.mediaService.EditDetailsAsync(apiInputModel, "", this.webHostEnvironment.WebRootPath);
+            }
+
             var viewModel = await this.mediaService.GetDetailsAsync<MediaDetailsViewModel>(id);
             if (viewModel.MediaType != "Movie" || viewModel is null)
             {
@@ -59,6 +73,17 @@
 
         public async Task<IActionResult> Shows(string id)
         {
+
+            var user = await this.userManager.GetUserAsync(this.User);
+
+            // Fills the details if the information is not full because of the weird api
+            var title = this.mediaService.GetTitleWithoutDetailsAsync(id);
+            if (title != null)
+            {
+                var apiInputModel = await this.apiService.GetDetailsFromApiAsync(id, "Show", title);
+                await this.mediaService.EditDetailsAsync(apiInputModel, user.Id, this.webHostEnvironment.WebRootPath);
+            }
+
             var viewModel = await this.mediaService.GetDetailsAsync<MediaDetailsViewModel>(id);
             if (viewModel.MediaType != "Show" || viewModel is null)
             {
@@ -96,7 +121,13 @@
 
             if (!this.ModelState.IsValid)
             {
-                this.View(edit);
+                return this.View(edit);
+            }
+
+            if (edit.ReleaseDateString == "01-01-0001")
+            {
+                this.ModelState.AddModelError(string.Empty, "Release date is required");
+                return this.View(edit);
             }
 
             try
@@ -106,6 +137,7 @@
             catch (Exception ex)
             {
                 this.ModelState.AddModelError(string.Empty, ex.Message);
+                return this.View(edit);
             }
 
             return this.Redirect("/");

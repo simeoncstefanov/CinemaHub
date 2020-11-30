@@ -89,6 +89,7 @@
 
         public async Task EditDetailsAsync(MediaDetailsInputModel inputModel, string userId, string rootPath)
         {
+            ;
             var media = this.mediaRepository.All()
                 .Include(x => x.Genres)
                 .ThenInclude(x => x.Genre)
@@ -141,7 +142,7 @@
                 genres.Remove(genre.Genre.Name);
             }
 
-            // Add all the remaining genres
+            // Add all the remaining genres which remained in [genres]
             foreach (var genre in genres)
             {
                 try
@@ -313,6 +314,26 @@
             await image.CopyToAsync(fileStream);
 
             return imageDb;
+        }
+
+        public string GetTitleWithoutDetailsAsync(string id)
+        {
+            try
+            {
+                var media = this.mediaRepository.All().Where(x => x.Id == id).FirstOrDefault();
+                if (!media.IsDetailFull)
+                {
+                    return media.Title;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch
+            {
+                throw new Exception($"Id {id} does not exist");
+            }
         }
     }
 }

@@ -20,7 +20,7 @@
             dbContext.Keywords.Add(new Keyword() { Name = "time travel" });
             dbContext.Keywords.Add(new Keyword() { Name = "patriotic" });
             dbContext.Keywords.Add(new Keyword() { Name = "anime" });
-            dbContext.Keywords.Add(new Keyword() { Name = "friends with benefits" });
+            dbContext.Keywords.Add(new Keyword() { Name = "mind blowing" });
         }
     }
 }

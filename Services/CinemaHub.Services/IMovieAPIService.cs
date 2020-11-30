@@ -3,11 +3,10 @@
     using System.Threading.Tasks;
 
     using CinemaHub.Services.Models;
+    using CinemaHub.Web.ViewModels.Media;
 
     public interface IMovieAPIService
     {
-        Task InsertMovieDetails(string title);
-
-        Task InsertShowDetails(string title);
+        Task<MediaDetailsInputModel> GetDetailsFromApiAsync(string id, string mediaType, string title);
     }
 }

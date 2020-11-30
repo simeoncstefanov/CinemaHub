@@ -18,5 +18,7 @@
         Task<T> GetDetailsAsync<T>(string id);
 
         Task EditDetailsAsync(MediaDetailsInputModel mediaDetails, string userId, string rootPath);
+
+        string GetTitleWithoutDetailsAsync(string id);
     }
 }

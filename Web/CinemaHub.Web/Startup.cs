@@ -76,8 +76,8 @@
             services.AddTransient<IMediaService, MediaService>();
 
             // Application services
+            services.AddTransient<IMovieAPIService, MovieAPIService>();
             services.AddTransient<IEmailSender, NullMessageSender>();
-
             services.AddTransient<IKeywordService, KeywordService>();
         }
 

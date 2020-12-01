@@ -54,7 +54,7 @@ var populateGrid = function(json) {
                                     </div>
                                     <div class="mv-item-infor">
                                         <h6><a href="/Media/${media.mediaType + "s"}/${media.id}">${media.title}</a></h6>
-                                        <p class="rate"><i class="ion-android-star"></i><span>8.1</span> /10</p>
+                                        <p class="rate"><i class="ion-android-star"></i><span>${media.rating.toFixed(1)}</span> /10</p>
                                     </div>
                                 </div>`
     };
@@ -67,32 +67,38 @@ var populateGrid = function(json) {
    // element.parentNode.removeChild(element);
         }
 
-    
-    for (i = json.currentPage - 1; i > json.currentPage - 3; i--) {
-        if (i > 0)
-        {
             var pageButton = document.createElement("A");
-            pageButton.innerHTML = i;
-            pageButton.classList.add("pageNumber");
-            pages.appendChild(pageButton)
-        }
-    }
-
-        var pageButton = document.createElement("A");
-            pageButton.innerHTML = json.currentPage;
+        pageButton.innerHTML = 1;
+        pageButton.classList.add("pageNumber");
+        pages.appendChild(pageButton)
+        if (json.currentPage == 1)
+        {
             pageButton.classList.add("active");
-            pageButton.classList.add("pageNumber");
-            pages.appendChild(pageButton)
+        }
 
-    for (i = json.currentPage + 1; i <= json.currentPage + 3; i++) {
-        if (i <= json.pages)
+    for (i = json.currentPage - 3; i < json.currentPage + 4; i++) {
+        if (i > 1 && i < json.pages)
         {
             var pageButton = document.createElement("A");
             pageButton.innerHTML = i;
             pageButton.classList.add("pageNumber");
-            pages.appendChild(pageButton);
+            pages.appendChild(pageButton)
+            if (i == json.currentPage)
+            {
+                pageButton.classList.add("active");
+            }
         }
     }
+
+    var pageButton = document.createElement("A");
+    pageButton.innerHTML = json.pages;
+    pageButton.classList.add("pageNumber");
+    pages.appendChild(pageButton)
+    if (json.currentPage == json.pages)
+    {
+        pageButton.classList.add("active");
+    }
+
 
     var pageNumbers = document.getElementsByClassName("pageNumber");
 

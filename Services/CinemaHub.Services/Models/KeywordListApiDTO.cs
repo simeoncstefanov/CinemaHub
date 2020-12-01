@@ -8,5 +8,14 @@
     {
         [JsonProperty("keywords")]
         public List<KeywordApiDTO> KeywordsList { get; set; }
+
+        [JsonProperty("results")]
+        public List<KeywordApiDTO> KeywordsList2
+        {
+            set
+            {
+                this.KeywordsList = value;
+            }
+        }
     }
 }

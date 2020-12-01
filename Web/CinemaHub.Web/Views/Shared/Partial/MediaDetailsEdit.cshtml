@@ -1,11 +1,7 @@
-﻿@model CinemaHub.Web.ViewModels.Media.MediaDetailsInputModel
+﻿@using Microsoft.CodeAnalysis
+@model CinemaHub.Web.ViewModels.Media.MediaDetailsInputModel
 
 @{
-    var keywordsJson = string.Empty;
-    if (Model.KeywordsList != null)
-    {
-        keywordsJson = Newtonsoft.Json.JsonConvert.SerializeObject(Model.KeywordsList);
-    }
     var releaseDate = Model.ReleaseDateString;
     if (releaseDate == "0001-01-01")
     {
@@ -19,75 +15,85 @@
         <div class="row">
             <div class="col-md-4 col-sm-12 col-xs-12">
                 <div class="form-row">
+                    <p class="alert-danger"><div asp-validation-summary="ModelOnly">
+                        </div>
+                    </p>
+                </div>
+                <div class="form-row">
                     <div class="movie-img">
                         <img id="img-src" src="@Model.PosterPath" alt="">
                     </div>
                 </div>
                 <p> </p>
                 <div class="form-row">
-                    <label asp-for="PosterImageFile"><p>Upload Poster</p></label>
-                    <input type="file" asp-for="PosterImageFile" onchange="loadFile(event)" />
+                    <label asp-for="PosterImageFile">
+                        <p>Upload Poster</p>
+                    </label>
+                    <p><input type="file" asp-for="PosterImageFile" onchange="loadFile(event)" /></p>
                 </div>
             </div>
             <div class="col-md-8 col-sm-12 col-xs-12">
                 <div class="form-row">
                     <div class="form-group col-md-12">
                         <label asp-for="Title"><p>Title</p></label>
-                        <input type="text" class="form-control" asp-for="Title" placeholder="Inception" value="@Model.Title">
+                        <p><input type="text" class="form-control" asp-for="Title" placeholder="Inception" value="@Model.Title"></p>
                         <p class="alert-danger"> <span asp-validation-for="Title" class="alert-danger"></span></p>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-12">
                         <label asp-for="Genres"><p>Genres</p></label>
-                        <input asp-for="Genres" class="form-control" value='@Model.Genres'>
+                        <p><input asp-for="Genres" class="form-control" value='@Model.Genres'></p>
                         <p class="alert-danger"> <span asp-validation-for="Genres" class="alert-danger"></span></p>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-3">
                         <label asp-for="MediaType"><p>Media Type</p></label>
-                        <select asp-for="MediaType" class="form-control">
+                        <p><select asp-for="MediaType" class="form-control">
                             @if (Model.MediaType == "Show")
                             {
-                                <option>Movie</option>
-                                <option selected>TV Show</option>
+                                <option selected>Show</option>
+                            }
+                            else if (Model.MediaType == "Movie")
+                            {
+                                <option selected>Movie</option>
                             }
                             else
                             {
                                 <option selected>Movie</option>
-                                <option>TV Show</option>
+                                <option>Show</option>
                             }
-                        </select>
+                        </select></p>
                         <p class="alert-danger"> <span asp-validation-for="MediaType" class="alert-danger"></span></p>
 
                     </div>
                     <div class="form-group col-md-3">
                         <label asp-for="Runtime"><p>Runtime</p></label>
-                        <input type="number" class="form-control" asp-for="Runtime" value="@Model.Runtime">
+                        <p><input type="number" class="form-control" asp-for="Runtime" value="@Model.Runtime"></p>
                         <p class="alert-danger"> <span asp-validation-for="Runtime" class="alert-danger"></span></p>
                     </div>
                     <div class="form-group col-md-3">
                         <label asp-for="ReleaseDate"><p>Release Date</p></label>
-                        <input asp-for="ReleaseDate" type="date" class="form-control" value="@releaseDate">
+                        <p><input asp-for="ReleaseDate" type="date" class="form-control" value="@releaseDate"></p>
                         <p class="alert-danger"> <span asp-validation-for="ReleaseDate" class="alert-danger"></span></p>
                     </div>
                     <div class="form-group col-md-3">
                         <label asp-for="Budget"><p>Budget</p></label>
-                        <input asp-for="Budget" type="number" class="form-control" value="@Model.Budget">
+                        <p><input asp-for="Budget" type="number" class="form-control" value="@Model.Budget"></p>
                         <p class="alert-danger"> <span asp-validation-for="Budget" class="alert-danger"></span></p>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-12 col-sm-12 col-xs-12">
                         <label asp-for="YoutubeTrailerUrl"><p>Youtube Trailer Link</p></label>
-                        <input type="text" class="form-control" asp-for="YoutubeTrailerUrl" value="@Model.YoutubeTrailerUrl">
+                        <p><input type="text" class="form-control" asp-for="YoutubeTrailerUrl" value="@Model.YoutubeTrailerUrl"></p>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-12 col-sm-12 col-xs-12">
                         <label asp-for="Overview"><p>Overview</p></label>
-                        <textarea asp-for="Overview" style="height: 100%; " rows="9">@Model.Overview</textarea>
+                        <p><textarea asp-for="Overview" style="height: 100%; " rows="9">@Model.Overview</textarea></p>
                         <p class="alert-danger"> <span asp-validation-for="Overview" class="alert-danger"></span></p>
                     </div>
                 </div>
@@ -95,7 +101,7 @@
                 <div class="form-row">
                     <div class="form-group col-md-12 col-sm-12 col-xs-12">
                         <label asp-for="Keywords"><p>Keywords</p></label>
-                        <input asp-for="Keywords" value='@keywordsJson' class="form-control">
+                        <p><textarea asp-for="Keywords">@Model.Keywords</textarea></p>
                     </div>
                 </div>
             </div>

@@ -7,10 +7,14 @@
     using System.Linq;
 
     using AutoMapper;
+
     using CinemaHub.Data.Models;
     using CinemaHub.Data.Models.Enums;
     using CinemaHub.Services.Mapping;
+
     using Microsoft.AspNetCore.Http;
+
+    using Newtonsoft.Json;
 
     public class MediaDetailsInputModel : IMapFrom<Media>, IHaveCustomMappings
     {
@@ -36,7 +40,6 @@
         public int Runtime { get; set; }
 
         [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "Budget should be more than 0")]
         public int Budget { get; set; }
 
         public string YoutubeTrailerUrl { get; set; }
@@ -52,40 +55,22 @@
         public string Genres { get; set; }
 
         public string Keywords { get; set; }
- 
-        public IEnumerable<KeywordViewModel> KeywordsList { get; set; }
 
         public void CreateMappings(IProfileExpression configuration)
         {
             configuration.CreateMap<Media, MediaDetailsInputModel>()
+                .ForMember(x => x.MediaType, opt => opt.MapFrom(x => x.GetType().Name))
                 .ForMember(
-                    x =>
-                    x.MediaType, opt =>
-                    opt.MapFrom(x => 
-                        x.GetType().Name))
+                    x => x.PosterPath,
+                    opt => opt.MapFrom(x => x.Images.Where(x => x.ImageType == ImageType.Poster).FirstOrDefault().Path))
                 .ForMember(
-                    x =>
-                    x.PosterPath, opt =>
-                    opt.MapFrom(x => 
-                        x.Images.Where(x => x.ImageType == ImageType.Poster)
-                        .FirstOrDefault().Path))
-                .ForMember(
-                    x =>
-                        x.Genres, opt =>
-                    opt.MapFrom(x =>
-                        string.Join(", ", x.Genres.Select(x => x.Genre.Name))))
-                .ForMember(
-                    x =>
-                    x.KeywordsList, opt =>
-                    opt.MapFrom(x =>
-                        x.Keywords.Select(x => new KeywordViewModel()
-                        {
-                            Id = x.Keyword.Id,
-                            Value = x.Keyword.Name,
-                        })))
-                .ForMember(
-                    x =>
-                    x.Keywords, opt => opt.Ignore());
+                    x => x.Genres,
+                    opt => opt.MapFrom(x => string.Join(", ", x.Genres.Select(x => x.Genre.Name)))).ForMember(
+                    x => x.Keywords,
+                    opt => opt.MapFrom(
+                        x => JsonConvert.SerializeObject(
+                            x.Keywords.Select(
+                                x => new KeywordViewModel() { Id = x.Keyword.Id, Value = x.Keyword.Name, }))));
         }
     }
 }

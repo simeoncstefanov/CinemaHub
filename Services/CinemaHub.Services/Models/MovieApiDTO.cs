@@ -24,6 +24,15 @@
         [JsonProperty("title")]
         public string Title { get; set; }
 
+        [JsonProperty("name")]
+        private string Title2
+        {
+            set
+            {
+                this.Title = value;
+            }
+        }
+
         [JsonProperty("overview")]
         public string Overview { get; set; }
 
@@ -32,6 +41,15 @@
 
         [JsonProperty("release_date")]
         public string ReleaseDate { get; set; }
+
+        [JsonProperty("first_air_date")]
+        private string ReleaseDate2
+        {
+            set
+            {
+                this.ReleaseDate = value;
+            }
+        }
 
         [JsonProperty("id")]
         public int MovieApiId { get; set; }
@@ -50,6 +68,16 @@
 
         [JsonProperty("runtime")]
         public int Runtime { get; set; }
+
+        [JsonProperty("episode_run_time")]
+        public List<int> Runtime2
+        {
+            set
+            {
+                this.Runtime = value[0];
+            }
+        }
+
 
         [JsonProperty("keywords")]
         public KeywordListApiDTO KeywordsListApi { get; set; }

@@ -4,15 +4,18 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using System.Web;
 
     using CinemaHub.Data.Models;
     using CinemaHub.Web.ViewModels.Account;
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
     using Microsoft.Extensions.Logging;
 
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
@@ -49,7 +52,7 @@
                 if (result.Succeeded)
                 {
                     this.logger.LogInformation("User logged in.");
-                    return this.LocalRedirect(returnUrl);
+                    return this.Redirect(this.Request.Headers["Referer"].ToString());
                 }
 
                 if (result.RequiresTwoFactor)
@@ -64,8 +67,8 @@
                 }
                 else
                 {
-                    this.ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return this.Redirect(this.Url.RouteUrl("login") + returnUrl);
+                    this.ModelState.AddModelError("InvalidLogin", "Invalid login attempt.");
+                    return this.RedirectToAction("Login", "Account");
                 }
             }
 

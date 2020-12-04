@@ -1,14 +1,6 @@
 ﻿var results = [];
 
 document.addEventListener("DOMContentLoaded", function () {
-    $.ajax({
-        url: "/api/media",
-        dataType: 'json',
-        async: true,
-        success: function (data) {
-            results = data;
-        }
-    });
     autocomplete(document.getElementById("myInput"), results);
 });
 

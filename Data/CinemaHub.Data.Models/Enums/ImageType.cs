@@ -4,5 +4,6 @@
     {
         Poster = 0,
         Backdrop = 1,
+        Normal = 2,
     }
 }

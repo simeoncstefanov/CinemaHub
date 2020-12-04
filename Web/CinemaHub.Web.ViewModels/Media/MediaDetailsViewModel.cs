@@ -10,6 +10,7 @@
     using CinemaHub.Data.Models;
     using CinemaHub.Data.Models.Enums;
     using CinemaHub.Services.Mapping;
+    using CinemaHub.Web.ViewModels.Reviews;
 
     public class MediaDetailsViewModel : IMapFrom<Media>, IHaveCustomMappings
     {
@@ -46,6 +47,10 @@
         public int RatingCount { get; set; }
 
         public int CurrentUserRating { get; set; }
+
+        public int ReviewCount { get; set; }
+
+        public string UserWatchType { get; set; }
 
         public void CreateMappings(IProfileExpression configuration)
         {

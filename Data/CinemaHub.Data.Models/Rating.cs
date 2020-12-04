@@ -28,5 +28,7 @@
         public string CreatorId { get; set; }
 
         public ApplicationUser Creator { get; set; }
+
+        public Review Review { get; set; }
     }
 }

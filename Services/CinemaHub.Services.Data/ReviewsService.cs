@@ -61,12 +61,18 @@
         public async Task CreateReview(string userId, ReviewInputModel inputModel)
         {
             var ratingDb = await this.ratingRepository.All()
+                               .Include(x => x.Review)
                                .Where(x => x.CreatorId == userId && x.MediaId == inputModel.MediaId)
                                .FirstOrDefaultAsync();
 
             if (ratingDb == null)
             {
-                throw new Exception("You need to rate the media to submit a review");
+                throw new Exception("You need to rate the media to submit a review.");
+            }
+
+            if (ratingDb.Review != null)
+            {
+                throw new Exception("You have already created a review. Delete it to create new one.");
             }
 
             var newReview = new Review()
@@ -74,6 +80,8 @@
                                     Rating = ratingDb,
                                     Title = inputModel.Title,
                                     ReviewText = inputModel.ReviewText,
+                                    MediaId = inputModel.MediaId,
+                                    CreatorId = userId,
                                 };
 
             await this.reviewRepository.AddAsync(newReview);

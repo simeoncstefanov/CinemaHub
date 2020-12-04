@@ -10,13 +10,13 @@
                 <div class="topbar-filter">
                     <p>Found <span id="pagesFound"></span> in total</p>
                     <label>Sort by:</label>
-                    <select>
-                        <option value="popularity">A-Z</option>
-                        <option value="popularity">Popularity Descending</option>
+                    <select id="sortMenu">
+                        <option value="a-z">A-Z</option>
+                        <option value="popularity-desc">Popularity Descending</option>
                         <option value="popularity">Popularity Ascending</option>
-                        <option value="rating">Rating Descending</option>
+                        <option value="rating-desc">Rating Descending</option>
                         <option value="rating">Rating Ascending</option>
-                        <option value="date">Release date Descending</option>
+                        <option value="date-desc">Release date Descending</option>
                         <option value="date">Release date Ascending</option>
                     </select>
 
@@ -31,7 +31,6 @@
                     <label>@action per page:</label>
                     <select>
                         <option value="range">20 @action</option>
-                        <option value="saab">10 @action</option>
                     </select>
 
                     <div class="pagination2" id="paginationNumbers">

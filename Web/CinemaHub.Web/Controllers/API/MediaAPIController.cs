@@ -24,8 +24,7 @@
         [HttpGet]
         public async Task<IEnumerable<MediaGridDTO>> Get(string query)
         {
-            await this.mediaService.ApplyQueryAsync(new MediaQueryDTO() { SearchQuery = query });
-            var media = await this.mediaService.GetPageAsync(1, 10);
+            var media = await this.mediaService.GetPageAsync(new MediaQueryDTO() { SearchQuery = query, Page = 1, ElementsPerPage = 10 });
             return media.Results;
         }
 
@@ -33,8 +32,7 @@
         [HttpPost]
         public async Task<MediaResultDTO> Query([FromBody] MediaQueryDTO query)
         {
-            await this.mediaService.ApplyQueryAsync(query);
-            var result = await this.mediaService.GetPageAsync(query.Page, query.ElementsPerPage);
+            var result = await this.mediaService.GetPageAsync(query);
             return result;
         }
     }

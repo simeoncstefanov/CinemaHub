@@ -9,10 +9,9 @@
 
     public class Review : BaseDeletableModel<string>
     {
-        public Review()
-        {
-            this.Id = Guid.NewGuid().ToString();
-        }
+        [Key]
+        [ForeignKey(nameof(Rating))]
+        public string RatingId { get; set; }
 
         [Required]
         [MaxLength(50)]
@@ -21,9 +20,16 @@
         [MaxLength(10000)]
         public string ReviewText { get; set; }
 
-        [ForeignKey(nameof(Rating))]
-        public string RatingId { get; set; }
-
         public Rating Rating { get; set; }
+
+        [ForeignKey(nameof(Media))]
+        public string MediaId { get; set; }
+
+        public Media Media { get; set; }
+
+        [ForeignKey(nameof(Creator))]
+        public string CreatorId { get; set; }
+
+        public ApplicationUser Creator { get; set; }
     }
 }

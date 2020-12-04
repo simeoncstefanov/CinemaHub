@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using System.Security.Cryptography.X509Certificates;
     using System.Text;
     using System.Threading.Tasks;
 
@@ -48,11 +49,15 @@
 
         public int ResultsFound { get; set; }
 
-        public async Task<MediaResultDTO> GetPageAsync(int page, int elementsPerPage)
+        public async Task<MediaResultDTO> GetPageAsync(MediaQueryDTO query)
         {
-            int paginationCount = (page - 1) * elementsPerPage;
+            int paginationCount = (query.Page - 1) * query.ElementsPerPage;
 
-            var medias = await this.mediaQuery.Include(x => x.Ratings).Skip(paginationCount).Take(elementsPerPage).Select(
+            this.mediaQuery = this.mediaQuery.Include(x => x.Ratings);
+
+            await this.ApplyQueryAsync(query);
+
+            var medias = await this.mediaQuery.Skip(paginationCount).Take(query.ElementsPerPage).Select(
                              x => new MediaGridDTO()
                                       {
                                           Id = x.Id,
@@ -70,14 +75,14 @@
                        {
                            ResultCount = this.ResultsFound,
                            Results = medias,
-                           ResultsPerPage = elementsPerPage,
-                           CurrentPage = page,
+                           ResultsPerPage = query.ElementsPerPage,
+                           CurrentPage = query.Page,
                        };
         }
 
         public async Task<T> GetDetailsAsync<T>(string id)
         {
-            var media = await this.mediaRepository.All()
+            var media = await this.mediaRepository.AllAsNoTracking()
                 .Where(x => x.Id == id)
                 .To<T>().FirstOrDefaultAsync();
 
@@ -86,7 +91,6 @@
 
         public async Task EditDetailsAsync(MediaDetailsInputModel inputModel, string userId, string rootPath)
         {
-            ;
             var media = this.mediaRepository.All()
                 .Include(x => x.Genres)
                 .ThenInclude(x => x.Genre)
@@ -222,48 +226,7 @@
             await this.mediaRepository.SaveChangesAsync();
         }
 
-        public async Task ApplyQueryAsync(MediaQueryDTO query)
-        {
-            if (query.MediaType == nameof(Movie))
-            {
-                this.mediaQuery = this.mediaQuery.OfType<Movie>();
-            }
-            else if (query.MediaType == nameof(Show))
-            {
-                this.mediaQuery = this.mediaQuery.OfType<Show>();
-            }
-
-            this.mediaQuery = this.mediaQuery.Where(x => x.Title.Contains(query.SearchQuery));
-            this.ResultsFound = this.mediaQuery.Count();
-        }
-
-        private void SortBy(SortTypeEnum sortType)
-        {
-            switch (sortType)
-            {
-                case SortTypeEnum.ReleaseDate:
-                    this.mediaQuery = this.mediaQuery.OrderBy(x => x.ReleaseDate);
-                    break;
-                case SortTypeEnum.Popularity:
-                    this.mediaQuery = this.mediaQuery.OrderBy(x => x.Watchers.Count);
-                    break;
-            }
-        }
-
-        private void SortByDescending(SortTypeEnum sortType)
-        {
-            switch (sortType)
-            {
-                case SortTypeEnum.ReleaseDate:
-                    this.mediaQuery = this.mediaQuery.OrderByDescending(x => x.ReleaseDate);
-                    break;
-                case SortTypeEnum.Popularity:
-                    this.mediaQuery = this.mediaQuery.OrderByDescending(x => x.Watchers.Count);
-                    break;
-            }
-        }
-
-        public string GetTitleWithoutDetailsAsync(string id)
+        public string IsMediaDetailsFullAsync(string id)
         {
             try
             {
@@ -331,6 +294,50 @@
             await image.CopyToAsync(fileStream);
 
             return imageDb;
+        }
+
+        private async Task ApplyQueryAsync(MediaQueryDTO query)
+        {
+            if (query.MediaType == nameof(Movie))
+            {
+                this.mediaQuery = this.mediaQuery.OfType<Movie>();
+            }
+            else if (query.MediaType == nameof(Show))
+            {
+                this.mediaQuery = this.mediaQuery.OfType<Show>();
+            }
+
+            if (!string.IsNullOrWhiteSpace(query.Keywords))
+            {
+                var keywords = query.Keywords.Split(", ").Select(x => int.Parse(x)).ToList();
+                this.mediaQuery = this.mediaQuery.Where(x =>
+                    x.Keywords.Any(y =>
+                        keywords.Contains(y.KeywordId)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(query.Genres))
+            {
+                var genres = query.Genres.Split(", ");
+                this.mediaQuery = this.mediaQuery.Where(
+                    selectedMedia => genres.All(
+                        genreName => selectedMedia.Genres.Select(x => x.Genre.Name).Contains(genreName)));
+            }
+
+            this.mediaQuery = this.mediaQuery.Where(x => 
+                x.Title.Contains(query.SearchQuery));
+
+            this.mediaQuery = query.SortType switch
+                {
+                    "popularity" => this.mediaQuery.Include(x => x.Watchers).OrderBy(x => x.Watchers.Count()),
+                    "popularity-desc" => this.mediaQuery.Include(x => x.Watchers).OrderByDescending(x => x.Watchers.Count()),
+                    "rating" => this.mediaQuery.OrderBy(x => x.Ratings.Average(x => x.Score)),
+                    "rating-desc" => this.mediaQuery.OrderByDescending(x => x.Ratings.Average(x => x.Score)),
+                    "date" => this.mediaQuery.OrderBy(x => x.ReleaseDate),
+                    "date-desc" => this.mediaQuery.OrderByDescending(x => x.ReleaseDate),
+                    _ => this.mediaQuery.OrderBy(x => x.Title),
+                };
+
+            this.ResultsFound = await this.mediaQuery.CountAsync();
         }
     }
 }

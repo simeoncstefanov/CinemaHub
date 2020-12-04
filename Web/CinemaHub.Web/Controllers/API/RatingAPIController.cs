@@ -1,5 +1,6 @@
 ﻿namespace CinemaHub.Web.Controllers
 {
+    using System.Collections.Generic;
     using System.Security.Claims;
     using System.Threading.Tasks;
 
@@ -21,7 +22,16 @@
             this.reviewService = reviewsService;
         }
 
+        [HttpGet]
+        public async Task<IEnumerable<ReviewViewModel>> GetReviews(string mediaId, int page, string sortType)
+        {
+            var reviews = await this.reviewService.GetReviews<ReviewViewModel>(mediaId, page, sortType);
+            return reviews;
+
+        }
+
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<RatingResponseModel>> Post(RatingInputModel input)
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;

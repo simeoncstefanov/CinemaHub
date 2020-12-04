@@ -1,0 +1,109 @@
+﻿@using CinemaHub.Web.ViewModels.Media
+@inject CinemaHub.Services.Data.IMediaService mediaService;
+@model CinemaHub.Web.ViewModels.Reviews.ReviewInputModel;
+@{
+    this.ViewData["Title"] = "Add Review";
+    var media = await mediaService.GetDetailsAsync<MediaMinimalViewModel>(Model.MediaId);
+}
+
+@section Styles {
+    <style>
+        .rate2 {
+            font-size: 35px;
+            cursor: pointer;
+        }
+
+        .rate-hover-layer {
+            color: #ffa500;
+            cursor: pointer;
+        }
+
+        .rate-base-layer {
+            color: gray;
+            cursor: pointer;
+        }
+
+        .rate-select-layer {
+            color: #d48900;
+            cursor: pointer;
+        }
+
+        .rate-container {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+}
+
+<div class="container">
+    <form method="post" id="antiForgeryForm" hidden></form>
+    <form method="post" asp-controller="Reviews" asp-action="Add" enctype="application/x-www-form-urlencoded">
+        <div class="form-row">
+            <div class="col-md-4 col-sm-12 col-xs-12">
+                <div class="form-group">
+                    <div class="movie-btn">
+                        <img src="@media.ImagePath" alt="">
+                    </div>
+                    <h3 style="font-family: 'Dosis'; color: whitesmoke", sans-serif;">@media.Title</h3>
+                </div>
+
+            </div>
+            <div class="form-group col-md-8">
+                <div class="alert-danger" asp-validation-summary="All"></div>
+                <label>
+                    <p>
+                        <div class="rate2" data-rate-value=@Model.CurrentUserRating></div>
+                        <input asp-for="MediaId" type="hidden" value="@Model.MediaId" />
+                    </p>
+                </label>
+                <p> </p>
+                <label asp-for="Title">
+                    <p>Title</p>
+                </label>
+                <p><input type="text" class="form-control" asp-for="Title" placeholder="" /></p>
+                <p class="alert-danger"> <span asp-validation-for="Title" class="alert-danger"></span></p>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-8">
+                <label asp-for="ReviewText">
+                    <p>Review Text</p>
+                </label>
+                <p><textarea asp-for="ReviewText" class="form-control" rows="10"></textarea></p>
+                <p class="alert-danger"> <span asp-validation-for="ReviewText" class="alert-danger"></span></p>
+            </div>
+            <div class="form-row">
+                <p><input style="font-family: 'Dosis'; color: whitesmoke; margin-left: 15px" type="submit" style="width: 100%; margin-top: 20px;" value="Submit" /></p>
+            </div>
+        </div>
+
+    </form>
+    <div class="row">
+        <div class="topbar-filter">
+            <p>Found <span> reviews</span> in total</p>
+            <input id="totalReviews" type="hidden" value="" />
+            <label>Filter by:</label>
+            <select>
+                <option value="popularity">Popularity Descending</option>
+                <option value="popularity">Popularity Ascending</option>
+                <option value="rating">Rating Descending</option>
+                <option value="rating">Rating Ascending</option>
+                <option value="date">Release date Descending</option>
+                <option value="date">Release date Ascending</option>
+            </select>
+        </div>
+        
+        <div class="rv-hd">
+            <button id="loadBtn" class="signoutbtn" type="button" style="margin-top: 20px; width: 100%; text-align: center;">Load More</button>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    @if (this.SignInManager.IsSignedIn(this.User))
+    {
+        <script src="~/js/rater/rater.min.js"></script>
+        <script src="~/js/rater/rater-custom.js"></script>
+    }
+}

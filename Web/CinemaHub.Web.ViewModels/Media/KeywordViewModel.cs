@@ -1,6 +1,7 @@
 ﻿namespace CinemaHub.Web.ViewModels.Media
 {
     using Newtonsoft.Json;
+
     public class KeywordViewModel
     {
         [JsonProperty("value")]

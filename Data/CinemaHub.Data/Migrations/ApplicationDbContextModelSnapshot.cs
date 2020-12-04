@@ -487,6 +487,9 @@ namespace CinemaHub.Data.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("ReviewId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<byte>("Score")
                         .HasColumnType("tinyint");
 
@@ -496,22 +499,29 @@ namespace CinemaHub.Data.Migrations
 
                     b.HasIndex("MediaId");
 
+                    b.HasIndex("ReviewId")
+                        .IsUnique()
+                        .HasFilter("[ReviewId] IS NOT NULL");
+
                     b.ToTable("Rating");
                 });
 
             modelBuilder.Entity("CinemaHub.Data.Models.Review", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ApplicationUserId")
+                    b.Property<string>("RatingId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CreatorId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -522,9 +532,6 @@ namespace CinemaHub.Data.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("RatingId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("ReviewText")
                         .HasColumnType("nvarchar(max)")
                         .HasMaxLength(10000);
@@ -534,15 +541,13 @@ namespace CinemaHub.Data.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.HasKey("Id");
+                    b.HasKey("RatingId");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("CreatorId");
 
                     b.HasIndex("IsDeleted");
 
                     b.HasIndex("MediaId");
-
-                    b.HasIndex("RatingId");
 
                     b.ToTable("Reviews");
                 });
@@ -788,21 +793,27 @@ namespace CinemaHub.Data.Migrations
                     b.HasOne("CinemaHub.Data.Models.Media", "Media")
                         .WithMany("Ratings")
                         .HasForeignKey("MediaId");
+
+                    b.HasOne("CinemaHub.Data.Models.Review", "Review")
+                        .WithOne()
+                        .HasForeignKey("CinemaHub.Data.Models.Rating", "ReviewId");
                 });
 
             modelBuilder.Entity("CinemaHub.Data.Models.Review", b =>
                 {
-                    b.HasOne("CinemaHub.Data.Models.ApplicationUser", null)
+                    b.HasOne("CinemaHub.Data.Models.ApplicationUser", "Creator")
                         .WithMany("Reviews")
-                        .HasForeignKey("ApplicationUserId");
+                        .HasForeignKey("CreatorId");
 
-                    b.HasOne("CinemaHub.Data.Models.Media", null)
+                    b.HasOne("CinemaHub.Data.Models.Media", "Media")
                         .WithMany("Reviews")
                         .HasForeignKey("MediaId");
 
                     b.HasOne("CinemaHub.Data.Models.Rating", "Rating")
                         .WithMany()
-                        .HasForeignKey("RatingId");
+                        .HasForeignKey("RatingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CinemaHub.Data.Models.Season", b =>

@@ -351,38 +351,6 @@ namespace CinemaHub.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Reviews",
-                columns: table => new
-                {
-                    Id = table.Column<string>(nullable: false),
-                    CreatedOn = table.Column<DateTime>(nullable: false),
-                    ModifiedOn = table.Column<DateTime>(nullable: true),
-                    IsDeleted = table.Column<bool>(nullable: false),
-                    DeletedOn = table.Column<DateTime>(nullable: true),
-                    Rating = table.Column<int>(nullable: false),
-                    Title = table.Column<string>(maxLength: 50, nullable: false),
-                    ReviewText = table.Column<string>(maxLength: 10000, nullable: true),
-                    MediaId = table.Column<string>(nullable: true),
-                    CreatorId = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Reviews", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Reviews_AspNetUsers_CreatorId",
-                        column: x => x.CreatorId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Reviews_Media_MediaId",
-                        column: x => x.MediaId,
-                        principalTable: "Media",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Seasons",
                 columns: table => new
                 {
@@ -459,6 +427,73 @@ namespace CinemaHub.Data.Migrations
                         name: "FK_Episodes_Seasons_SeasonId",
                         column: x => x.SeasonId,
                         principalTable: "Seasons",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Rating",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    CreatedOn = table.Column<DateTime>(nullable: false),
+                    ModifiedOn = table.Column<DateTime>(nullable: true),
+                    Score = table.Column<byte>(nullable: false),
+                    MediaId = table.Column<string>(nullable: true),
+                    CreatorId = table.Column<string>(nullable: true),
+                    ReviewId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Rating", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Rating_AspNetUsers_CreatorId",
+                        column: x => x.CreatorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Rating_Media_MediaId",
+                        column: x => x.MediaId,
+                        principalTable: "Media",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Reviews",
+                columns: table => new
+                {
+                    RatingId = table.Column<string>(nullable: false),
+                    Id = table.Column<string>(nullable: true),
+                    CreatedOn = table.Column<DateTime>(nullable: false),
+                    ModifiedOn = table.Column<DateTime>(nullable: true),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    DeletedOn = table.Column<DateTime>(nullable: true),
+                    Title = table.Column<string>(maxLength: 50, nullable: false),
+                    ReviewText = table.Column<string>(maxLength: 10000, nullable: true),
+                    MediaId = table.Column<string>(nullable: true),
+                    CreatorId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reviews", x => x.RatingId);
+                    table.ForeignKey(
+                        name: "FK_Reviews_AspNetUsers_CreatorId",
+                        column: x => x.CreatorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Reviews_Media_MediaId",
+                        column: x => x.MediaId,
+                        principalTable: "Media",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Reviews_Rating_RatingId",
+                        column: x => x.RatingId,
+                        principalTable: "Rating",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -593,6 +628,23 @@ namespace CinemaHub.Data.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Rating_CreatorId",
+                table: "Rating",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rating_MediaId",
+                table: "Rating",
+                column: "MediaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rating_ReviewId",
+                table: "Rating",
+                column: "ReviewId",
+                unique: true,
+                filter: "[ReviewId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Reviews_CreatorId",
                 table: "Reviews",
                 column: "CreatorId");
@@ -616,10 +668,38 @@ namespace CinemaHub.Data.Migrations
                 name: "IX_Seasons_ShowId",
                 table: "Seasons",
                 column: "ShowId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Rating_Reviews_ReviewId",
+                table: "Rating",
+                column: "ReviewId",
+                principalTable: "Reviews",
+                principalColumn: "RatingId",
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Rating_AspNetUsers_CreatorId",
+                table: "Rating");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Reviews_AspNetUsers_CreatorId",
+                table: "Reviews");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Rating_Media_MediaId",
+                table: "Rating");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Reviews_Media_MediaId",
+                table: "Reviews");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Rating_Reviews_ReviewId",
+                table: "Rating");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -654,9 +734,6 @@ namespace CinemaHub.Data.Migrations
                 name: "MediaWatchers");
 
             migrationBuilder.DropTable(
-                name: "Reviews");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
@@ -676,6 +753,12 @@ namespace CinemaHub.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Media");
+
+            migrationBuilder.DropTable(
+                name: "Reviews");
+
+            migrationBuilder.DropTable(
+                name: "Rating");
         }
     }
 }

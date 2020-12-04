@@ -10,6 +10,7 @@
     <link href="~/css/style.css" rel="stylesheet" />
     <link href="~/css/searchbar.css" rel="stylesheet" />
     <link href="~/css/site.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     @await this.RenderSectionAsync("Styles", required: false)
 
@@ -211,6 +212,6 @@
     <script src="~/js/custom.js" asp-append-version="true"></script>
     <script src="~/js/searchbar.js" asp-append-version="true"></script>
 
-@await this.RenderSectionAsync("Scripts", required: false)
+    @await this.RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

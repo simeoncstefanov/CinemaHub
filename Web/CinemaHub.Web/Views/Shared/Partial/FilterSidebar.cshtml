@@ -1,21 +1,53 @@
 ﻿@model CinemaHub.Web.ViewModels.Media.MediaGridViewModel;
+<style>
+    .keywords-filter {
+        font-family: 'Nunito', sans-serif !important;
+        font-size: 12px !important;
+        color: #abb7c4 !important;
+        font-weight: 300 !important;
+        text-transform: none !important;
+        background-color: #f1f1f1 !important;
+        border: none !important;
+        -webkit-border-radius: 3px !important;
+        -moz-border-radius: 3px !important;
+        border-radius: 3px !important;
+        min-height: 40px;
+        display: flex;
+    }
+</style>
+
 <form class="form-style-1" asp-controller="Media" asp-action="@this.ViewContext.RouteData.Values["Action"].ToString()" method="post">
     <input type="hidden" id="MediaType" value="@Model.MediaType" />
     <div class="row">
         <div class="col-md-12 form-it">
             <label>Movie name</label>
-            <input id="SearchQuery" type="text" placeholder="Enter keywords" />
+            <input id="SearchQuery" type="text" placeholder="Search by Title" />
+        </div>
+        <div class="col-md-12 form-it">
+            <label>Keywords</label>
+            <textarea class="keywords-filter" id="Keywords" type="text" placeholder="Enter keywords"></textarea>
         </div>
         <div class="col-md-12 form-it">
             <label>Genres & Subgenres</label>
             <div class="group-ip">
-                <select id="Keywords" name="skills" multiple="" class="ui fluid dropdown">
+                <select id="Genres" name="skills" multiple="" class="ui fluid dropdown">
                     <option value="">Enter to filter genres</option>
-                    <option value="Action1">Action 1</option>
-                    <option value="Action2">Action 2</option>
-                    <option value="Action3">Action 3</option>
-                    <option value="Action4">Action 4</option>
-                    <option value="Action5">Action 5</option>
+                    <option value="Action">Action</option>
+                    <option value="Adventure">Adventure</option>
+                    <option value="Animation">Comedy</option>
+                    <option value="Crime">Crime</option>
+                    <option value="Documentary">Documentary</option>
+                    <option value="Drama">Drama</option>
+                    <option value="Family">Family</option>
+                    <option value="Fantasy">History</option>
+                    <option value="Horror">Music</option>
+                    <option value="Mystery">Mystery</option>
+                    <option value="Romance">Romance</option>
+                    <option value="Science Fiction">Science Fiction</option>
+                    <option value="TV Movie">TV Movie</option>
+                    <option value="Thriller">Thriller</option>
+                    <option value="War">War</option>
+                    <option value="Western">Western</option>
                 </select>
             </div>
             <input type="hidden" id="Genres" value="" />

@@ -11,6 +11,8 @@
     using CinemaHub.Services.Data.Models;
     using CinemaHub.Web.ViewModels;
     using CinemaHub.Web.ViewModels.Media;
+    using CinemaHub.Web.ViewModels.Reviews;
+
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Identity;
@@ -22,7 +24,7 @@
         private const int DefaultPerPage = 20;
         private readonly IMediaService mediaService;
         private readonly IMovieAPIService apiService;
-
+        private readonly IUserService userService;
         private readonly IReviewsService reviewsService;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IWebHostEnvironment webHostEnvironment;
@@ -31,6 +33,7 @@
                                IMovieAPIService apiService,
                                IWebHostEnvironment webHostEnvironment,
                                IReviewsService reviewsService,
+                               IUserService userService,
                                UserManager<ApplicationUser> userManager)
         {
             this.mediaService = mediaService;
@@ -38,6 +41,7 @@
             this.webHostEnvironment = webHostEnvironment;
             this.apiService = apiService;
             this.reviewsService = reviewsService;
+            this.userService = userService;
         }
 
         // both controllers get the searched media with ajax
@@ -56,13 +60,12 @@
         public async Task<IActionResult> Movies(string id)
         {
             var user = await this.userManager.GetUserAsync(this.User);
-
             // Fills the details if the information is not full because of the weird api
-            var title = this.mediaService.GetTitleWithoutDetailsAsync(id);
+            var title = this.mediaService.IsMediaDetailsFullAsync(id);
             if (title != null)
             {
                 var apiInputModel = await this.apiService.GetDetailsFromApiAsync(title, "Movie", id);
-                await this.mediaService.EditDetailsAsync(apiInputModel, "", this.webHostEnvironment.WebRootPath);
+                await this.mediaService.EditDetailsAsync(apiInputModel, user.Id, this.webHostEnvironment.WebRootPath);
             }
 
             var viewModel = await this.mediaService.GetDetailsAsync<MediaDetailsViewModel>(id);
@@ -78,7 +81,9 @@
             if (user != null)
             {
                 viewModel.CurrentUserRating = await this.reviewsService.GetRatingForMedia(user.Id, id);
+                viewModel.UserWatchType = await this.userService.GetWatchtypeUserAsync(user.Id, id);
             }
+            viewModel.ReviewCount = await this.reviewsService.GetReviewCount(id);
             return this.View("MediaDetails", viewModel);
         }
 
@@ -87,11 +92,11 @@
             var user = await this.userManager.GetUserAsync(this.User);
 
             // Fills the details if the information is not full because of the weird api
-            var title = this.mediaService.GetTitleWithoutDetailsAsync(id);
+            var title = this.mediaService.IsMediaDetailsFullAsync(id);
             if (title != null)
             {
                 var apiInputModel = await this.apiService.GetDetailsFromApiAsync(title, "Show", id);
-                await this.mediaService.EditDetailsAsync(apiInputModel, "", this.webHostEnvironment.WebRootPath);
+                await this.mediaService.EditDetailsAsync(apiInputModel, user.Id, this.webHostEnvironment.WebRootPath);
             }
 
             var viewModel = await this.mediaService.GetDetailsAsync<MediaDetailsViewModel>(id);
@@ -103,8 +108,13 @@
 
             var ratings = await this.reviewsService.GetRatingAverageCount(id);
             viewModel.AverageRating = ratings.Item1;
-            viewModel.AverageRating = ratings.Item2;
-            viewModel.CurrentUserRating = await this.reviewsService.GetRatingForMedia(user.Id, id);
+            viewModel.RatingCount = ratings.Item2;
+            if (user != null)
+            {
+                viewModel.CurrentUserRating = await this.reviewsService.GetRatingForMedia(user.Id, id);
+                viewModel.UserWatchType = await this.userService.GetWatchtypeUserAsync(user.Id, id);
+            }
+            viewModel.ReviewCount = await this.reviewsService.GetReviewCount(id);
             return this.View("MediaDetails", viewModel);
         }
 

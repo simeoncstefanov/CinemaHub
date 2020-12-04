@@ -11,14 +11,12 @@
 
     public interface IMediaService
     {
-        Task<MediaResultDTO> GetPageAsync(int page, int elementsPerPage);
-
-        Task ApplyQueryAsync(MediaQueryDTO query);
+        Task<MediaResultDTO> GetPageAsync(MediaQueryDTO query);
 
         Task<T> GetDetailsAsync<T>(string id);
 
         Task EditDetailsAsync(MediaDetailsInputModel mediaDetails, string userId, string rootPath);
 
-        string GetTitleWithoutDetailsAsync(string id);
+        string IsMediaDetailsFullAsync(string id);
     }
 }

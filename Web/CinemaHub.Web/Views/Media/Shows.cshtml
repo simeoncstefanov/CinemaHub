@@ -4,7 +4,14 @@
 
 <partial name="MediaGrid.cshtml" />
 
+@section Styles {
+    <link href="~/js/tagify/tagify.css" rel="stylesheet" />
+}
+
 
 @section Scripts {
     <script src="~/js/mediagrid.js" asp-append-version="true"></script>
+    <script src="~/js/tagify/tagify.min.js" asp-append-version="true"></script>
+    <script src="~/js/tagify/tagify-filterpage.js" asp-append-version="true"></script>
+    <script src="~/js/watchlist.js" asp-append-version="true"></script>
 } 

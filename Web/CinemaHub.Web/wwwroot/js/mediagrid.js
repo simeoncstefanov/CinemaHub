@@ -16,12 +16,26 @@ $(submitBtn).on('click', function(e){
 var requestJson = function(page){
     var searchQuery = document.getElementById("SearchQuery").value;
     var mediaType = document.getElementById("MediaType").value;
+    var sortType = $('#sortMenu').val();
+    var keywords = tagify1.value.map(x => x.id).join(", ");
+
+    var genres = "";
+    var genresNodes = document.querySelectorAll("div[class='item active filtered']");
+    for (var i = 0; i < genresNodes.length; i++) {
+        genres += genresNodes[i].dataset.value + ", ";
+    }
+    genres = genres.slice(0, -2);
+
+
     var jsonRequestBody = JSON.stringify({
-         "searchQuery": searchQuery,
-         "page": page,
-         "elementsPerPage": 20,
-         "mediaType": mediaType,
-        });
+        "searchQuery": searchQuery,
+        "page": page,
+        "elementsPerPage": 20,
+        "mediaType": mediaType,
+        "keywords": keywords,
+        "genres": genres,
+        "sortType": sortType
+    });
 
     $.ajax({
         type: "POST",
@@ -59,22 +73,21 @@ var populateGrid = function(json) {
                                 </div>`
     };
 
+    //pagination:
     pagination.innerHTML = "Page "+json.currentPage+" of "+json.pages;
     var elements = document.querySelectorAll('.pageNumber');  
     for (var element of elements) {
             element.remove();
-   // or 
-   // element.parentNode.removeChild(element);
-        }
+    }
 
-            var pageButton = document.createElement("A");
-        pageButton.innerHTML = 1;
-        pageButton.classList.add("pageNumber");
-        pages.appendChild(pageButton)
-        if (json.currentPage == 1)
-        {
-            pageButton.classList.add("active");
-        }
+    var pageButton = document.createElement("A");
+    pageButton.innerHTML = 1;
+    pageButton.classList.add("pageNumber");
+    pages.appendChild(pageButton)
+    if (json.currentPage == 1)
+    {
+        pageButton.classList.add("active");
+    }
 
     for (i = json.currentPage - 3; i < json.currentPage + 4; i++) {
         if (i > 1 && i < json.pages)

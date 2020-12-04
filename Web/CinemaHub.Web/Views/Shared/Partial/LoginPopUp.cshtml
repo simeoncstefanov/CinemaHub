@@ -1,5 +1,4 @@
 ﻿@model CinemaHub.Web.ViewModels.Account.LoginInputModel;
-
 <div class="login-wrapper" id="login-content">
     <div class="login-content">
         <a href="#" class="close">x</a>
@@ -31,7 +30,10 @@
             <div class="row">
                 <button type="submit">Login</button>
             </div>
-            @Html.Hidden("returnUrl", Model.ReturnUrl);
+            @if (Model != null)
+            {
+                @Html.Hidden("returnUrl", Model.ReturnUrl);
+            }
         </form>
         <div class="row">
             <p>Or via social</p>

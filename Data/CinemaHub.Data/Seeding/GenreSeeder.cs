@@ -22,8 +22,8 @@
             }
 
             dbContext.Genres.Add(new Genre() { Name = "Action", ApiId = 28 });
-            dbContext.Genres.Add(new Genre() { Name = "Adventure", ApiId = 12 });
-            dbContext.Genres.Add(new Genre() { Name = "Animation", ApiId = 16 });
+            dbContext.Genres.Add(new Genre() { Name = "Adventure", ApiId = 12});
+            dbContext.Genres.Add(new Genre() { Name = "Animation", ApiId = 16});
             dbContext.Genres.Add(new Genre() { Name = "Comedy", ApiId = 35 });
             dbContext.Genres.Add(new Genre() { Name = "Crime", ApiId = 80 });
             dbContext.Genres.Add(new Genre() { Name = "Documentary", ApiId = 99 });

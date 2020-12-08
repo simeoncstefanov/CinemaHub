@@ -44,6 +44,7 @@
 
         public string YoutubeTrailerUrl { get; set; }
 
+        [JsonIgnore]
         public IFormFile PosterImageFile { get; set; }
 
         public string PosterPath { get; set; }

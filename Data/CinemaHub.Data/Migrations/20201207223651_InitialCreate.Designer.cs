@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CinemaHub.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201201133742_InitialCreate")]
+    [Migration("20201207223651_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -70,6 +70,9 @@ namespace CinemaHub.Data.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<string>("AvatarImageId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -128,6 +131,8 @@ namespace CinemaHub.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AvatarImageId");
+
                     b.HasIndex("IsDeleted");
 
                     b.HasIndex("NormalizedEmail")
@@ -139,6 +144,44 @@ namespace CinemaHub.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.AvatarImage", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Extension")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AvatarImages");
                 });
 
             modelBuilder.Entity("CinemaHub.Data.Models.Comment", b =>
@@ -177,6 +220,37 @@ namespace CinemaHub.Data.Migrations
                     b.HasIndex("IsDeleted");
 
                     b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.CommentVote", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CommentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsUpvote")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommentId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CommentVotes");
                 });
 
             modelBuilder.Entity("CinemaHub.Data.Models.Discussion", b =>
@@ -261,8 +335,10 @@ namespace CinemaHub.Data.Migrations
 
             modelBuilder.Entity("CinemaHub.Data.Models.Genre", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("ApiId")
                         .HasColumnType("int");
@@ -317,6 +393,9 @@ namespace CinemaHub.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("AdderId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("Budget")
                         .HasColumnType("int");
 
@@ -355,6 +434,8 @@ namespace CinemaHub.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AdderId");
+
                     b.ToTable("Media");
 
                     b.HasDiscriminator<string>("MediaType").HasValue("Media");
@@ -368,8 +449,8 @@ namespace CinemaHub.Data.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("GenreId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("GenreId")
+                        .HasColumnType("int");
 
                     b.Property<string>("MediaId")
                         .HasColumnType("nvarchar(450)");
@@ -489,9 +570,6 @@ namespace CinemaHub.Data.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ReviewId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<byte>("Score")
                         .HasColumnType("tinyint");
 
@@ -500,10 +578,6 @@ namespace CinemaHub.Data.Migrations
                     b.HasIndex("CreatorId");
 
                     b.HasIndex("MediaId");
-
-                    b.HasIndex("ReviewId")
-                        .IsUnique()
-                        .HasFilter("[ReviewId] IS NOT NULL");
 
                     b.ToTable("Rating");
                 });
@@ -713,6 +787,22 @@ namespace CinemaHub.Data.Migrations
                     b.HasDiscriminator().HasValue("Show");
                 });
 
+            modelBuilder.Entity("CinemaHub.Data.Models.ApplicationUser", b =>
+                {
+                    b.HasOne("CinemaHub.Data.Models.AvatarImage", "AvatarImage")
+                        .WithMany()
+                        .HasForeignKey("AvatarImageId");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.AvatarImage", b =>
+                {
+                    b.HasOne("CinemaHub.Data.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CinemaHub.Data.Models.Comment", b =>
                 {
                     b.HasOne("CinemaHub.Data.Models.ApplicationUser", "Creator")
@@ -722,6 +812,21 @@ namespace CinemaHub.Data.Migrations
                     b.HasOne("CinemaHub.Data.Models.Discussion", "Discussion")
                         .WithMany("Comments")
                         .HasForeignKey("DiscussionId");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.CommentVote", b =>
+                {
+                    b.HasOne("CinemaHub.Data.Models.Comment", "Comment")
+                        .WithMany("CommentVotes")
+                        .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CinemaHub.Data.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CinemaHub.Data.Models.Discussion", b =>
@@ -742,11 +847,20 @@ namespace CinemaHub.Data.Migrations
                         .HasForeignKey("SeasonId");
                 });
 
+            modelBuilder.Entity("CinemaHub.Data.Models.Media", b =>
+                {
+                    b.HasOne("CinemaHub.Data.Models.ApplicationUser", "Adder")
+                        .WithMany()
+                        .HasForeignKey("AdderId");
+                });
+
             modelBuilder.Entity("CinemaHub.Data.Models.MediaGenre", b =>
                 {
                     b.HasOne("CinemaHub.Data.Models.Genre", "Genre")
                         .WithMany("MediaGenres")
-                        .HasForeignKey("GenreId");
+                        .HasForeignKey("GenreId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("CinemaHub.Data.Models.Media", "Media")
                         .WithMany("Genres")
@@ -795,10 +909,6 @@ namespace CinemaHub.Data.Migrations
                     b.HasOne("CinemaHub.Data.Models.Media", "Media")
                         .WithMany("Ratings")
                         .HasForeignKey("MediaId");
-
-                    b.HasOne("CinemaHub.Data.Models.Review", "Review")
-                        .WithOne()
-                        .HasForeignKey("CinemaHub.Data.Models.Rating", "ReviewId");
                 });
 
             modelBuilder.Entity("CinemaHub.Data.Models.Review", b =>
@@ -812,8 +922,8 @@ namespace CinemaHub.Data.Migrations
                         .HasForeignKey("MediaId");
 
                     b.HasOne("CinemaHub.Data.Models.Rating", "Rating")
-                        .WithMany()
-                        .HasForeignKey("RatingId")
+                        .WithOne("Review")
+                        .HasForeignKey("CinemaHub.Data.Models.Review", "RatingId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

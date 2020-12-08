@@ -1,4 +1,5 @@
-﻿@{
+﻿@using Microsoft.IdentityModel.Tokens
+@{
     if (ViewData.TryGetValue("ParentLayout", out var parentLayout))
     {
         Layout = (string)parentLayout;
@@ -9,13 +10,13 @@
     }
 }
 
-<div class="page-single">
+<div class="page-single" style="padding: 15px;">
     <div class="container">
         <div class="row ipad-width2">
             <div class="col-md-3 col-sm-12 col-xs-12">
-                <partial name="_ManageNav"/>
+                <partial name="_ManageNav" />
             </div>
-            <div class="col-md-9 col-sm-12 col-xs-12">
+            <div class="col-md-9 col-sm-12 col-xs-12" style="color: #abb7c4; font-family: 'Nunito', sans-serif;">
                 @RenderBody()
             </div>
         </div>
@@ -24,4 +25,20 @@
 
 @section Scripts {
     @RenderSection("Scripts", required: false)
+    <script>
+        var uploadBtn = $('.upload-btn');
+        var uploadPopup = $('.overlay-upload')
+        var uploadIsShown = false;
+        uploadBtn.on('click',
+            function () {
+                if (uploadIsShown) {
+                    uploadPopup.css("display", "none");
+                } else {
+                    uploadPopup.css("display", "flex");
+                }
+                uploadIsShown = !uploadIsShown;
+            }
+        );
+    </script>
 }
+

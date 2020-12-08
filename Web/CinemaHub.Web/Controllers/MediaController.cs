@@ -9,14 +9,19 @@
     using CinemaHub.Services;
     using CinemaHub.Services.Data;
     using CinemaHub.Services.Data.Models;
+    using CinemaHub.Web.Filters.Action.InputModelTransfer;
+    using CinemaHub.Web.Filters.Action.ModelStateTransfer;
     using CinemaHub.Web.ViewModels;
     using CinemaHub.Web.ViewModels.Media;
     using CinemaHub.Web.ViewModels.Reviews;
 
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Components.Forms;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.CodeAnalysis.Operations;
+
     using Newtonsoft.Json;
 
     public class MediaController : BaseController
@@ -45,18 +50,19 @@
         }
 
         // both controllers get the searched media with ajax
-        [Route("/[controller]/[action]")]
+        [Route("/[controller]/[action]/")]
         public async Task<IActionResult> Movies()
         {
             return this.View(new MediaGridViewModel() { MediaType = "Movie" });
         }
 
-        [Route("/[controller]/[action]")]
+        [Route("/[controller]/[action]/")]
         public async Task<IActionResult> Shows()
         {
             return this.View(new MediaGridViewModel() { MediaType = "Show" });
         }
 
+        [Route("/[controller]/[action]/{id}")]
         public async Task<IActionResult> Movies(string id)
         {
             var user = await this.userManager.GetUserAsync(this.User);
@@ -65,7 +71,7 @@
             if (title != null)
             {
                 var apiInputModel = await this.apiService.GetDetailsFromApiAsync(title, "Movie", id);
-                await this.mediaService.EditDetailsAsync(apiInputModel, user.Id, this.webHostEnvironment.WebRootPath);
+                await this.mediaService.EditDetailsAsync(apiInputModel, "", this.webHostEnvironment.WebRootPath);
             }
 
             var viewModel = await this.mediaService.GetDetailsAsync<MediaDetailsViewModel>(id);
@@ -87,6 +93,7 @@
             return this.View("MediaDetails", viewModel);
         }
 
+        [Route("/[controller]/[action]/{id}")]
         public async Task<IActionResult> Shows(string id)
         {
             var user = await this.userManager.GetUserAsync(this.User);
@@ -96,7 +103,7 @@
             if (title != null)
             {
                 var apiInputModel = await this.apiService.GetDetailsFromApiAsync(title, "Show", id);
-                await this.mediaService.EditDetailsAsync(apiInputModel, user.Id, this.webHostEnvironment.WebRootPath);
+                await this.mediaService.EditDetailsAsync(apiInputModel, "", this.webHostEnvironment.WebRootPath);
             }
 
             var viewModel = await this.mediaService.GetDetailsAsync<MediaDetailsViewModel>(id);
@@ -130,6 +137,8 @@
         }
 
         [Authorize]
+        [ImportModelState]
+        [ImportInputModel(ClassName = nameof(MediaDetailsInputModel))]
         public async Task<IActionResult> Edit(string id)
         {
             var media = await this.mediaService.GetDetailsAsync<MediaDetailsInputModel>(id);
@@ -139,19 +148,21 @@
         // Edits or adds new movie if there is no id in the input model
         [Authorize]
         [HttpPost]
+        [ExportModelState]
+        [ExportInputModel]
         public async Task<IActionResult> Edit(MediaDetailsInputModel edit)
         {
             var user = await this.userManager.GetUserAsync(this.User);
 
             if (!this.ModelState.IsValid)
             {
-                return this.View(edit);
+                return this.RedirectToAction("Edit", "Media", new { id = edit.Id });
             }
 
-            if (edit.ReleaseDateString == "01-01-0001")
+            if (edit.ReleaseDateString == "01-01-0001" || edit.ReleaseDate == null)
             {
                 this.ModelState.AddModelError(string.Empty, "Release date is required");
-                return this.View(edit);
+                return this.RedirectToAction("Edit", "Media", new { id = edit.Id });
             }
 
             try
@@ -161,7 +172,7 @@
             catch (Exception ex)
             {
                 this.ModelState.AddModelError(string.Empty, ex.Message);
-                return this.View(edit);
+                return this.RedirectToAction("Edit", "Media", new { id = edit.Id });
             }
 
             return this.Redirect("/");

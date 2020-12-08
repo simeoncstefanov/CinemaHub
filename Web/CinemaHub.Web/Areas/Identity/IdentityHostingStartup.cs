@@ -11,12 +11,13 @@ using Microsoft.Extensions.DependencyInjection;
 [assembly: HostingStartup(typeof(CinemaHub.Web.Areas.Identity.IdentityHostingStartup))]
 namespace CinemaHub.Web.Areas.Identity
 {
+    using Microsoft.AspNetCore.Builder;
+
     public class IdentityHostingStartup : IHostingStartup
     {
         public void Configure(IWebHostBuilder builder)
         {
-            builder.ConfigureServices((context, services) => {
-            });
+            builder.ConfigureServices((context, services) => { });
         }
     }
 }

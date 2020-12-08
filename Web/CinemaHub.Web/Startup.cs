@@ -85,6 +85,7 @@
             services.AddTransient<IKeywordService, KeywordService>();
             services.AddTransient<IReviewsService, ReviewsService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IDiscussionsService, DiscussionsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -124,6 +125,10 @@
             app.UseEndpoints(
                 endpoints =>
                     {
+                        endpoints.MapAreaControllerRoute(
+                            "Identity",
+                            "Identity",
+                            "{controller=Home}/{action=Index}/{id?}");
                         endpoints.MapControllerRoute("areaRoute", "{area:exists}/{controller=Home}/{action=Index}/{id?}");
                         endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
                         endpoints.MapRazorPages();

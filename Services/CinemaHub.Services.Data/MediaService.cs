@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -100,7 +101,7 @@
 
             bool isAdd = false;
 
-            // Hacky way to check if the type we try to add create exists
+            // check if the type we try to add create exists
             if (media == null)
             {
                 isAdd = true;
@@ -128,7 +129,9 @@
             media.YoutubeTrailerUrl = inputModel.YoutubeTrailerUrl;
             media.ReleaseDate = inputModel.ReleaseDate;
 
-            var genres = inputModel.Genres.Split(", ").ToList();
+            var genres = inputModel.Genres.Split(new string[] { ", ", "&" }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim())
+                .ToList();
             var genresDb = media.Genres.ToList();
 
             // Remove all genres which are not in the inputModel's genres and ignore all which are
@@ -146,18 +149,15 @@
             // Add all the remaining genres which remained in [genres]
             foreach (var genre in genres)
             {
-                try
+                var genreDb = this.genreRepository.All().FirstOrDefault(x => x.Name == genre);
+                if (genreDb != null)
                 {
                     media.Genres.Add(
                         new MediaGenre()
                             {
                                 Media = media,
-                                Genre = this.genreRepository.All().FirstOrDefault(x => x.Name == genre),
+                                Genre = genreDb,
                             });
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception($"Genre with the name \"{genre}\" does not exist");
                 }
             }
 
@@ -202,7 +202,6 @@
                 try
                 {
                     var mediaImage = await this.DownloadPosterImage(image, rootPath, media);
-
 
                     var posterImage = media.Images.FirstOrDefault(x => x.ImageType == ImageType.Poster);
                     if (posterImage != null)
@@ -318,13 +317,35 @@
             if (!string.IsNullOrWhiteSpace(query.Genres))
             {
                 var genres = query.Genres.Split(", ");
-                this.mediaQuery = this.mediaQuery.Where(
-                    selectedMedia => genres.All(
-                        genreName => selectedMedia.Genres.Select(x => x.Genre.Name).Contains(genreName)));
+
+                this.mediaQuery =
+                    this.mediaQuery.Where(x =>
+                        x.Genres.Select(x => x.Genre.Name)
+                            .All(x => genres.Contains(x)));
             }
 
-            this.mediaQuery = this.mediaQuery.Where(x => 
-                x.Title.Contains(query.SearchQuery));
+            if(!string.IsNullOrWhiteSpace(query.WatchType))
+            {
+                var isValidWatchType = Enum.TryParse<WatchType>(query.WatchType, true, out WatchType watchType);
+                if (!isValidWatchType)
+                {
+                    throw new InvalidEnumArgumentException($"Watchtype {query.WatchType} is not valid!");
+                }
+
+                this.mediaQuery = this.mediaQuery.Where(
+                    x => x.Watchers.Any(x => x.UserId == query.UserId && x.WatchType == watchType));
+            }
+
+            if (!query.AreNotWatched)
+            {
+                this.mediaQuery = this.mediaQuery.Where(x => x.Watchers.Any(x => x.UserId != query.UserId));
+            }
+
+            if (query.SearchQuery != null)
+            {
+                this.mediaQuery = this.mediaQuery.Where(x =>
+                    x.Title.Contains(query.SearchQuery ?? string.Empty));
+            }
 
             this.mediaQuery = query.SortType switch
                 {

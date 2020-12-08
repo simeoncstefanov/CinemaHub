@@ -1,0 +1,31 @@
+﻿@model CinemaHub.Web.ViewModels.Discussions.DiscussionInputModel
+@{
+    this.ViewData["Title"] = "Create Discussion";
+}
+
+<form method="post" asp-controller="Discussions" asp-action="Create" enctype="application/x-www-form-urlencoded">
+    <input asp-for="MediaId" type="hidden" value="@Model.MediaId"/>
+    <div class="form-row">
+        <div class="form-group col-md-8">
+            <div class="alert-danger" asp-validation-summary="All"></div>
+            <label asp-for="Title">
+                <p>Title</p>
+            </label>
+            <p><input type="text" class="form-control" asp-for="Title" placeholder=""/></p>
+            <p class="alert-danger"> <span asp-validation-for="Title" class="alert-danger"></span></p>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-8">
+            <label asp-for="Content">
+                <p>Discussion Text</p>
+            </label>
+            <p><textarea asp-for="Content" class="form-control" rows="10"></textarea></p>
+            <p class="alert-danger"> <span asp-validation-for="Content" class="alert-danger"></span></p>
+        </div>
+        <div class="form-row">
+            <p><input style="font-family: 'Dosis'; color: whitesmoke; margin-left: 15px" type="submit" style="width: 100%; margin-top: 20px;" value="Submit"/></p>
+        </div>
+    </div>
+
+</form>

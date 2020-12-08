@@ -52,6 +52,10 @@
 
         public DbSet<Rating> Rating { get; set; }
 
+        public DbSet<CommentVote> CommentVotes { get; set; }
+
+        public DbSet<AvatarImage> AvatarImages { get; set; }
+
         public override int SaveChanges() => this.SaveChanges(true);
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)

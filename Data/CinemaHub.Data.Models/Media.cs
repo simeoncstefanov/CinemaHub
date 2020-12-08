@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
     using System.Data;
     using System.Text;
 
@@ -48,6 +49,11 @@
 
         [Required]
         public bool IsDetailFull { get; set; }
+
+        [ForeignKey(nameof(Adder))]
+        public string AdderId { get; set; }
+
+        public ApplicationUser Adder { get; set; }
 
         public string YoutubeTrailerUrl { get; set; }
 

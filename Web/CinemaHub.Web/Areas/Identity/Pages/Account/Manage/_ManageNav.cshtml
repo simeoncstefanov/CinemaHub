@@ -3,21 +3,26 @@
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }
 
-<div class="user-information">
+<div class="user-information" style="margin-top: -100px">
     <div class="user-img">
         <a href="#"><img src="/images/template/uploads/user-img.png" alt=""><br></a>
-        <a href="#" class="redbtn">Change avatar</a>
+        <a href="#" class="redbtn upload-btn">Change avatar</a>
+        <div style="display: none; width: 100%" class="overlay-upload">
+            <form method="post" asp-controller="Account" enctype="multipart/form-data">
+                <input style="width: 100%; margin-top: 50px" type="file" />
+                <input type="submit" id="Submit" />
+            </form>
+        </div>
     </div>
     <div class="user-fav">
-        <p>Account Details</p>
+        <p>CinemaHub Details</p>
         <ul>
-            <li class="active"><a href="#">Watchlist</a></li>
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Favorite movies</a></li>
+            <li><a asp-page="./Watchlist">Watchlist</a></li>
+            <li><a asp-page="./Reviews">Reviews</a></li>
         </ul>
     </div>
     <div class="user-fav">
-        <p>Others</p>
+        <p>Account Details</p>
         <ul>
             <li><a id="profile" asp-page="./Index">Profile</a></li>
             <li><a id="email" asp-page="./Email">Email</a></li>
@@ -31,3 +36,5 @@
         </ul>
     </div>
 </div>
+
+

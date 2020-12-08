@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Security.Claims;
     using System.Threading.Tasks;
 
     using CinemaHub.Services.Data;
@@ -32,6 +33,12 @@
         [HttpPost]
         public async Task<MediaResultDTO> Query([FromBody] MediaQueryDTO query)
         {
+            var user = this.User.FindFirst(ClaimTypes.NameIdentifier);
+            if (user != null)
+            {
+                query.UserId = user.Value;
+            }
+
             var result = await this.mediaService.GetPageAsync(query);
             return result;
         }

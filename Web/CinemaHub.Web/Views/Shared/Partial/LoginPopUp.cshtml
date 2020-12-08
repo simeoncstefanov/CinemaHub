@@ -1,10 +1,11 @@
-﻿@model CinemaHub.Web.ViewModels.Account.LoginInputModel;
+﻿@using Microsoft.AspNetCore.Http
+@model CinemaHub.Web.ViewModels.Account.LoginInputModel;
 <div class="login-wrapper" id="login-content">
     <div class="login-content">
         <a href="#" class="close">x</a>
         <h3>Login</h3>
         <form asp-controller="Account" asp-action="Login" method="post">
-            <div asp-validation-summary="All" class="text-danger"></div>
+            <div asp-validation-summary="All" class="alert-danger"></div>
             <div class="row">
                 <label asp-for="Email">
                     Username:
@@ -32,7 +33,7 @@
             </div>
             @if (Model != null)
             {
-                @Html.Hidden("returnUrl", Model.ReturnUrl);
+                @Html.Hidden("returnUrl", this.Context.Request.Path.ToString() != "/login" ? this.Context.Request.Path : new PathString("/"));
             }
         </form>
         <div class="row">

@@ -7,11 +7,10 @@
 
     using CinemaHub.Data.Common.Models;
 
-    public class Genre : BaseModel<string>
+    public class Genre : BaseModel<int>
     {
         public Genre()
         {
-            this.Id = Guid.NewGuid().ToString();
             this.MediaGenres = new HashSet<MediaGenre>();
         }
 

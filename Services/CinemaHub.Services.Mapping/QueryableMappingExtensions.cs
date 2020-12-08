@@ -30,6 +30,7 @@
             }
 
             return source.ProjectTo<TDestination>(AutoMapperConfig.MapperInstance.ConfigurationProvider, parameters);
+            
         }
     }
 }

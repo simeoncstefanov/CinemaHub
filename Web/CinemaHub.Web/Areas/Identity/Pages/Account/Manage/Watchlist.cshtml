@@ -1,0 +1,66 @@
+﻿@page
+@model CinemaHub.Web.Areas.Identity.Pages.Account.Manage.WatchlistModel
+@{
+    ViewData["Title"] = Model.Username + "'s Watchlist";
+}
+
+<div class="page-single userfav_list" style="padding: 0px">
+    <div class="container">
+        <div class="row ipad-width2">
+            <div class="col-md-9 col-sm-12 col-xs-12">
+                <div class="topbar-filter user">
+                    <p style="padding-right: 40px">Found <span>@Model.ResultCount medias</span> in total</p>
+                    <label>Watch Type</label>
+                    <div class="dropdown-options">
+                        <span>@Model.WatchTypeFormatted</span>
+                        <div class="dropdown-content">
+                            <ul>
+                                <li><a asp-area="Identity" asp-page="/Account/Manage/Watchlist" asp-route-watchtype="onwatchlist">Want to watch</a></li>
+                                <li><a asp-area="Identity" asp-page="/Account/Manage/Watchlist" asp-route-watchtype="completed">Completed</a></li>
+                                <li><a asp-area="Identity" asp-page="/Account/Manage/Watchlist" asp-route-watchtype="currentlywatched">Currently Watched</a></li>
+                                <li><a asp-area="Identity" asp-page="/Account/Manage/Watchlist" asp-route-watchtype="dropped">Dropped</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-wrap-movielist user-fav-list">
+                    @foreach (var media in Model.MediaSet)
+                    {
+                        <div class="movie-item-style-2">
+                            <img src="@media.ImagePath" style="width: 100px" alt="">
+                            <div class="mv-item-infor">
+                                <h6><a asp-controller="Media" asp-action="@($"{media.MediaType}s")" asp-route-id="@media.Id">@media.Title</a></h6>
+                                <p class="rate"><i class="ion-android-star"></i><span>@media.Rating.ToString("F")</span> /10</p>
+                                <p class="describe">@media.Overview.Substring(0, media.Overview.Length < 200 ? media.Overview.Length : 200)...</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="topbar-filter">
+                    <label>Movies per page:</label>
+                    <select>
+                        <option value="range">20 Movies</option>
+                    </select>
+
+                    <div class="pagination2">
+                        <span>Page @Model.CurrentPage of @Model.TotalPages</span>
+                        @for (int i = Model.CurrentPage - 4; i < Model.CurrentPage + 4; i++)
+                        {
+                            if (i > 0 && i <= Model.TotalPages)
+                            {
+                                if (i == Model.CurrentPage)
+                                {
+                                    <a class="active" asp-area="Identity" asp-page="/Account/Manage/Watchlist" asp-route-watchtype="@Model.WatchType" asp-route-currentpage="@i">@i</a>
+                                }
+                                else
+                                {
+                                    <a asp-area="Identity" asp-page="/Account/Manage/Watchlist" asp-route-watchtype="@Model.WatchType" asp-route-currentpage="@i">@i</a>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

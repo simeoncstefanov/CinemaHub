@@ -20,11 +20,14 @@
         [ForeignKey(nameof(Discussion))]
         public string DiscussionId { get; set; }
 
-        public virtual Discussion Discussion { get; set; }
+        public Discussion Discussion { get; set; }
 
         [ForeignKey(nameof(Creator))]
         public string CreatorId { get; set; }
 
-        public virtual ApplicationUser Creator { get; set; }
+        public ApplicationUser Creator { get; set; }
+
+        public virtual ICollection<CommentVote> CommentVotes { get; set; }
+
     }
 }

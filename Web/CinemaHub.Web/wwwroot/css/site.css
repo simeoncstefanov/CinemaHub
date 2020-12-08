@@ -36,3 +36,62 @@
 button {
     margin: 10px;
 }
+
+.dropdown-options {
+    position: relative;
+    display: inline-block;
+    font-family: 'Nunito', sans-serif;
+    width: 200px;
+    min-height: 100%;
+    z-index: 1;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: url(../images/uploads/drop-icon.png) no-repeat right 20px center;
+    border-left: 1px solid #405266;
+    border-right: 1px solid #405266;
+    border-top: none;
+    border-bottom: none;
+    color: #ffffff;
+    font-weight: 400;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    color: #abb7c4;
+    font-weight: 300;
+    text-transform: none;
+}
+
+.dropdown-options span {
+    padding-left: 10px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    max-width: 100%;
+    z-index: 1;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: white;
+    border-left: 1px solid #405266;
+    border-right: 1px solid #405266;
+    border-top: none;
+    border-bottom: none;
+    color: #ffffff;
+    font-weight: 400;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    color: #abb7c4;
+    font-weight: 300;
+    text-transform: none;
+}
+
+.dropdown-content li {
+    padding: 3px 10px
+}
+
+.dropdown-options:hover .dropdown-content {
+    display: block;
+}

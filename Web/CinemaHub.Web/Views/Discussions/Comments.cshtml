@@ -1,0 +1,74 @@
+﻿@using CinemaHub.Web.ViewModels.Media
+@model CinemaHub.Web.ViewModels.Discussions.CommentPageViewModel;
+@inject CinemaHub.Services.Data.IMediaService mediaService;
+@{
+    this.ViewData["Title"] = "Comments";
+    var media = await this.mediaService.GetDetailsAsync<MediaMinimalViewModel>(Model.MediaId);
+}
+
+<style>
+    .fa fa-chevron-circle-up {
+
+    }
+
+    </style>
+<div class="page-single">
+    <div class="container">
+        <div class="row ipad-width2">
+            <div class="col-md-9 col-sm-12 col-xs-12">
+                <div class="row">
+                    <div class="commentarea">
+                        <i class="fa fa-chevron-circle-up" style="position: absolute; top: 0; right: 3px; font-size: 25px;"></i>
+                        <textarea style="max-width: 1000px; height: 100%; width: 100%; margin-bottom: 15px;" rows="10"></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="ceb-item-style-2" style="display: flex; justify-content: space-between;">
+                            <h2 style="font-family: 'Dosis', sans-serif; color: whitesmoke;">@Model.DiscussionTitle</h2>
+                            <a href="" class="redbtn">Comment</a>
+                        </div>
+
+                    </div>
+                    @foreach (var comment in Model.Comments)
+                    {
+                        <div class="col-md-12">
+                            <div class="ceb-item-style-2">
+                                <img src="@comment.AvatarImagePath" alt="">
+                                <div class="ceb-infor">
+                                    <h2><a href="celebritysingle.html">@comment.Username</a></h2>
+                                    <span>@comment.CreatedOn.ToString("D")</span>
+                                    <p style="padding-top: 10px">@comment.Content</p>
+                                </div>
+
+                                <div style="position: absolute; top: 10px; right: 25px; font-size: 25px;"  class="vote-container">
+                                    <i class="fa fa-chevron-circle-up" style="position: absolute; top: 0; right: 3px; font-size: 25px;"></i>
+                                    <p style="position: absolute; top: 21px; right: 6px;">10</p>
+                                    <i class="fa fa-chevron-circle-down" style="position: absolute; top: 40px; right: 3px; font-size: 25px;"></i>
+                                </div>
+                            </div>
+                        </div>}
+                </div>
+                <div class="topbar-filter">
+                    <div class="pagination2">
+                        <span>Page 1 of 6:</span>
+                        <a class="active" href="#">1</a>
+                        <a href="#">2</a>
+                        <a href="#">3</a>
+                        <a href="#">4</a>
+                        <a href="#">5</a>
+                        <a href="#">6</a>
+                        <a href="#"><i class="ion-arrow-right-b"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-xs-12 col-sm-12">
+                <div class="sidebar">
+                    <h2 style="font-family: 'Dosis', sans-serif; color: whitesmoke; margin-bottom: 10px;">@media.Title</h2>
+                    <div class="ads">
+                        <img src="@media.ImagePath" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div></div>

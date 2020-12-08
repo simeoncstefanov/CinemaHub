@@ -63,13 +63,19 @@
                 urlMediaType = "tv";
             }
 
+            var apiId = "";
             // Get the id by searching the title in the api (too lazy to make another model so I use dynamic deserializing)
-
-            var apiId = (string)JObject.Parse(
+            try
+            {
+                apiId = (string)JObject.Parse(
                         await this.client.GetStringAsync(
-                            $"https://api.themoviedb.org/3/search/multi?api_key=238b937765146aa0e189640d869591e7&language=en-US&query={title}&page=1&include_adult=false"))
+                            $"https://api.themoviedb.org/3/search/{urlMediaType}?api_key=238b937765146aa0e189640d869591e7&language=en-US&query={title}&page=1&include_adult=false"))
                     ["results"]?[0]["id"];
-
+            }
+            catch (Exception ex)
+            {
+                return new MediaDetailsInputModel();
+            }
 
             var mediaString = await this.client.GetStringAsync(
                                   $"https://api.themoviedb.org/3/{urlMediaType}/{apiId}?api_key=238b937765146aa0e189640d869591e7&language=en-US&append_to_response=keywords");
@@ -77,10 +83,14 @@
             var inputModel = this.mapper.Map<MediaDetailsInputModel>(mediaJson);
 
             // Check to see if the movie already exists so we can edit it if it does
-            inputModel.Id = this.mediaRepository.AllAsNoTracking().FirstOrDefault(x => x.Title == title).Id;
+            var mediaDb = this.mediaRepository.AllAsNoTracking().FirstOrDefault(x => x.Title == title);
+            if (mediaDb != null)
+            {
+                inputModel.Id = mediaDb.Id;
+            }
             // TODO ADD BACKDROP
 
-            // IF the keyword doesn't exist make it 0 so the Media Service knows it does not exist 
+            // IF the keyword doesn't exist make its id 0 so the Media Service knows it does not exist 
             var keywordList = new List<KeywordViewModel>();
             foreach (var keyword in mediaJson.KeywordsListApi.KeywordsList)
             {

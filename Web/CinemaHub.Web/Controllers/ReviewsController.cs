@@ -9,6 +9,9 @@
     using CinemaHub.Data.Models;
     using CinemaHub.Services;
     using CinemaHub.Services.Data;
+    using CinemaHub.Web.Filters.Action;
+    using CinemaHub.Web.Filters.Action.InputModelTransfer;
+    using CinemaHub.Web.Filters.Action.ModelStateTransfer;
     using CinemaHub.Web.ViewModels.Media;
     using CinemaHub.Web.ViewModels.Reviews;
 
@@ -16,6 +19,8 @@
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
+
+    using Newtonsoft.Json;
 
     public class ReviewsController : BaseController
     {
@@ -33,9 +38,13 @@
         }
 
         [Authorize]
+        [ImportInputModel(ClassName = nameof(ReviewInputModel))]
+        [ImportModelState]
         public async Task<IActionResult> Add(string mediaId)
         {
             var userId = await this.userManager.GetUserAsync(this.User);
+
+            // Check if media exists
             var media = await this.mediaService.GetDetailsAsync<MediaPathViewModel>(mediaId);
 
             if (media == null)
@@ -44,17 +53,21 @@
             }
 
             int currentUserRating = await this.reviewService.GetRatingForMedia(userId.Id, mediaId);
-            return this.View(new ReviewInputModel() { MediaId = mediaId, CurrentUserRating = currentUserRating});
+
+            return this.View(new ReviewInputModel() { MediaId = mediaId, CurrentUserRating = currentUserRating });
         }
 
+        [Authorize]
         [HttpPost]
+        [ExportInputModel]
+        [ExportModelState]
         public async Task<IActionResult> Add(ReviewInputModel inputModel)
         {
             var userId = await this.userManager.GetUserAsync(this.User);
 
             if (!this.ModelState.IsValid)
             {
-                return this.View(inputModel);
+                return this.RedirectToAction("Add", "Reviews", new { mediaId = inputModel.MediaId });
             }
 
             try
@@ -64,7 +77,7 @@
             catch (Exception e)
             {
                 this.ModelState.AddModelError(string.Empty, e.Message);
-                return this.View(inputModel);
+                return this.RedirectToAction("Add", "Reviews", new { mediaId = inputModel.MediaId });
             }
 
             var media = await this.mediaService.GetDetailsAsync<MediaPathViewModel>(inputModel.MediaId);

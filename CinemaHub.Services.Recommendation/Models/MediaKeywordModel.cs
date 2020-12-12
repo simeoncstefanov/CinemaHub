@@ -1,15 +1,14 @@
 ﻿namespace CinemaHub.Services.Recommendation.Models
 {
+    using Microsoft.ML.Data;
+
     public class MediaKeywordModel
     {
-        public float mediaId;
+        public string UserId { get; set; }
 
-        public float userId;
+        public string Keywords { get; set; }
 
-        public string keywords;
-
-        public string genres;
-
-        public float score;
+        public bool IsLiked { get; set; }
     }
 }
+  

@@ -17,7 +17,9 @@
 
         Task<IEnumerable<T>> GetUserWatchListAsync<T>(string userId, int page, WatchType watchType);
 
-        Task ChangeAvatarAsync(string userId, IFormFile image);
+        Task ChangeAvatarAsync(IFormFile image, string rootPath, string userId);
+
+        Task<string> GetAvatarPath(string userId);
 
         Task<string> GetWatchtypeUserAsync(string userId, string mediaId);
     }

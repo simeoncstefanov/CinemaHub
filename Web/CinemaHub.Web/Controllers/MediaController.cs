@@ -50,13 +50,13 @@
         }
 
         // both controllers get the searched media with ajax
-        [Route("/[controller]/[action]/")]
+        [Route("/[controller]/[action]")]
         public async Task<IActionResult> Movies()
         {
             return this.View(new MediaGridViewModel() { MediaType = "Movie" });
         }
 
-        [Route("/[controller]/[action]/")]
+        [Route("/[controller]/[action]")]
         public async Task<IActionResult> Shows()
         {
             return this.View(new MediaGridViewModel() { MediaType = "Show" });
@@ -175,7 +175,7 @@
                 return this.RedirectToAction("Edit", "Media", new { id = edit.Id });
             }
 
-            return this.Redirect("/");
+            return this.Redirect($"/Media/{edit.MediaType}s/{edit.Id}");
         }
     }
 }

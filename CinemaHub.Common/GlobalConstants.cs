@@ -8,6 +8,8 @@
 
         public const string AdministratorRoleName = "Administrator";
 
+        public const string DefaultAvatarImagePath = "\\images\\template\\uploads\\user-img.png";
+
         public static readonly Dictionary<string, List<byte[]>> ImageFileSignatures = new Dictionary<string, List<byte[]>>
                                                                                      {
                                                                                          {

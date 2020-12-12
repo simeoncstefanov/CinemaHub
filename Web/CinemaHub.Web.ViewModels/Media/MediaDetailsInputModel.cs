@@ -16,7 +16,7 @@
 
     using Newtonsoft.Json;
 
-    public class MediaDetailsInputModel : IMapFrom<Media>, IHaveCustomMappings
+    public class MediaDetailsInputModel : IMapFrom<Media>, IMapTo<Media>, IHaveCustomMappings
     {
         public string Id { get; set; }
 
@@ -35,11 +35,9 @@
 
         public string ReleaseDateString => this.ReleaseDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-        [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Runtime should be more than 0")]
         public int Runtime { get; set; }
 
-        [Required]
         public int Budget { get; set; }
 
         public string YoutubeTrailerUrl { get; set; }

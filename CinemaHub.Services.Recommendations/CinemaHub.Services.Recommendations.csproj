@@ -5,13 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.ML" Version="1.5.2" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\CinemaHub.Common\CinemaHub.Common.csproj" />
     <ProjectReference Include="..\Data\CinemaHub.Data.Common\CinemaHub.Data.Common.csproj" />
+    <ProjectReference Include="..\Data\CinemaHub.Data.Models\CinemaHub.Data.Models.csproj" />
     <ProjectReference Include="..\Data\CinemaHub.Data\CinemaHub.Data.csproj" />
   </ItemGroup>
 

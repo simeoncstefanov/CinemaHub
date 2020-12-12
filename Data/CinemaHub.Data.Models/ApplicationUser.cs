@@ -16,6 +16,11 @@
         this.Roles = new HashSet<IdentityUserRole<string>>();
         this.Claims = new HashSet<IdentityUserClaim<string>>();
         this.Logins = new HashSet<IdentityUserLogin<string>>();
+        this.Watchlist = new HashSet<MediaWatcher>();
+        this.Discussions = new HashSet<Discussion>();
+        this.Comments = new HashSet<Comment>();
+        this.Reviews = new HashSet<Review>();
+        this.Ratings = new HashSet<Rating>();
     }
 
     // Audit info
@@ -27,9 +32,6 @@
     public bool IsDeleted { get; set; }
 
     public DateTime? DeletedOn { get; set; }
-
-    [ForeignKey(nameof(AvatarImage))]
-    public string AvatarImageId { get; set; }
 
     public AvatarImage AvatarImage { get; set; }
 
@@ -46,5 +48,7 @@
     public virtual ICollection<Comment> Comments { get; set; }
 
     public virtual ICollection<Review> Reviews { get; set; }
+
+    public virtual ICollection<Rating> Ratings { get; set; }
 }
 }

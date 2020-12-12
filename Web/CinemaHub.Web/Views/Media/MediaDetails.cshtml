@@ -64,8 +64,10 @@
             font-weight: bold;
             text-decoration: underline;
         }
-            
 
+        #cookieConsent {
+            position: absolute;
+        }
     </style>
 }
 <div class="page-single movie-single movie_single">
@@ -136,11 +138,13 @@
                                             <!-- movie user review -->
                                         </div>
                                         <div class="col-md-4 col-xs-12 col-sm-12">
-                                            <div class="sb-it">
-                                                <h6>Stars: </h6>
-                                                <p>ADD CELEBRITIES IN DB!!!</p>
-                                            </div>
-                                            <div class="sb-it">
+                                            @if(this.SignInManager.IsSignedIn(this.User))
+                                                {
+                                                <div class="sb-it">
+                                                <a class="signoutbtn" style="margin-left: 15px" asp-controller="Media" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+                                                </div>
+                                                }
+                                                <div class="sb-it">
                                                 <h6>Genres:</h6>
                                                 <p>
                                                     @foreach (var genre in Model.GenresList)

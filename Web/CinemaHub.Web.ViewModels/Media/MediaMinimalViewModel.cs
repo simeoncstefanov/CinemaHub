@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+
     using AutoMapper;
     using CinemaHub.Data.Models;
     using CinemaHub.Data.Models.Enums;
@@ -11,6 +12,8 @@
 
     public class MediaMinimalViewModel : IMapFrom<Media>, IHaveCustomMappings
     {
+        public string Id { get; set; }
+
         public string Title { get; set; }
 
         public string ImagePath { get; set; }

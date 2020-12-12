@@ -24,9 +24,10 @@
         public void CreateMappings(IProfileExpression configuration)
         {
             configuration.CreateMap<Review, ReviewViewModel>()
-                .ForMember(x => x.Creator, opt => opt.MapFrom(x => x.Rating.Creator.UserName)).ForMember(
-                    x => x.Rating,
-                    opt => opt.MapFrom(x => x.Rating.Score));
+                .ForMember(x => x.Creator, opt => opt.MapFrom(x => x.Rating.Creator.UserName))
+                .ForMember(x => x.Rating, opt => opt.MapFrom(x => x.Rating.Score)).ForMember(
+                    x => x.AvatarImage,
+                    opt => opt.MapFrom(x => x.Creator.AvatarImage.Path));
         }
     }
 }

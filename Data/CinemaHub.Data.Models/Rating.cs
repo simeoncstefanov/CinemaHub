@@ -19,6 +19,8 @@
         [Range(1, 10)]
         public byte Score { get; set; }
 
+        // public bool IsTrained { get; set; } = false; // Is it added to the recommendation model.
+
         [ForeignKey(nameof(Media))]
         public string MediaId { get; set; }
 

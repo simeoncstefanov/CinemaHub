@@ -95,3 +95,7 @@ button {
 .dropdown-options:hover .dropdown-content {
     display: block;
 }
+
+.avatar-image {
+    border-radius: 50%;
+}

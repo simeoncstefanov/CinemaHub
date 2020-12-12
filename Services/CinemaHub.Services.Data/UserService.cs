@@ -9,20 +9,27 @@
     using System.Text;
     using System.Threading.Tasks;
 
+    using CinemaHub.Common;
     using CinemaHub.Data.Common.Repositories;
     using CinemaHub.Data.Models;
     using CinemaHub.Services.Mapping;
 
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Migrations;
 
     public class UserService : IUserService
     {
         private const int MediaPerPage = 20;
         private readonly IRepository<MediaWatcher> watchRepository;
+        private readonly IRepository<AvatarImage> avatarRepo;
 
-        public UserService(IRepository<MediaWatcher> watchRepository)
+        public UserService(
+            IRepository<MediaWatcher> watchRepository, 
+            IRepository<AvatarImage> avatarImageRepo,
+            IRepository<ApplicationUser> userRepo)
         {
             this.watchRepository = watchRepository;
+            this.avatarRepo = avatarImageRepo;
         }
 
         public async Task AddToUserWatchlistAsync(string userId, string mediaId, WatchType watchType)
@@ -45,9 +52,21 @@
             await this.watchRepository.SaveChangesAsync();
         }
 
-        public Task ChangeAvatarAsync(string userId, IFormFile image)
+        public async Task ChangeAvatarAsync(IFormFile image, string rootPath, string userId)
         {
-            throw new NotImplementedException();
+            var avatarImage = await this.avatarRepo.All().FirstOrDefaultAsync(x => x.UserId == userId);
+
+            var avatarPath = "\\images\\avatars\\";
+            var path = rootPath + avatarPath;
+
+            var name = "avatar-" + avatarImage.UserId;
+            var imageExtension = await FileDownloader.DownloadImage(image, path, name);
+
+            avatarImage.Path = avatarPath + $"{name}.{imageExtension}";
+            avatarImage.Extension = imageExtension;
+
+            this.avatarRepo.Update(avatarImage);
+            await this.avatarRepo.SaveChangesAsync();
         }
 
         public async Task DeleteWatchlistAsync(string userId, string mediaId)
@@ -62,6 +81,18 @@
 
             this.watchRepository.Delete(watcher);
             await this.watchRepository.SaveChangesAsync();
+        }
+
+        public async Task<string> GetAvatarPath(string userId)
+        {
+            var avatarImage = await this.avatarRepo.AllAsNoTracking().FirstOrDefaultAsync(x => x.UserId == userId);
+
+            if (avatarImage != null)
+            {
+                return avatarImage.Path;
+            }
+
+            return GlobalConstants.DefaultAvatarImagePath;
         }
 
         public async Task<IEnumerable<T>> GetUserWatchListAsync<T>(string userId, int page, WatchType watchType)

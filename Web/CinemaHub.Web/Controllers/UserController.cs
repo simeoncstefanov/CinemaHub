@@ -1,16 +1,21 @@
 ﻿namespace CinemaHub.Web.Controllers
 {
-    using Microsoft.AspNetCore.Mvc;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
 
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+
     public class UserController : BaseController
     {
-        public IActionResult Index()
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Index(IFormFile imageFile)
         {
-            return View();
+            return this.BadRequest();
         }
     }
 }

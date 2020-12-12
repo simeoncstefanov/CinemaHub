@@ -18,5 +18,7 @@
         Task EditDetailsAsync(MediaDetailsInputModel mediaDetails, string userId, string rootPath);
 
         string IsMediaDetailsFullAsync(string id);
+
+        Task<IEnumerable<T>> GetMediaBatch<T>(IEnumerable<string> mediaIds);
     }
 }

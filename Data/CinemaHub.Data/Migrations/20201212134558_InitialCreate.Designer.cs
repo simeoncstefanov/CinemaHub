@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CinemaHub.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201207223651_InitialCreate")]
+    [Migration("20201212134558_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -70,9 +70,6 @@ namespace CinemaHub.Data.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("AvatarImageId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -131,8 +128,6 @@ namespace CinemaHub.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AvatarImageId");
-
                     b.HasIndex("IsDeleted");
 
                     b.HasIndex("NormalizedEmail")
@@ -172,14 +167,15 @@ namespace CinemaHub.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("IsDeleted");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("AvatarImages");
                 });
@@ -787,20 +783,11 @@ namespace CinemaHub.Data.Migrations
                     b.HasDiscriminator().HasValue("Show");
                 });
 
-            modelBuilder.Entity("CinemaHub.Data.Models.ApplicationUser", b =>
-                {
-                    b.HasOne("CinemaHub.Data.Models.AvatarImage", "AvatarImage")
-                        .WithMany()
-                        .HasForeignKey("AvatarImageId");
-                });
-
             modelBuilder.Entity("CinemaHub.Data.Models.AvatarImage", b =>
                 {
                     b.HasOne("CinemaHub.Data.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .WithOne("AvatarImage")
+                        .HasForeignKey("CinemaHub.Data.Models.AvatarImage", "UserId");
                 });
 
             modelBuilder.Entity("CinemaHub.Data.Models.Comment", b =>
@@ -903,7 +890,7 @@ namespace CinemaHub.Data.Migrations
             modelBuilder.Entity("CinemaHub.Data.Models.Rating", b =>
                 {
                     b.HasOne("CinemaHub.Data.Models.ApplicationUser", "Creator")
-                        .WithMany()
+                        .WithMany("Ratings")
                         .HasForeignKey("CreatorId");
 
                     b.HasOne("CinemaHub.Data.Models.Media", "Media")

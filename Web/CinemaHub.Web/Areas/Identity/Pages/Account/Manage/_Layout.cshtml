@@ -1,4 +1,5 @@
 ﻿@using Microsoft.IdentityModel.Tokens
+@using CinemaHub.Web.ViewModels.Account
 @{
     if (ViewData.TryGetValue("ParentLayout", out var parentLayout))
     {
@@ -6,7 +7,7 @@
     }
     else
     {
-        Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+        Layout = "~/Areas/Identity/Pages/Account/Manage/_Layout.cshtml";
     }
 }
 
@@ -14,7 +15,7 @@
     <div class="container">
         <div class="row ipad-width2">
             <div class="col-md-3 col-sm-12 col-xs-12">
-                <partial name="_ManageNav" />
+                <partial name="_ManageNav" model="new AvatarUploadInputModel()" />
             </div>
             <div class="col-md-9 col-sm-12 col-xs-12" style="color: #abb7c4; font-family: 'Nunito', sans-serif;">
                 @RenderBody()

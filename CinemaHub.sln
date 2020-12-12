@@ -41,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CinemaHub.Web.ViewModels", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CinemaHub.Data.Tests", "Tests\CinemaHub.Data.Tests\CinemaHub.Data.Tests.csproj", "{4378A4A3-2B27-4A8D-8C27-CE4EEF22B537}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CinemaHub.Services.Recommendation", "CinemaHub.Services.Recommendation\CinemaHub.Services.Recommendation.csproj", "{6CD61702-E315-4EC6-AB10-224333A9A5AB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CinemaHub.Services.Recommendations", "CinemaHub.Services.Recommendations\CinemaHub.Services.Recommendations.csproj", "{D273FC1A-3030-4326-B76E-06F0121EE5D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -109,10 +109,10 @@ Global
 		{4378A4A3-2B27-4A8D-8C27-CE4EEF22B537}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4378A4A3-2B27-4A8D-8C27-CE4EEF22B537}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4378A4A3-2B27-4A8D-8C27-CE4EEF22B537}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6CD61702-E315-4EC6-AB10-224333A9A5AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6CD61702-E315-4EC6-AB10-224333A9A5AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6CD61702-E315-4EC6-AB10-224333A9A5AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6CD61702-E315-4EC6-AB10-224333A9A5AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D273FC1A-3030-4326-B76E-06F0121EE5D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D273FC1A-3030-4326-B76E-06F0121EE5D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D273FC1A-3030-4326-B76E-06F0121EE5D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D273FC1A-3030-4326-B76E-06F0121EE5D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -132,7 +132,7 @@ Global
 		{3EE06C6E-C8F3-418A-A309-8AC81976A074} = {7A731632-6714-44E2-A9E4-069EBA9E666C}
 		{13B7AACB-9C85-4409-8D4B-95A67D0DFFF7} = {E389DEB6-5F90-444B-A054-12A10D39C76F}
 		{4378A4A3-2B27-4A8D-8C27-CE4EEF22B537} = {7A731632-6714-44E2-A9E4-069EBA9E666C}
-		{6CD61702-E315-4EC6-AB10-224333A9A5AB} = {516E002B-9E6E-4456-B7F6-EAA353966DE6}
+		{D273FC1A-3030-4326-B76E-06F0121EE5D9} = {516E002B-9E6E-4456-B7F6-EAA353966DE6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {384484BE-4680-4529-9CC2-AD37BA4D12D1}

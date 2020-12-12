@@ -12,6 +12,7 @@
     using CinemaHub.Web.Filters.Action.ModelStateTransfer;
     using CinemaHub.Web.ViewModels.Account;
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
@@ -26,17 +27,20 @@
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly ILogger<AccountController> logger;
         private readonly IUserService userService;
+        private readonly IWebHostEnvironment webHostEnvironment;
 
         public AccountController(
             SignInManager<ApplicationUser> signInManager,
             ILogger<AccountController> logger,
             UserManager<ApplicationUser> userManager,
-            IUserService userService)
+            IUserService userService,
+            IWebHostEnvironment webHostEnvironment)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.logger = logger;
             this.userService = userService;
+            this.webHostEnvironment = webHostEnvironment;
         }
 
         [Route("/login")]
@@ -80,7 +84,25 @@
                 }
             }
 
-            return this.Redirect(this.Url.RouteUrl("login") + returnUrl);
+            return this.RedirectToAction("Login", "Account");
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> UploadImage(AvatarUploadInputModel inputModel)
+        {
+            var userId = this.userManager.GetUserId(this.User);
+
+            try
+            {
+                await this.userService.ChangeAvatarAsync(inputModel.Image, this.webHostEnvironment.WebRootPath, userId);
+            }
+            catch (Exception ex)
+            {
+                this.ModelState.AddModelError(string.Empty, ex.Message);
+            }
+
+            return this.Redirect("/Identity/Account/Manage");
         }
     }
 }

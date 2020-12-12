@@ -48,15 +48,14 @@
             this.mediaQuery = this.mediaRepository.All();
         }
 
-        public int ResultsFound { get; set; }
-
         public async Task<MediaResultDTO> GetPageAsync(MediaQueryDTO query)
         {
             int paginationCount = (query.Page - 1) * query.ElementsPerPage;
 
             this.mediaQuery = this.mediaQuery.Include(x => x.Ratings);
 
-            await this.ApplyQueryAsync(query);
+            this.ApplyQueryAsync(query);
+            var resultsFound = this.mediaQuery.Count();
 
             var medias = await this.mediaQuery.Skip(paginationCount).Take(query.ElementsPerPage).Select(
                              x => new MediaGridDTO()
@@ -74,7 +73,7 @@
 
             return new MediaResultDTO()
                        {
-                           ResultCount = this.ResultsFound,
+                           ResultCount = resultsFound,
                            Results = medias,
                            ResultsPerPage = query.ElementsPerPage,
                            CurrentPage = query.Page,
@@ -120,13 +119,13 @@
             }
 
             // if the media exists replace all its fields, if it does not set the fields
-            media.Title = inputModel.Title;
-            media.Overview = inputModel.Overview;
+            media.Title = inputModel.Title ?? media.Title;
+            media.Overview = inputModel.Overview ?? media.Overview;
             media.IsDetailFull = true;
             media.Budget = inputModel.Budget;
-            media.Language = inputModel.Language;
+            media.Language = inputModel.Language ?? media.Language;
             media.Runtime = inputModel.Runtime;
-            media.YoutubeTrailerUrl = inputModel.YoutubeTrailerUrl;
+            media.YoutubeTrailerUrl = inputModel.YoutubeTrailerUrl ?? media.YoutubeTrailerUrl;
             media.ReleaseDate = inputModel.ReleaseDate;
 
             var genres = inputModel.Genres.Split(new string[] { ", ", "&" }, StringSplitOptions.RemoveEmptyEntries)
@@ -245,6 +244,14 @@
             }
         }
 
+        public async Task<IEnumerable<T>> GetMediaBatch<T>(IEnumerable<string> mediaIds)
+        {
+            return await this.mediaRepository.AllAsNoTracking()
+                       .Where(x => mediaIds.Contains(x.Id))
+                       .To<T>()
+                       .ToListAsync();
+        }
+
         private async Task<MediaImage> DownloadPosterImage(IFormFile image, string rootPath, Media media)
         {
             Directory.CreateDirectory($"{rootPath}/images/posters/");
@@ -295,7 +302,7 @@
             return imageDb;
         }
 
-        private async Task ApplyQueryAsync(MediaQueryDTO query)
+        private void ApplyQueryAsync(MediaQueryDTO query)
         {
             if (query.MediaType == nameof(Movie))
             {
@@ -319,9 +326,7 @@
                 var genres = query.Genres.Split(", ");
 
                 this.mediaQuery =
-                    this.mediaQuery.Where(x =>
-                        x.Genres.Select(x => x.Genre.Name)
-                            .All(x => genres.Contains(x)));
+                    this.mediaQuery.Where(x => x.Genres.Select(x => x.Genre.Name).All(x => genres.Contains(x)));
             }
 
             if(!string.IsNullOrWhiteSpace(query.WatchType))
@@ -357,8 +362,6 @@
                     "date-desc" => this.mediaQuery.OrderByDescending(x => x.ReleaseDate),
                     _ => this.mediaQuery.OrderBy(x => x.Title),
                 };
-
-            this.ResultsFound = await this.mediaQuery.CountAsync();
         }
     }
 }

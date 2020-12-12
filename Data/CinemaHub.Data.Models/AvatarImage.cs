@@ -16,7 +16,6 @@
         [ForeignKey(nameof(User))]
         public string UserId { get; set; }
 
-        [Required]
         public ApplicationUser User { get; set; }
 
         [Required]

@@ -40,7 +40,7 @@ var populateReviews = function(data) {
 
         var html = `<div class="mv-user-review-item">
         <div class="user-infor">
-        <img src="images/uploads/userava1.jpg" alt="">
+        <img class="avatar-image" src="${review.avatarImage}" alt="">
         <div>
         <h3>${review.title}</h3>
         <div class="no-star">

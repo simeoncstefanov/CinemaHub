@@ -1,15 +1,20 @@
-﻿@inject SignInManager<ApplicationUser> SignInManager
+﻿@using CinemaHub.Services.Data
+@model CinemaHub.Web.ViewModels.Account.AvatarUploadInputModel;
+@inject SignInManager<ApplicationUser> SignInManager
+@inject IUserService userService;
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+    var userId = this.SignInManager.UserManager.GetUserId(this.User);
+    var userAvatarPath = await this.userService.GetAvatarPath(userId);
 }
 
 <div class="user-information" style="margin-top: -100px">
     <div class="user-img">
-        <a href="#"><img src="/images/template/uploads/user-img.png" alt=""><br></a>
+        <a href="#"><img class="avatar-image" style="width: 200px; height: 200px" src="@userAvatarPath" alt=""><br></a>
         <a href="#" class="redbtn upload-btn">Change avatar</a>
         <div style="display: none; width: 100%" class="overlay-upload">
-            <form method="post" asp-controller="Account" enctype="multipart/form-data">
-                <input style="width: 100%; margin-top: 50px" type="file" />
+            <form method="post" asp-controller="Account" asp-action="UploadImage" enctype="multipart/form-data">
+                <input asp-for="Image" style="width: 100%; margin-top: 50px" type="file" />
                 <input type="submit" id="Submit" />
             </form>
         </div>

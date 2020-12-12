@@ -54,7 +54,7 @@
 
                     if (!DateTime.TryParse(movie.ReleaseDate, out DateTime movieReleaseDate))
                     {
-                        dbMovie = null;
+                        continue;
                     }
                     else
                     {

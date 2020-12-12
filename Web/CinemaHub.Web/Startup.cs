@@ -16,6 +16,7 @@
     using CinemaHub.Services.Data.Models;
     using CinemaHub.Services.Mapping;
     using CinemaHub.Services.Messaging;
+    using CinemaHub.Services.Recommendations;
     using CinemaHub.Web.ViewModels;
     using CinemaHub.Web.ViewModels.Media;
     using Microsoft.AspNetCore.Builder;
@@ -68,6 +69,7 @@
                 {
                     options.HeaderName = "X-CSRF-TOKEN";
                 });
+
             services.AddRazorPages();
 
             services.AddSingleton(this.configuration);
@@ -86,6 +88,7 @@
             services.AddTransient<IReviewsService, ReviewsService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IDiscussionsService, DiscussionsService>();
+            services.AddTransient<IRecommendService, RecommendService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

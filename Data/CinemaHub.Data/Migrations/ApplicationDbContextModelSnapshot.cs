@@ -197,6 +197,7 @@ namespace CinemaHub.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DiscussionId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("IsDeleted")
@@ -256,6 +257,7 @@ namespace CinemaHub.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatorId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("DeletedOn")
@@ -268,6 +270,7 @@ namespace CinemaHub.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("MediaId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("ModifiedOn")
@@ -387,11 +390,11 @@ namespace CinemaHub.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("AdderId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int>("Budget")
                         .HasColumnType("int");
+
+                    b.Property<string>("CreatorId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Imdb")
                         .HasColumnType("int");
@@ -428,7 +431,7 @@ namespace CinemaHub.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AdderId");
+                    b.HasIndex("CreatorId");
 
                     b.ToTable("Media");
 
@@ -796,7 +799,9 @@ namespace CinemaHub.Data.Migrations
 
                     b.HasOne("CinemaHub.Data.Models.Discussion", "Discussion")
                         .WithMany("Comments")
-                        .HasForeignKey("DiscussionId");
+                        .HasForeignKey("DiscussionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CinemaHub.Data.Models.CommentVote", b =>
@@ -818,11 +823,15 @@ namespace CinemaHub.Data.Migrations
                 {
                     b.HasOne("CinemaHub.Data.Models.ApplicationUser", "Creator")
                         .WithMany("Discussions")
-                        .HasForeignKey("CreatorId");
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("CinemaHub.Data.Models.Media", "Media")
                         .WithMany("Discussions")
-                        .HasForeignKey("MediaId");
+                        .HasForeignKey("MediaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CinemaHub.Data.Models.Episode", b =>
@@ -834,9 +843,9 @@ namespace CinemaHub.Data.Migrations
 
             modelBuilder.Entity("CinemaHub.Data.Models.Media", b =>
                 {
-                    b.HasOne("CinemaHub.Data.Models.ApplicationUser", "Adder")
+                    b.HasOne("CinemaHub.Data.Models.ApplicationUser", "Creator")
                         .WithMany()
-                        .HasForeignKey("AdderId");
+                        .HasForeignKey("CreatorId");
                 });
 
             modelBuilder.Entity("CinemaHub.Data.Models.MediaGenre", b =>

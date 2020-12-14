@@ -37,6 +37,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\CinemaHub.Common\CinemaHub.Common.csproj" />
     <ProjectReference Include="..\..\CinemaHub.Services.Recommendations\CinemaHub.Services.Recommendations.csproj" />
+    <ProjectReference Include="..\..\Data\CinemaHub.Data.Common\CinemaHub.Data.Common.csproj" />
     <ProjectReference Include="..\..\Data\CinemaHub.Data.Models\CinemaHub.Data.Models.csproj" />
     <ProjectReference Include="..\..\Data\CinemaHub.Data\CinemaHub.Data.csproj" />
     <ProjectReference Include="..\..\Services\CinemaHub.Services.Data\CinemaHub.Services.Data.csproj" />
@@ -48,7 +49,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Administration\Controllers\" />
     <Folder Include="wwwroot\images\posters\" />
   </ItemGroup>
 </Project>

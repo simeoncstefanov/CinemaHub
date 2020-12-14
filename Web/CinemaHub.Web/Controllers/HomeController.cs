@@ -2,10 +2,13 @@
 {
     using System.Diagnostics;
 
+    using CinemaHub.Web.Filters.Action.ModelStateTransfer;
     using CinemaHub.Web.ViewModels;
 
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
+    [AllowAnonymous]
     public class HomeController : BaseController
     {
         [Route("/")]
@@ -24,6 +27,11 @@
         {
             return this.View(
                 new ErrorViewModel { RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier });
+        }
+
+        public IActionResult NotFound()
+        {
+            return this.View();
         }
     }
 }

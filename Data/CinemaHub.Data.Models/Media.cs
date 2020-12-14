@@ -7,10 +7,11 @@
     using System.Data;
     using System.Text;
 
+    using CinemaHub.Data.Common.Models;
     using CinemaHub.Data.Models.Enums;
     using Newtonsoft.Json;
 
-    public abstract class Media
+    public abstract class Media : ICreatedByEntity
     {
         public Media()
         {
@@ -50,10 +51,10 @@
         [Required]
         public bool IsDetailFull { get; set; }
 
-        [ForeignKey(nameof(Adder))]
-        public string AdderId { get; set; }
+        [ForeignKey(nameof(Creator))]
+        public string CreatorId { get; set; }
 
-        public ApplicationUser Adder { get; set; }
+        public ApplicationUser Creator { get; set; }
 
         public string YoutubeTrailerUrl { get; set; }
 

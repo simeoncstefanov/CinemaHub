@@ -5,9 +5,11 @@
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
+    using CinemaHub.Data.Common;
     using CinemaHub.Data.Common.Models;
 
-    public class Comment : BaseDeletableModel<string>
+
+    public class Comment : BaseDeletableModel<string>, ICreatedByEntity
     {
         public Comment()
         {

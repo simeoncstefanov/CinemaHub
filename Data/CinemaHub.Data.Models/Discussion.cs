@@ -9,7 +9,7 @@
     using CinemaHub.Data.Common.Models;
     using Microsoft.EntityFrameworkCore.Storage;
 
-    public class Discussion : BaseDeletableModel<string>
+    public class Discussion : BaseDeletableModel<string>, ICreatedByEntity
     {
         public Discussion()
         {
@@ -26,11 +26,13 @@
         [ForeignKey(nameof(Media))]
         public string MediaId { get; set; }
 
+        [Required]
         public virtual Media Media { get; set; }
 
         [ForeignKey(nameof(Creator))]
         public string CreatorId { get; set; }
 
+        [Required]
         public virtual ApplicationUser Creator { get; set; }
 
         public virtual ICollection<Comment> Comments { get; set; }

@@ -8,12 +8,16 @@
     using System.Text;
 
     using AutoMapper;
+
+    using CinemaHub.Data.Common.Models;
     using CinemaHub.Data.Models;
     using CinemaHub.Services.Mapping;
 
-    public class DiscussionViewModel : IMapFrom<Discussion>, IHaveCustomMappings
+    public class DiscussionViewModel : IMapFrom<Discussion>, IHaveCustomMappings, ICreatedByEntity
     {
         public string Id { get; set; }
+
+        public string MediaId { get; set; }
 
         public string Title { get; set; }
 

@@ -6,12 +6,18 @@
     using System.Text;
 
     using AutoMapper;
+
+    using CinemaHub.Data.Common.Models;
     using CinemaHub.Data.Models;
     using CinemaHub.Services.Mapping;
 
-    public class CommentViewModel : IMapFrom<Comment>, IHaveCustomMappings
+    public class CommentViewModel : IMapFrom<Comment>, IHaveCustomMappings, ICreatedByEntity
     {
+        public string Id { get; set; }
+
         public string CreatorId { get; set; }
+
+        public string DiscussionId { get; set; }
 
         public string Content { get; set; }
 
@@ -28,18 +34,10 @@
         public void CreateMappings(IProfileExpression configuration)
         {
             configuration.CreateMap<Comment, CommentViewModel>()
-                .ForMember(
-                    x => x.Username, 
-                    opt => opt.MapFrom(x => x.Creator.UserName))
-                .ForMember(
-                    x => x.Upvotes,
-                    opt => opt.MapFrom(x => x.CommentVotes.Where(x => x.IsUpvote).Count()))
-                .ForMember(
-                    x => x.Upvotes, 
-                    opt => opt.MapFrom(x => x.CommentVotes.Where(x => !x.IsUpvote).Count()))
-                .ForMember(
-                    x => x.AvatarImagePath, 
-                    opt => opt.MapFrom(x => x.Creator.AvatarImage.Path));
+                .ForMember(x => x.Username, opt => opt.MapFrom(x => x.Creator.UserName))
+                .ForMember(x => x.Upvotes, opt => opt.MapFrom(x => x.CommentVotes.Where(x => x.IsUpvote).Count()))
+                .ForMember(x => x.Upvotes, opt => opt.MapFrom(x => x.CommentVotes.Where(x => !x.IsUpvote).Count()))
+                .ForMember(x => x.AvatarImagePath, opt => opt.MapFrom(x => x.Creator.AvatarImage.Path));
         }
     }
 }

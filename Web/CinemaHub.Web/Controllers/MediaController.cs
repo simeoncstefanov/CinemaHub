@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-
+    using CinemaHub.Common;
     using CinemaHub.Data.Models;
     using CinemaHub.Services;
     using CinemaHub.Services.Data;
@@ -21,6 +21,7 @@
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.CodeAnalysis.Operations;
+    using Microsoft.Extensions.Logging.Abstractions;
 
     using Newtonsoft.Json;
 
@@ -50,93 +51,79 @@
         }
 
         // both controllers get the searched media with ajax
+        [AllowAnonymous]
         [Route("/[controller]/[action]")]
         public async Task<IActionResult> Movies()
         {
             return this.View(new MediaGridViewModel() { MediaType = "Movie" });
         }
 
+        [AllowAnonymous]
         [Route("/[controller]/[action]")]
         public async Task<IActionResult> Shows()
         {
             return this.View(new MediaGridViewModel() { MediaType = "Show" });
         }
 
+        [AllowAnonymous]
         [Route("/[controller]/[action]/{id}")]
         public async Task<IActionResult> Movies(string id)
         {
             var user = await this.userManager.GetUserAsync(this.User);
-            // Fills the details if the information is not full because of the weird api
-            var title = this.mediaService.IsMediaDetailsFullAsync(id);
-            if (title != null)
+            MediaDetailsViewModel viewModel = null;
+            try
             {
-                var apiInputModel = await this.apiService.GetDetailsFromApiAsync(title, "Movie", id);
-                await this.mediaService.EditDetailsAsync(apiInputModel, "", this.webHostEnvironment.WebRootPath);
-            }
+                viewModel = await this.AllMediaInfo(id, "Movie", user);
 
-            var viewModel = await this.mediaService.GetDetailsAsync<MediaDetailsViewModel>(id);
-            if (viewModel.MediaType != "Movie" || viewModel is null)
+                if (viewModel is null)
+                {
+                    return this.NotFound();
+                }
+
+            }
+            catch (Exception ex)
             {
-                // TODO: ADD ERROR VIEW;
                 return this.NotFound();
             }
 
-            var ratings = await this.reviewsService.GetRatingAverageCount(id);
-            viewModel.AverageRating = ratings.Item1;
-            viewModel.RatingCount = ratings.Item2;
-            if (user != null)
-            {
-                viewModel.CurrentUserRating = await this.reviewsService.GetRatingForMedia(user.Id, id);
-                viewModel.UserWatchType = await this.userService.GetWatchtypeUserAsync(user.Id, id);
-            }
-            viewModel.ReviewCount = await this.reviewsService.GetReviewCount(id);
             return this.View("MediaDetails", viewModel);
         }
 
+        [AllowAnonymous]
         [Route("/[controller]/[action]/{id}")]
         public async Task<IActionResult> Shows(string id)
         {
             var user = await this.userManager.GetUserAsync(this.User);
-
-            // Fills the details if the information is not full because of the weird api
-            var title = this.mediaService.IsMediaDetailsFullAsync(id);
-            if (title != null)
+            MediaDetailsViewModel viewModel = null;
+            try
             {
-                var apiInputModel = await this.apiService.GetDetailsFromApiAsync(title, "Show", id);
-                await this.mediaService.EditDetailsAsync(apiInputModel, "", this.webHostEnvironment.WebRootPath);
+                viewModel = await this.AllMediaInfo(id, "Show", user);
+
+                if (viewModel is null)
+                {
+                    return this.NotFound();
+                }
+
             }
-
-            var viewModel = await this.mediaService.GetDetailsAsync<MediaDetailsViewModel>(id);
-            if (viewModel.MediaType != "Show" || viewModel is null)
+            catch (Exception ex)
             {
-                // TODO: ADD ERROR VIEW;
                 return this.NotFound();
             }
 
-            var ratings = await this.reviewsService.GetRatingAverageCount(id);
-            viewModel.AverageRating = ratings.Item1;
-            viewModel.RatingCount = ratings.Item2;
-            if (user != null)
-            {
-                viewModel.CurrentUserRating = await this.reviewsService.GetRatingForMedia(user.Id, id);
-                viewModel.UserWatchType = await this.userService.GetWatchtypeUserAsync(user.Id, id);
-            }
-            viewModel.ReviewCount = await this.reviewsService.GetReviewCount(id);
             return this.View("MediaDetails", viewModel);
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> All(string query)
         {
             return this.View("Error");
         }
 
-        [Authorize]
         public async Task<IActionResult> Add()
         {
             return this.View(new MediaDetailsInputModel());
         }
 
-        [Authorize]
         [ImportModelState]
         [ImportInputModel(ClassName = nameof(MediaDetailsInputModel))]
         public async Task<IActionResult> Edit(string id)
@@ -176,6 +163,41 @@
             }
 
             return this.Redirect($"/Media/{edit.MediaType}s/{edit.Id}");
+        }
+
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
+        public async Task<IActionResult> CommitEdit(MediaDetailsInputModel edit)
+        {
+            return this.View();
+        }
+
+        private async Task<MediaDetailsViewModel> AllMediaInfo(string id, string mediaType, ApplicationUser user)
+        {
+            // Fills the details if the information is not full.
+            var title = this.mediaService.IsMediaDetailsFullAsync(id);
+            if (title != null)
+            {
+                var apiInputModel = await this.apiService.GetDetailsFromApiAsync(title, mediaType, id);
+                await this.mediaService.EditDetailsAsync(apiInputModel, "", this.webHostEnvironment.WebRootPath);
+            }
+
+            var viewModel = await this.mediaService.GetDetailsAsync<MediaDetailsViewModel>(id);
+            if (viewModel.MediaType != mediaType || viewModel is null)
+            {
+                return null;
+            }
+
+            var ratings = await this.reviewsService.GetRatingAverageCount(id);
+            viewModel.AverageRating = ratings.Item1;
+            viewModel.RatingCount = ratings.Item2;
+            if (user != null)
+            {
+                viewModel.CurrentUserRating = await this.reviewsService.GetRatingForMedia(user.Id, id);
+                viewModel.UserWatchType = await this.userService.GetWatchtypeUserAsync(user.Id, id);
+            }
+            viewModel.ReviewCount = await this.reviewsService.GetReviewCount(id);
+
+            return viewModel;
         }
     }
 }

@@ -7,7 +7,7 @@
 
     using CinemaHub.Data.Common.Models;
 
-    public class Review : BaseDeletableModel<string>
+    public class Review : BaseDeletableModel<string>, ICreatedByEntity
     {
         [Key]
         [ForeignKey(nameof(Rating))]

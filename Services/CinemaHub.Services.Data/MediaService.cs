@@ -325,8 +325,13 @@
             {
                 var genres = query.Genres.Split(", ");
 
-                this.mediaQuery =
-                    this.mediaQuery.Where(x => x.Genres.Select(x => x.Genre.Name).All(x => genres.Contains(x)));
+                foreach(string genre in genres)
+                {
+                    this.mediaQuery = this.mediaQuery.Where(x => x.Genres.Select(x => x.Genre.Name).Contains(genre));
+                }
+
+                var test = this.mediaQuery.ToList();
+                ;
             }
 
             if(!string.IsNullOrWhiteSpace(query.WatchType))

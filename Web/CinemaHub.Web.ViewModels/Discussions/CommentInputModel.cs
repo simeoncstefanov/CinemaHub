@@ -6,5 +6,8 @@
     {
         [Required]
         public string Content { get; set; }
+
+        [Required]
+        public string DiscussionId { get; set; }
     }
 }

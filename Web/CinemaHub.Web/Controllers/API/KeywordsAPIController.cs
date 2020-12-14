@@ -7,6 +7,8 @@
 
     using CinemaHub.Services.Data;
     using CinemaHub.Services.Data.Models;
+
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +23,7 @@
             this.keywordService = keywordService;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IEnumerable<KeywordDTO>> Get(string query, int results)
         {

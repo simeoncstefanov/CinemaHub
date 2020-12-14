@@ -8,7 +8,7 @@
 
     using CinemaHub.Data.Common.Models;
 
-    public class Rating : BaseModel<string>
+    public class Rating : BaseModel<string>, ICreatedByEntity
     {
         public Rating()
         {

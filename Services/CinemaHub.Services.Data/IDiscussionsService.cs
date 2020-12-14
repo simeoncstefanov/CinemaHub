@@ -22,10 +22,6 @@
 
         Task DeleteComment(string commentId);
 
-        Task<bool> IsCommentUser(string commentId, string userId);
-
-        Task<bool> IsDiscussionUser(string discussionId, string userId);
-
         Task DeleteDiscussion(string discussionId);
 
         Task<int> GetTotalDiscussions(string mediaId);
@@ -35,5 +31,9 @@
         Task<string> GetDiscussionTitle(string discussionId);
 
         Task<string> GetDiscussionMedia(string discussionId);
+
+        Task<T> GetDiscussionInfo<T>(string discussionId);
+
+        Task<T> GetCommentInfo<T>(string commentId);
     }
 }

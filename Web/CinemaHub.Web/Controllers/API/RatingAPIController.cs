@@ -23,6 +23,7 @@
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IEnumerable<ReviewViewModel>> GetReviews(string mediaId, int page, string sortType)
         {
             var reviews = await this.reviewService.GetReviews<ReviewViewModel>(mediaId, page, sortType);
@@ -31,7 +32,6 @@
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<ActionResult<RatingResponseModel>> Post(RatingInputModel input)
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;

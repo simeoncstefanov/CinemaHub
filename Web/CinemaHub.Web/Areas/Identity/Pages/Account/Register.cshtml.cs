@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using CinemaHub.Data.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
@@ -21,6 +20,7 @@ namespace CinemaHub.Web.Areas.Identity.Pages.Account
 
     using CinemaHub.Common;
     using CinemaHub.Services.Data;
+    using CinemaHub.Services.Messaging;
 
     [AllowAnonymous]
     public class RegisterModel : PageModel
@@ -29,20 +29,17 @@ namespace CinemaHub.Web.Areas.Identity.Pages.Account
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-        private readonly IUserService _userService;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender,
-            IUserService userService)
+            IEmailSender emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
-            this._userService = userService;
         }
 
         [BindProperty]
@@ -111,8 +108,13 @@ namespace CinemaHub.Web.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = user.Id, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    await _emailSender.SendEmailAsync(
+                        "cinemahub@sianabee.com",
+                        "CinemaHub",
+                        Input.Email,
+                        "Activate your CinemaHub account",
+                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.",
+                        new List<EmailAttachment>());
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {

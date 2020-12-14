@@ -25,7 +25,7 @@
         {
             this.userService = userService;
         }
-
+        
         public async Task<ActionResult> GetUserMediaWatchlist(string mediaId)
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -33,7 +33,6 @@
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<ActionResult<WatchlistViewModel>> AddToWatchlist(string mediaId, string watchType, bool delete = false)
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;

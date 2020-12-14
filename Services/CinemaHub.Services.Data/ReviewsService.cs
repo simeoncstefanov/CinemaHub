@@ -18,7 +18,7 @@
 
     public class ReviewsService : IReviewsService
     {
-        private const int DefaultReviewsPerPage = 20;
+        private const int DefaultReviewsPerPage = 5;
         private readonly IRepository<Review> reviewRepository;
         private readonly IRepository<Rating> ratingRepository;
         private readonly IRepository<Media> mediaRepository;

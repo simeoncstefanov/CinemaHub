@@ -91,6 +91,11 @@
 
             builder.Entity<Review>().HasKey(x => x.RatingId);
 
+            builder.Entity<Comment>().HasOne(x => x.Discussion).WithMany(x => x.Comments).OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+            builder.Entity<Discussion>().HasMany(x => x.Comments).WithOne(x => x.Discussion);
+
+
             // Set global query filter for not deleted entities only
             var deletableEntityTypes = entityTypes
                 .Where(et => et.ClrType != null && typeof(IDeletableEntity).IsAssignableFrom(et.ClrType));

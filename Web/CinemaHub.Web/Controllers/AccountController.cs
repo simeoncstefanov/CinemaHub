@@ -43,15 +43,17 @@
             this.webHostEnvironment = webHostEnvironment;
         }
 
+        [AllowAnonymous]
         [Route("/login")]
         [HttpGet]
-        [ImportModelState] // POST-REDIRECT-GET Pattern - importing the errors from the Post Login action.
+        [ImportModelState]
         public IActionResult Login(string returnUrl = null)
         {
             return this.View("~/Views/Home/Index.cshtml");
         }
 
         [Route("/login")]
+        [AllowAnonymous]
         [HttpPost]
         [ExportModelState]
         public async Task<IActionResult> Login(LoginInputModel model)
@@ -69,17 +71,18 @@
 
                 if (result.RequiresTwoFactor)
                 {
-                    return this.RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                    return this.RedirectToPage("Identity", "Account/LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 }
 
                 if (result.IsLockedOut)
                 {
                     this.logger.LogWarning("User account locked out.");
-                    return this.RedirectToPage("./Lockout");
+                    return this.Redirect("/Identity/Account/Lockout");
                 }
                 else
                 {
                     this.ModelState.AddModelError("InvalidLogin", "Invalid login attempt.");
+                    this.ModelState.Remove("RememberMe");
                     return this.RedirectToAction("Login", "Account");
                 }
             }
@@ -87,7 +90,6 @@
             return this.RedirectToAction("Login", "Account");
         }
 
-        [Authorize]
         [HttpPost]
         public async Task<IActionResult> UploadImage(AvatarUploadInputModel inputModel)
         {

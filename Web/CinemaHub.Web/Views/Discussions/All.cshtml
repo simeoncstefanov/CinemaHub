@@ -1,6 +1,9 @@
 ﻿@using CinemaHub.Web.ViewModels.Media
+@using Microsoft.AspNetCore.Authorization
+@using CinemaHub.Web.Authorization
 @model CinemaHub.Web.ViewModels.Discussions.DiscussionPageViewModel;
 @inject CinemaHub.Services.Data.IMediaService mediaService;
+@inject IAuthorizationService authorizationService;
 @{
     var media = await mediaService.GetDetailsAsync<MediaMinimalViewModel>(Model.MediaId);
     ViewData["Title"] = $"Discussions - {media.Title}";
@@ -13,10 +16,19 @@
                 @foreach (var discussion in Model.Discussions)
                 {
                 <div class="blog-item-style-1 blog-item-style-3">
-                    <img src="@discussion.AvatarImagePath" alt="">
+                    <img style="width: 150px; height: 150px;" src="@discussion.AvatarImagePath" alt="">
                     <div class="blog-it-infor">
                         <h3><a asp-controller="Discussions" asp-action="@discussion.Id">@discussion.Title</a></h3>
                         <span class="time">Created On: @discussion.CreatedOn.ToString("d") | Last Reply: @discussion.LastReply.ToString("D") | Is Open: @(!(discussion.isLocked)) | Replies: @discussion.CommentCount</span>
+                        @if ((await this.authorizationService.AuthorizeAsync(
+                            User, discussion,
+                            AuthorizedOperations.Delete)).Succeeded)
+                        {
+                            <form asp-controller="Discussions" asp-action="DeleteDiscussion" method="post" enctype="multipart/form-data">
+                                <input name="discussionId" type="hidden" value="@discussion.Id"/>
+                                <input type="submit" value="Delete" class="redbtn" style="background-color: red; margin-top: 15px;"/>
+                            </form>
+                        }
                     </div>
                 </div>
                 }
@@ -43,7 +55,7 @@
                         }
                     }
                 }
-                @if (Model.CurrentPage != Model.TotalPages)
+                @if (Model.CurrentPage != Model.TotalPages && Model.TotalPages > 1)
                 {
                     <li><a asp-controller="Discussions" asp-action="All" asp-route-mediaId="@Model.MediaId" asp-route-page="@Model.TotalPages">@Model.TotalPages</a></li>
                 }

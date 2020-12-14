@@ -18,6 +18,8 @@
 
         public string DiscussionTitle { get; set; }
 
+        public string DiscussionId { get; set; }
+
         public IEnumerable<CommentViewModel> Comments { get; set; }
     }
 }

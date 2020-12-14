@@ -1,26 +1,27 @@
 ﻿@using CinemaHub.Web.ViewModels.Media
+@using Microsoft.AspNetCore.Authorization
+@using CinemaHub.Web.Authorization
 @model CinemaHub.Web.ViewModels.Discussions.CommentPageViewModel;
+@inject IAuthorizationService authorizationService; 
 @inject CinemaHub.Services.Data.IMediaService mediaService;
 @{
     this.ViewData["Title"] = "Comments";
     var media = await this.mediaService.GetDetailsAsync<MediaMinimalViewModel>(Model.MediaId);
 }
 
-<style>
-    .fa fa-chevron-circle-up {
-
-    }
-
-    </style>
 <div class="page-single">
     <div class="container">
         <div class="row ipad-width2">
             <div class="col-md-9 col-sm-12 col-xs-12">
-                <div class="row">
-                    <div class="commentarea">
-                        <i class="fa fa-chevron-circle-up" style="position: absolute; top: 0; right: 3px; font-size: 25px;"></i>
-                        <textarea style="max-width: 1000px; height: 100%; width: 100%; margin-bottom: 15px;" rows="10"></textarea>
-                    </div>
+                <div style="margin-bottom: 20px;"class="row">
+                    <form asp-controller="Discussions" asp-action="CreateComment" method="post" enctype="multipart/form-data">
+                        <div class="commentarea">
+                            <i class="fa fa-chevron-circle-up" style="position: absolute; top: 0; right: 3px; font-size: 25px;"></i>
+                            <textarea name="Content" style="max-width: 1000px; height: 100%; width: 100%; margin-bottom: 15px;" rows="10"></textarea>
+                            <input name="DiscussionId" type="hidden" value="@Model.DiscussionId"/>
+                            <input type="submit" class="redbtn"></input>
+                        </div>
+                    </form>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
@@ -34,7 +35,7 @@
                     {
                         <div class="col-md-12">
                             <div class="ceb-item-style-2">
-                                <img src="@comment.AvatarImagePath" alt="">
+                                <img style="width: 100px; height: 100px; border-radius: 50%;" src="@comment.AvatarImagePath" alt="">
                                 <div class="ceb-infor">
                                     <h2><a href="celebritysingle.html">@comment.Username</a></h2>
                                     <span>@comment.CreatedOn.ToString("D")</span>
@@ -45,6 +46,16 @@
                                     <i class="fa fa-chevron-circle-up" style="position: absolute; top: 0; right: 3px; font-size: 25px;"></i>
                                     <p style="position: absolute; top: 21px; right: 6px;">10</p>
                                     <i class="fa fa-chevron-circle-down" style="position: absolute; top: 40px; right: 3px; font-size: 25px;"></i>
+                                    
+                                    @if ((await this.authorizationService.AuthorizeAsync(
+                                        this.User, comment,
+                                        AuthorizedOperations.Delete)).Succeeded)
+                                    {
+                                        <form style="position: absolute; right: 100px" asp-controller="Discussions" asp-action="DeleteComment" method="post" enctype="multipart/form-data">
+                                            <input name="commentId" type="hidden" value="@comment.Id"/>
+                                            <input type="submit" value="Delete" class="redbtn" style="background-color: red; margin-top: 15px;"/>
+                                        </form>
+                                    }
                                 </div>
                             </div>
                         </div>}

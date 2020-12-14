@@ -17,11 +17,12 @@
                 .Select(kvp => new ModelStateDto()
                                    {
                                        Key = kvp.Key,
-                                       AttemptedValue = kvp.Value.AttemptedValue,
+                                       AttemptedValue = kvp.Value.AttemptedValue == "true, false" ? "true" : kvp.Value.AttemptedValue, // weird checkbox behavior - returns true,false instead of true and can't be deserialized
                                        RawValue = kvp.Value.RawValue,
                                        ErrorMessages = kvp.Value.Errors.Select(err => err.ErrorMessage).ToList(),
                                    });
 
+                
             return JsonConvert.SerializeObject(errorList);
         }
 

@@ -80,16 +80,14 @@
                                 TV Shows
                             </a>
                         </li>
-                        <li class="dropdown first">
-                            <a class="btn btn-default lv1">
-                                News
-                            </a>
-                        </li>
-                        <li class="first">
-                            <a asp-controller="Home" asp-action="About" class="btn btn-default lv1">
-                                About
-                            </a>
-                        </li>
+                        @if (this.SignInManager.IsSignedIn(this.User))
+                        {
+                            <li class="first">
+                                <a asp-controller="Recommendations" asp-action="Index" asp-route-id="" class="btn btn-default lv1">
+                                    Recommendations
+                                </a>
+                            </li>
+                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>

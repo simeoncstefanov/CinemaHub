@@ -11,11 +11,5 @@
 
     public class UserController : BaseController
     {
-        [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> Index(IFormFile imageFile)
-        {
-            return this.BadRequest();
-        }
     }
 }

@@ -18,14 +18,14 @@
 
     public class DiscussionsService : IDiscussionsService
     {
-        private IRepository<Discussion> discussionRepo;
-        private IRepository<Comment> commentRepo;
+        private IDeletableEntityRepository<Discussion> discussionRepo;
+        private IDeletableEntityRepository<Comment> commentRepo;
         private IRepository<CommentVote> voteRepo;
         private IRepository<Media> mediaRepo;
 
         public DiscussionsService(
-            IRepository<Discussion> discussionRepo,
-            IRepository<Comment> commentRepo,
+            IDeletableEntityRepository<Discussion> discussionRepo,
+            IDeletableEntityRepository<Comment> commentRepo,
             IRepository<CommentVote> voteRepo,
             IRepository<Media> mediaRepo)
         {
@@ -74,12 +74,12 @@
         {
             var comment = await this.commentRepo.All().FirstOrDefaultAsync(x => x.Id == commentId);
             this.commentRepo.Delete(comment);
-            await this.discussionRepo.SaveChangesAsync();
+            await this.commentRepo.SaveChangesAsync();
         }
 
         public async Task DeleteDiscussion(string discussionId)
         {
-            var discussion = await this.discussionRepo.All().FirstOrDefaultAsync(x => x.Id == discussionId);
+            var discussion = await this.discussionRepo.All().Include(x => x.Comments).FirstOrDefaultAsync(x => x.Id == discussionId);
             this.discussionRepo.Delete(discussion);
             await this.discussionRepo.SaveChangesAsync();
         }
@@ -115,14 +115,24 @@
             return discussions;
         }
 
-        public Task<bool> IsCommentUser(string commentId, string userId)
+        public async Task<T> GetDiscussionInfo<T>(string discussionId)
         {
-            throw new NotImplementedException();
+            var discussion = await this.discussionRepo.AllAsNoTracking()
+                              .Where(x => x.Id == discussionId)
+                              .To<T>()
+                              .FirstOrDefaultAsync();
+
+            return discussion;
         }
 
-        public Task<bool> IsDiscussionUser(string discussionId, string userId)
+        public async Task<T> GetCommentInfo<T>(string commentId)
         {
-            throw new NotImplementedException();
+            var comment = await this.commentRepo.AllAsNoTracking()
+                              .Where(x => x.Id == commentId)
+                              .To<T>()
+                              .FirstOrDefaultAsync();
+
+            return comment;
         }
 
         public async Task<IEnumerable<T>> GetComments<T>(string discussionId, int page, int count)

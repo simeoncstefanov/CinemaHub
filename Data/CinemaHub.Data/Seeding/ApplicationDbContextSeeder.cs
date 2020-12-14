@@ -31,6 +31,7 @@
                               new KeywordsSeeder(),
                               new MoviesSeeder(rootPath),
                               new ShowsSeeder(rootPath),
+                              new UserSeeder(),
                           };
 
             foreach (var seeder in seeders)

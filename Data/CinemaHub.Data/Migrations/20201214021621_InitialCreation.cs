@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CinemaHub.Data.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class InitialCreation : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -231,7 +231,7 @@ namespace CinemaHub.Data.Migrations
                     Imdb = table.Column<int>(nullable: false),
                     MovieApiId = table.Column<int>(nullable: false),
                     IsDetailFull = table.Column<bool>(nullable: false),
-                    AdderId = table.Column<string>(nullable: true),
+                    CreatorId = table.Column<string>(nullable: true),
                     YoutubeTrailerUrl = table.Column<string>(nullable: true),
                     MediaType = table.Column<string>(nullable: false)
                 },
@@ -239,8 +239,8 @@ namespace CinemaHub.Data.Migrations
                 {
                     table.PrimaryKey("PK_Media", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Media_AspNetUsers_AdderId",
-                        column: x => x.AdderId,
+                        name: "FK_Media_AspNetUsers_CreatorId",
+                        column: x => x.CreatorId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -257,8 +257,8 @@ namespace CinemaHub.Data.Migrations
                     DeletedOn = table.Column<DateTime>(nullable: true),
                     Title = table.Column<string>(nullable: false),
                     IsLocked = table.Column<bool>(nullable: false),
-                    MediaId = table.Column<string>(nullable: true),
-                    CreatorId = table.Column<string>(nullable: true)
+                    MediaId = table.Column<string>(nullable: false),
+                    CreatorId = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -446,7 +446,7 @@ namespace CinemaHub.Data.Migrations
                     IsDeleted = table.Column<bool>(nullable: false),
                     DeletedOn = table.Column<DateTime>(nullable: true),
                     Content = table.Column<string>(nullable: false),
-                    DiscussionId = table.Column<string>(nullable: true),
+                    DiscussionId = table.Column<string>(nullable: false),
                     CreatorId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -674,9 +674,9 @@ namespace CinemaHub.Data.Migrations
                 column: "IsDeleted");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Media_AdderId",
+                name: "IX_Media_CreatorId",
                 table: "Media",
-                column: "AdderId");
+                column: "CreatorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MediaGenre_GenreId",

@@ -16,7 +16,7 @@
 
     using Newtonsoft.Json;
 
-    public class MediaDetailsInputModel : IMapFrom<Media>, IMapTo<Media>, IHaveCustomMappings
+    public class MediaDetailsInputModel : IMapFrom<Media>, IMapTo<Media>, IMapFrom<MediaEdit>, IHaveCustomMappings
     {
         public string Id { get; set; }
 
@@ -70,6 +70,10 @@
                         x => JsonConvert.SerializeObject(
                             x.Keywords.Select(
                                 x => new KeywordViewModel() { Id = x.Keyword.Id, Value = x.Keyword.Name, }))));
+
+            configuration.CreateMap<MediaEdit, MediaDetailsInputModel>()
+                .ForMember(x => x.Id, opt => opt.MapFrom(x => x.MediaId))
+                .ForMember(x => x.Keywords, opt => opt.MapFrom(x => x.KeywordsJson));
         }
     }
 }

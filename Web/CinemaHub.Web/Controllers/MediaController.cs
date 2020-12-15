@@ -33,14 +33,18 @@
         private readonly IUserService userService;
         private readonly IReviewsService reviewsService;
         private readonly UserManager<ApplicationUser> userManager;
+        private readonly IAuthorizationService authorizationService;
         private readonly IWebHostEnvironment webHostEnvironment;
+        private readonly IMediaEditService mediaEditService;
 
         public MediaController(IMediaService mediaService,
                                IMovieAPIService apiService,
                                IWebHostEnvironment webHostEnvironment,
                                IReviewsService reviewsService,
                                IUserService userService,
-                               UserManager<ApplicationUser> userManager)
+                               IAuthorizationService authorizationService,
+                               UserManager<ApplicationUser> userManager,
+                               IMediaEditService mediaEditService)
         {
             this.mediaService = mediaService;
             this.userManager = userManager;
@@ -48,6 +52,8 @@
             this.apiService = apiService;
             this.reviewsService = reviewsService;
             this.userService = userService;
+            this.authorizationService = authorizationService;
+            this.mediaEditService = mediaEditService;
         }
 
         // both controllers get the searched media with ajax
@@ -152,9 +158,18 @@
                 return this.RedirectToAction("Edit", "Media", new { id = edit.Id });
             }
 
+            var isAdmin = this.User.IsInRole(GlobalConstants.AdministratorRoleName);
+
             try
             {
-                await this.mediaService.EditDetailsAsync(edit, user.Id, this.webHostEnvironment.WebRootPath);
+                if (!isAdmin)
+                {
+                    await this.mediaEditService.ApplyEditForApproval(edit, user.Id, this.webHostEnvironment.WebRootPath);
+                }
+                else
+                {
+                    await this.mediaService.EditDetailsAsync(edit, user.Id, this.webHostEnvironment.WebRootPath);
+                }
             }
             catch (Exception ex)
             {

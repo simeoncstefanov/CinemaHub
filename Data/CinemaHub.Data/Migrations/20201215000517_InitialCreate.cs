@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CinemaHub.Data.Migrations
 {
-    public partial class InitialCreation : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -271,6 +271,46 @@ namespace CinemaHub.Data.Migrations
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Discussions_Media_MediaId",
+                        column: x => x.MediaId,
+                        principalTable: "Media",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MediaEdits",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    CreatedOn = table.Column<DateTime>(nullable: false),
+                    ModifiedOn = table.Column<DateTime>(nullable: true),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    DeletedOn = table.Column<DateTime>(nullable: true),
+                    Title = table.Column<string>(nullable: false),
+                    Overview = table.Column<string>(nullable: false),
+                    Language = table.Column<string>(nullable: true),
+                    ReleaseDate = table.Column<DateTime>(nullable: false),
+                    PosterPath = table.Column<string>(nullable: true),
+                    Runtime = table.Column<int>(nullable: false),
+                    Budget = table.Column<int>(nullable: false),
+                    IsDetailFull = table.Column<bool>(nullable: false),
+                    Genres = table.Column<string>(nullable: true),
+                    KeywordsJson = table.Column<string>(nullable: true),
+                    CreatorId = table.Column<string>(nullable: false),
+                    YoutubeTrailerUrl = table.Column<string>(nullable: true),
+                    MediaId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MediaEdits", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MediaEdits_AspNetUsers_CreatorId",
+                        column: x => x.CreatorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_MediaEdits_Media_MediaId",
                         column: x => x.MediaId,
                         principalTable: "Media",
                         principalColumn: "Id",
@@ -679,6 +719,21 @@ namespace CinemaHub.Data.Migrations
                 column: "CreatorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MediaEdits_CreatorId",
+                table: "MediaEdits",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MediaEdits_IsDeleted",
+                table: "MediaEdits",
+                column: "IsDeleted");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MediaEdits_MediaId",
+                table: "MediaEdits",
+                column: "MediaId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MediaGenre_GenreId",
                 table: "MediaGenre",
                 column: "GenreId");
@@ -774,6 +829,9 @@ namespace CinemaHub.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Episodes");
+
+            migrationBuilder.DropTable(
+                name: "MediaEdits");
 
             migrationBuilder.DropTable(
                 name: "MediaGenre");

@@ -3,7 +3,9 @@
 
 
 document.addEventListener("DOMContentLoaded", function () {
-    requestJson(1);
+    setTimeout(function () {
+        requestJson(1);
+    }, 200);
 });
 
 

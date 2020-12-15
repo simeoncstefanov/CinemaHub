@@ -8,7 +8,7 @@ This web application is made to organize your entertainment media life. You can 
 
 
 ## Search media
-The page for Movies or TV Shows is where you search them by Title, Keywords and Genre and sort them by Release Date, Popularity or Rating. Alternatively for quick access you can use the search bar at top of the menu. 
+The page for Movies or TV Shows is where you search them by Title, Keywords and Genre and sort them by Release Date, Popularity or Rating. Alternatively for quick access you can use the search bar at top of the menu. 20000 movies and tv shows are seeded when you run the application for the first time from The Movie Database - https://www.themoviedb.org/
 
 
 ## Reviews and Ratings
@@ -24,8 +24,6 @@ Recommendations are created on a hybrid basis between ML.NET implementation and 
 1. Content-based recommendations - based on keywords and genres which the user rated higher and recently.
 2. Collaborative-based recommendations - based on ML.NET's matrix factorization. (if users rated high same things they are likely to do so in the future approach)
 Problem with using ML.NET is that it needs a good dataset, which you dont have at the start, so this recommendation 'activates' after 500 ratings from users
-
-
 
 ![alt-text](https://i.ibb.co/GW6md0S/second-page.png)
 

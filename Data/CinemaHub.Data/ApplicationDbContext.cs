@@ -57,6 +57,8 @@
 
         public DbSet<AvatarImage> AvatarImages { get; set; }
 
+        public DbSet<MediaEdit> MediaEdits { get; set; }
+
         public override int SaveChanges() => this.SaveChanges(true);
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)

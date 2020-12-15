@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CinemaHub.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201214021621_InitialCreation")]
-    partial class InitialCreation
+    [Migration("20201215000517_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -440,6 +440,76 @@ namespace CinemaHub.Data.Migrations
                     b.HasDiscriminator<string>("MediaType").HasValue("Media");
                 });
 
+            modelBuilder.Entity("CinemaHub.Data.Models.MediaEdit", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Budget")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Genres")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDetailFull")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("KeywordsJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Language")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MediaId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Overview")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PosterPath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ReleaseDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Runtime")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("YoutubeTrailerUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("MediaId");
+
+                    b.ToTable("MediaEdits");
+                });
+
             modelBuilder.Entity("CinemaHub.Data.Models.MediaGenre", b =>
                 {
                     b.Property<string>("Id")
@@ -848,6 +918,19 @@ namespace CinemaHub.Data.Migrations
                     b.HasOne("CinemaHub.Data.Models.ApplicationUser", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatorId");
+                });
+
+            modelBuilder.Entity("CinemaHub.Data.Models.MediaEdit", b =>
+                {
+                    b.HasOne("CinemaHub.Data.Models.ApplicationUser", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CinemaHub.Data.Models.Media", "Media")
+                        .WithMany()
+                        .HasForeignKey("MediaId");
                 });
 
             modelBuilder.Entity("CinemaHub.Data.Models.MediaGenre", b =>

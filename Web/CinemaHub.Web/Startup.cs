@@ -98,7 +98,6 @@
 
             // Authorization Handlers
             services.AddScoped<IAuthorizationHandler, EntityIsCreatedByAuthorizationHandler>();
-
             services.AddSingleton<IAuthorizationHandler, EntityAdministratorAuthorizationHandler>();
 
             // Application services
@@ -110,6 +109,7 @@
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IDiscussionsService, DiscussionsService>();
             services.AddTransient<IRecommendService, RecommendService>();
+            services.AddTransient<IMediaEditService, MediaEditService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -151,6 +151,10 @@
             app.UseEndpoints(
                 endpoints =>
                     {
+                        endpoints.MapAreaControllerRoute(
+                            "Administration",
+                            "Administration",
+                            "Administration/{controller=Dashboard}/{action=Index}");
                         endpoints.MapAreaControllerRoute(
                             "Identity",
                             "Identity",

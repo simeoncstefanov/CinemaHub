@@ -77,7 +77,7 @@ namespace CinemaHub.Web.Areas.Identity.Pages.Account.Manage
             var media = await this.mediaService.GetPageAsync(query);
             this.ResultCount = media.ResultCount;
             this.MediaSet = media.Results;
-            
+
             this.Page();
         }
     }

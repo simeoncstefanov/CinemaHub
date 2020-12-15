@@ -1,0 +1,34 @@
+﻿@using Microsoft.IdentityModel.Tokens
+@using CinemaHub.Web.ViewModels.Account
+@{
+     Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-single userfav_list">
+    <div class="container">
+        <div class="row ipad-width2">
+            <div class="col-md-3 col-sm-12 col-xs-12">
+                <div class="user-information">
+                    <div class="user-img">
+                        <a href=""><img src="/images/template/uploads/landing-dark-version.png" alt=""><br></a>
+                        <a asp-controller="Dashboard" asp-action="Index" class="redbtn">Administrator Dashboard</a>
+                    </div>
+                    <div class="user-fav">
+                        <p>Media</p>
+                        <ul>
+                            <li><a asp-controller="Dashboard" asp-action="EditsApproval">Approve Edits</a></li>
+                            <li><a href="userrate.html">Add keywords</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9 col-sm-12 col-xs-12">
+                @this.RenderBody();
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/tagify/tagify-editpage.js" asp-append-version="true"></script>
+} 

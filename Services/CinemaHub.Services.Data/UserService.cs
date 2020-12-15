@@ -41,7 +41,7 @@
             {
                 watcher = new MediaWatcher()
                               {
-                                  UserId = userId, 
+                                  UserId = userId,
                                   MediaId = mediaId,
                               };
 

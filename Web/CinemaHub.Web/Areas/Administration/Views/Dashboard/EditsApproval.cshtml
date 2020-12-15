@@ -1,0 +1,53 @@
+﻿@model CinemaHub.Web.ViewModels.MediaEdits.MediaEditApprovePageViewModel;
+
+@{ 
+    this.ViewData["Title"] = "Admin Dashboard - Approve Edits";
+}
+
+<div class="topbar-filter user">
+    <p>Found <span>1,608 movies</span> in total</p>
+    <label>Sort by:</label>
+    <select>
+        <option value="range">-- Choose option --</option>
+        <option value="saab">-- Choose option 2--</option>
+    </select>
+    <a href="userfavoritelist.html" class="list"><i class="ion-ios-list-outline active"></i></a>
+    <a href="userfavoritegrid.html" class="grid"><i class="ion-grid "></i></a>
+</div>
+<div class="flex-wrap-movielist user-fav-list">
+    @foreach (var comparisons in Model.ComparisonEdited)
+    {
+    <div class="movie-item-style-2">
+        <img src="@comparisons.Item1.PosterPath" alt="">
+        <div class="mv-item-infor">
+            <h6><a href="">@comparisons.Item1.Title</a></h6>
+            <p class="describe">@comparisons.Item1.Overview</p>
+            <p class="run-time"> Run Time: @comparisons.Item1.Runtime<span> Release: @comparisons.Item1.ReleaseDate.ToString("d")</span></p>
+        </div>
+        <img src="@comparisons.Item2.PosterPath" alt="">
+        <div class="mv-item-infor">
+            <h6><a href="">@comparisons.Item2.Title</a></h6>
+            <p class="describe">@comparisons.Item2.Overview</p>
+            <p class="run-time"> Run Time: @comparisons.Item2.Runtime<span> Release: @comparisons.Item2.ReleaseDate.ToString("d")</span></p>
+        </div>
+    </div>
+    }
+</div>
+<div class="topbar-filter">
+    <label>Movies per page:</label>
+    <select>
+        <option value="range">5 Movies</option>
+        <option value="saab">10 Movies</option>
+    </select>
+
+    <div class="pagination2">
+        <span>Page 1 of 2:</span>
+        <a class="active" href="#">1</a>
+        <a href="#">2</a>
+        <a href="#">3</a>
+        <a href="#">...</a>
+        <a href="#">78</a>
+        <a href="#">79</a>
+        <a href="#"><i class="ion-arrow-right-b"></i></a>
+    </div>
+</div>

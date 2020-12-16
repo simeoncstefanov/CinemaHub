@@ -1,53 +1,101 @@
-﻿@model CinemaHub.Web.ViewModels.MediaEdits.MediaEditApprovePageViewModel;
-
-@{ 
+﻿@using Microsoft.AspNetCore.Identity;
+@using CinemaHub.Data.Models;
+@inject UserManager<ApplicationUser> userManager;
+@model CinemaHub.Web.ViewModels.MediaEdits.MediaEditApprovePageViewModel;
+@{
     this.ViewData["Title"] = "Admin Dashboard - Approve Edits";
 }
 
 <div class="topbar-filter user">
-    <p>Found <span>1,608 movies</span> in total</p>
-    <label>Sort by:</label>
-    <select>
-        <option value="range">-- Choose option --</option>
-        <option value="saab">-- Choose option 2--</option>
-    </select>
-    <a href="userfavoritelist.html" class="list"><i class="ion-ios-list-outline active"></i></a>
-    <a href="userfavoritegrid.html" class="grid"><i class="ion-grid "></i></a>
+    <p>Found <span>@Model.TotalResults edit requests</span> in total</p>
 </div>
 <div class="flex-wrap-movielist user-fav-list">
     @foreach (var comparisons in Model.ComparisonEdited)
     {
-    <div class="movie-item-style-2">
-        <img src="@comparisons.Item1.PosterPath" alt="">
-        <div class="mv-item-infor">
-            <h6><a href="">@comparisons.Item1.Title</a></h6>
-            <p class="describe">@comparisons.Item1.Overview</p>
-            <p class="run-time"> Run Time: @comparisons.Item1.Runtime<span> Release: @comparisons.Item1.ReleaseDate.ToString("d")</span></p>
-        </div>
-        <img src="@comparisons.Item2.PosterPath" alt="">
-        <div class="mv-item-infor">
-            <h6><a href="">@comparisons.Item2.Title</a></h6>
-            <p class="describe">@comparisons.Item2.Overview</p>
-            <p class="run-time"> Run Time: @comparisons.Item2.Runtime<span> Release: @comparisons.Item2.ReleaseDate.ToString("d")</span></p>
-        </div>
-    </div>
+        var creator = await this.userManager.FindByIdAsync(comparisons.Item1.CreatorId);
+
+        @if (comparisons.Item2 != null)
+        {
+            <p>Request by: @creator.UserName (@creator.Id)</p>
+            <div style="width: 100%;
+        background-color: #041427;
+        padding: 10px;" class="movie-item-style-2">
+                <div class="col-md-8">
+
+                    <h2 style=" font-family: 'Dosis', sans-serif; color: whitesmoke">Edit</h2>
+                    <img style="width: 100px; height: 150px;" src="@comparisons.Item1.PosterPath" alt="">
+                    <div class="mv-item-infor">
+                        <h6><a href="">@comparisons.Item1.Title</a></h6>
+                        <p class="describe">@comparisons.Item1.Overview</p>
+                        <p class="run-time"> Run Time: @comparisons.Item1.Runtime<span> Release: @comparisons.Item1.ReleaseDateString</span></p>
+                        <p class="run-time"> Genres: @comparisons.Item1.Genres<span> Budget: @comparisons.Item1.Budget</span></p>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <h2 style=" font-family: 'Dosis', sans-serif; color: whitesmoke">Real</h2>
+                    <img style="width: 100px; height: 150px;" src="@comparisons.Item2.PosterPath" alt="">
+                    <div class="mv-item-infor">
+                        <h6><a href="">@comparisons.Item2.Title</a></h6>
+                        <p class="describe">@comparisons.Item2.Overview</p>
+                        <p class="run-time"> Run Time: @comparisons.Item2.Runtime<span> Release: @comparisons.Item2.ReleaseDateString</span></p>
+                        <p class="run-time"> Genres: @comparisons.Item2.Genres<span> Budget: @comparisons.Item2.Budget</span></p>
+                    </div>
+                </div>
+
+            </div>
+
+            <form style="margin-bottom: 50px;" method="post" enctype="application/x-www-form-urlencoded" asp-controller="Dashboard" asp-action="ApproveEdit">
+                <textarea name="keywordsList" style="position: absolute;" class="Keywords">@comparisons.Item1.Keywords</textarea>
+                <textarea readonly class="Keywords">@comparisons.Item2.Keywords</textarea>
+                <input type="hidden" name="editId" value="@comparisons.Item1.EditId" />
+                <input style="background-color: green" name="IsApproved" type="submit" class="redbtn" value="Approve" />
+                <input style="background-color: red" name="IsApproved" type="submit" class="redbtn" value="Reject" />
+            </form>
+        }
+        else
+        {
+            <div style="width: 100%; margin-top: 50px; background-color: #041427; padding: 10px;" class="movie-item-style-2">
+                <div class="col-md-12">
+                    <h2 style=" font-family: 'Dosis', sans-serif; color: whitesmoke">New add</h2>
+                    <p>@creator.UserName</p>
+                    <img style="width: 100px; height: 150px;" src="@comparisons.Item1.PosterPath" alt="">
+                    <div class="mv-item-infor">
+                        <h6><a href="">@comparisons.Item1.Title</a></h6>
+                        <p class="describe">@comparisons.Item1.Overview</p>
+                        <p class="run-time"> Run Time: @comparisons.Item1.Runtime<span> Release: @comparisons.Item1.ReleaseDateString</span></p>
+                        <p class="run-time"> Genres: @comparisons.Item1.Genres<span> Budget: @comparisons.Item1.Budget</span></p>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 50px;" class="col-md-12">
+                    <form method="post" enctype="application/x-www-form-urlencoded" asp-controller="Dashboard" asp-action="ApproveEdit">
+                        <textarea name="keywordsList" style="position: absolute;" class="Keywords">@comparisons.Item1.Keywords</textarea>
+                        <input type="hidden" name="editId" value="@comparisons.Item1.EditId" />
+                        <input style="background-color: green" name="IsApproved" type="submit" class="redbtn" value="Approve" />
+                        <input style="background-color: red" name="IsApproved" type="submit" class="redbtn" value="Reject" />
+                    </form>
+                </div>
+            </div>
+        }
     }
 </div>
 <div class="topbar-filter">
-    <label>Movies per page:</label>
-    <select>
-        <option value="range">5 Movies</option>
-        <option value="saab">10 Movies</option>
-    </select>
-
     <div class="pagination2">
-        <span>Page 1 of 2:</span>
-        <a class="active" href="#">1</a>
-        <a href="#">2</a>
-        <a href="#">3</a>
-        <a href="#">...</a>
-        <a href="#">78</a>
-        <a href="#">79</a>
-        <a href="#"><i class="ion-arrow-right-b"></i></a>
+        <span>Page @Model.CurrentPage of @Model.TotalPages</span>
+        @for (int i = Model.CurrentPage - 4; i < Model.CurrentPage + 4; i++)
+        {
+            if (i > 0 && i <= Model.TotalPages)
+            {
+                if (i == Model.CurrentPage)
+                {
+                    <a class="active" asp-action="EditsApproval" asp-controller="Dashboard" asp-route-page="@i">@i</a>
+                }
+                else
+                {
+                    <a asp-action="EditsApproval" asp-controller="Dashboard" asp-route-page="@i">@i</a>
+                }
+            }
+        }
     </div>
 </div>
+

@@ -13,11 +13,10 @@
 
         Task<IEnumerable<T>> GetEditsForApproval<T>(int page, int count);
 
-        Task<T> GetEditForApproval<T>(string editId);
+        Task<T> GetAndApproveEdit<T>(string editId);
 
         Task<int> GetEditsForApprovalCount();
 
-        Task DeleteEdit(string editId);
-
+        Task RejectEdit(string editId);
     }
 }

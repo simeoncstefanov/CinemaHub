@@ -56,7 +56,7 @@
             this.mediaEditService = mediaEditService;
         }
 
-        // both controllers get the searched media with ajax
+        // controllers get the searched media with ajax
         [AllowAnonymous]
         [Route("/[controller]/[action]")]
         public async Task<IActionResult> Movies()
@@ -64,6 +64,7 @@
             return this.View(new MediaGridViewModel() { MediaType = "Movie" });
         }
 
+        // controllers get the searched media with ajax
         [AllowAnonymous]
         [Route("/[controller]/[action]")]
         public async Task<IActionResult> Shows()
@@ -138,7 +139,7 @@
             return this.View(media);
         }
 
-        // Edits or adds new movie if there is no id in the input model
+        // Will request edit to an administrator if it is a regular user. Administrator can straight edit.
         [Authorize]
         [HttpPost]
         [ExportModelState]
@@ -158,8 +159,13 @@
                 return this.RedirectToAction("Edit", "Media", new { id = edit.Id });
             }
 
-            var isAdmin = this.User.IsInRole(GlobalConstants.AdministratorRoleName);
+            if (edit.Id == null && edit.PosterImageFile == null)
+            {
+                this.ModelState.AddModelError(string.Empty, "When you add new media you must upload poster!");
+                return this.RedirectToAction("Edit", "Media", new { id = edit.Id });
+            }
 
+            var isAdmin = this.User.IsInRole(GlobalConstants.AdministratorRoleName);
             try
             {
                 if (!isAdmin)
@@ -192,8 +198,9 @@
             var title = this.mediaService.IsMediaDetailsFullAsync(id);
             if (title != null)
             {
-                var apiInputModel = await this.apiService.GetDetailsFromApiAsync(title, mediaType, id);
-                await this.mediaService.EditDetailsAsync(apiInputModel, "", this.webHostEnvironment.WebRootPath);
+                var apiId = await this.apiService.GetIdFromTitle(title, mediaType);
+                var apiInputModel = await this.apiService.GetDetailsFromApiAsync(apiId, mediaType);
+                await this.mediaService.EditDetailsAsync(apiInputModel, string.Empty, this.webHostEnvironment.WebRootPath);
             }
 
             var viewModel = await this.mediaService.GetDetailsAsync<MediaDetailsViewModel>(id);

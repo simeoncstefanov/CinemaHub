@@ -55,6 +55,10 @@
 
         public string Keywords { get; set; }
 
+        public string EditId { get; set; }
+
+        public string CreatorId { get; set; }
+
         public void CreateMappings(IProfileExpression configuration)
         {
             configuration.CreateMap<Media, MediaDetailsInputModel>()
@@ -73,7 +77,9 @@
 
             configuration.CreateMap<MediaEdit, MediaDetailsInputModel>()
                 .ForMember(x => x.Id, opt => opt.MapFrom(x => x.MediaId))
-                .ForMember(x => x.Keywords, opt => opt.MapFrom(x => x.KeywordsJson));
+                .ForMember(x => x.Keywords, opt => opt.MapFrom(x => x.KeywordsJson))
+                .ForMember(x => x.EditId, opt => opt.MapFrom(x => x.Id))
+                .ForMember(x => x.CreatorId, opt => opt.MapFrom(x => x.CreatorId));
         }
     }
 }

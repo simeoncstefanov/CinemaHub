@@ -10,15 +10,17 @@
     using System.Threading.Tasks;
 
     using AutoMapper;
+    using AutoMapper.Configuration;
     using CinemaHub.Data.Common.Repositories;
     using CinemaHub.Data.Models;
+    using CinemaHub.Services.Data;
     using CinemaHub.Services.Models;
     using CinemaHub.Web.ViewModels.Media;
 
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Http.Internal;
     using Microsoft.EntityFrameworkCore;
-
+    using Microsoft.Extensions.DependencyInjection;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
@@ -49,11 +51,9 @@
             this.mediaRepository = mediaRepository;
         }
 
-        // Add id if you fill details on already created Movie
-        public async Task<MediaDetailsInputModel> GetDetailsFromApiAsync(string title, string mediaType, string idDb)
+        public async Task<MediaDetailsInputModel> GetDetailsFromApiAsync(int apiId, string mediaType)
         {
-            // API url needs different route for movies and shows separately
-            string urlMediaType = "";
+            string urlMediaType = string.Empty;
             if (mediaType == "Movie")
             {
                 urlMediaType = "movie";
@@ -63,32 +63,17 @@
                 urlMediaType = "tv";
             }
 
-            var apiId = "";
-            // Get the id by searching the title in the api (too lazy to make another model so I use dynamic deserializing)
-            try
-            {
-                apiId = (string)JObject.Parse(
-                        await this.client.GetStringAsync(
-                            $"https://api.themoviedb.org/3/search/{urlMediaType}?api_key=238b937765146aa0e189640d869591e7&language=en-US&query={title}&page=1&include_adult=false"))
-                    ["results"]?[0]["id"];
-            }
-            catch (Exception ex)
-            {
-                return new MediaDetailsInputModel();
-            }
-
             var mediaString = await this.client.GetStringAsync(
                                   $"https://api.themoviedb.org/3/{urlMediaType}/{apiId}?api_key=238b937765146aa0e189640d869591e7&language=en-US&append_to_response=keywords");
             var mediaJson = JsonConvert.DeserializeObject<MovieApiDTO>(mediaString);
             var inputModel = this.mapper.Map<MediaDetailsInputModel>(mediaJson);
 
             // Check to see if the movie already exists so we can edit it if it does
-            var mediaDb = this.mediaRepository.AllAsNoTracking().FirstOrDefault(x => x.Title == title);
+            var mediaDb = this.mediaRepository.AllAsNoTracking().FirstOrDefault(x => x.Title == mediaJson.Title);
             if (mediaDb != null)
             {
                 inputModel.Id = mediaDb.Id;
             }
-            // TODO ADD BACKDROP
 
             // IF the keyword doesn't exist make its id 0 so the Media Service knows it does not exist 
             var keywordList = new List<KeywordViewModel>();
@@ -116,5 +101,60 @@
             return inputModel;
         }
 
+        public async Task<int> GetIdFromTitle(string title, string mediaType)
+        {
+            string urlMediaType = string.Empty;
+            if (mediaType == "Movie")
+            {
+                urlMediaType = "movie";
+            }
+            else if (mediaType == "Show")
+            {
+                urlMediaType = "tv";
+            }
+
+            var apiId = string.Empty;
+
+            try
+            {
+                apiId = (string)JObject.Parse(
+                        await this.client.GetStringAsync(
+                            $"https://api.themoviedb.org/3/search/{urlMediaType}?api_key=238b937765146aa0e189640d869591e7&language=en-US&query={title}&page=1&include_adult=false"))
+                    ["results"]?[0]["id"];
+            }
+            catch (Exception)
+            {
+                throw new Exception("Title not found");
+            }
+
+            if (int.TryParse(apiId, out int result))
+            {
+                return result;
+            }
+            else
+            {
+                throw new Exception("Title not found");
+            }
+        }
+
+        public async Task<IEnumerable<int>> GetMoviesIds(int page)
+        {
+            var jsonResponse = await this.client
+                .GetStringAsync($"https://api.themoviedb.org/3/discover/movie?api_key=238b937765146aa0e189640d869591e7&language=en-US&sort_by=vote_count.desc&include_adult=false&include_video=false&page={page}");
+
+            var mediaResult = JsonConvert.DeserializeObject<MediaDiscoverApiDTO>(jsonResponse);
+
+            return mediaResult.Results.Select(x => x.MediaApiId);
+        }
+
+        public async Task<IEnumerable<int>> GetShowsIds(int page)
+        {
+            var jsonResponse = await this.client
+                .GetStringAsync($"https://api.themoviedb.org/3/discover/tv?api_key=238b937765146aa0e189640d869591e7&language=en-US&sort_by=vote_count.desc&page={page}&include_null_first_air_dates=false");
+
+            var mediaResult = JsonConvert.DeserializeObject<MediaDiscoverApiDTO>(jsonResponse);
+
+            return mediaResult.Results.Select(x => x.MediaApiId);
+        }
     }
 }

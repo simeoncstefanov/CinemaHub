@@ -10,6 +10,8 @@
 
         public const string DefaultAvatarImagePath = "\\images\\template\\uploads\\user-img.png";
 
+        public const string TemporaryImagesDir = "\\images\\temporary\\";
+
         public static readonly Dictionary<string, List<byte[]>> ImageFileSignatures = new Dictionary<string, List<byte[]>>
                                                                                      {
                                                                                          {

@@ -257,7 +257,9 @@
             Directory.CreateDirectory($"{rootPath}/images/posters/");
 
             // Check if extension is allowed
+
             var extension = Path.GetExtension(image.FileName).TrimStart('.');
+
             var imageFileSignatures = GlobalConstants.ImageFileSignatures;
 
             if (!imageFileSignatures.Any(x => x.Key == extension))
@@ -296,8 +298,10 @@
                                    };
 
             var physicalPath = rootPath + imageDb.Path;
-            using var fileStream = new FileStream(physicalPath, FileMode.Create);
-            await image.CopyToAsync(fileStream);
+            using (var fileStream = new FileStream(physicalPath, FileMode.Create))
+            {
+                await image.CopyToAsync(fileStream);
+            }
 
             return imageDb;
         }

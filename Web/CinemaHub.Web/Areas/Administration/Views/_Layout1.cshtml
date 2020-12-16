@@ -1,7 +1,7 @@
 ﻿@using Microsoft.IdentityModel.Tokens
 @using CinemaHub.Web.ViewModels.Account
 @{
-     Layout = "/Views/Shared/_Layout.cshtml";
+    Layout = "/Views/Shared/_Layout.cshtml";
 }
 
 <div class="page-single userfav_list">
@@ -30,5 +30,10 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/tagify/tagify-editpage.js" asp-append-version="true"></script>
-} 
+    <script src="~/js/tagify/tagify.min.js" asp-append-version="true"></script>
+    <script src="~/js/tagify/tagify-approvalpage.js" asp-append-version="true"></script>
+}
+
+@section Styles {
+    <link href="~/js/tagify/tagify.css" rel="stylesheet" />
+}

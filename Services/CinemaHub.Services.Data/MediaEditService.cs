@@ -2,15 +2,18 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
     using CinemaHub.Common;
+    using CinemaHub.Common.Models;
     using CinemaHub.Data.Common.Repositories;
     using CinemaHub.Data.Models;
     using CinemaHub.Services.Mapping;
     using CinemaHub.Web.ViewModels.Media;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Http.Internal;
     using Microsoft.EntityFrameworkCore;
 
     public class MediaEditService : IMediaEditService
@@ -38,17 +41,18 @@
                 KeywordsJson = edit.Keywords,
                 Genres = edit.Genres,
                 CreatorId = userId,
+                MediaType = edit.MediaType,
             };
 
             var image = edit.PosterImageFile;
             if (image != null)
             {
-                var tempPath = "\\images\\temporary\\";
-                var path = rootPath = tempPath;
+                var tempPath = GlobalConstants.TemporaryImagesDir;
+                var path = rootPath + tempPath;
 
                 var name = "tempPoster-" + mediaEdit.Id;
                 var imageExtension = await FileDownloader.DownloadImage(image, path, name);
-                mediaEdit.PosterPath = path + $"{name}.{imageExtension}";
+                mediaEdit.PosterPath = tempPath + $"{name}.{imageExtension}";
             }
             else
             {
@@ -92,9 +96,26 @@
             return await this.mediaEditRepo.AllAsNoTracking().CountAsync();
         }
 
-        public async Task DeleteEdit(string editId)
+        public async Task<T> GetAndApproveEdit<T>(string editId)
         {
-            return;
+            var result = await this.mediaEditRepo.All()
+                .Where(x => x.Id == editId)
+                .To<T>()
+                .FirstOrDefaultAsync();
+
+            var edit = await this.mediaEditRepo.All().FirstOrDefaultAsync(x => x.Id == editId);
+            edit.IsApproved = true;
+
+            this.mediaEditRepo.Delete(edit);
+            await this.mediaEditRepo.SaveChangesAsync();
+            return result;
+        }
+
+        public async Task RejectEdit(string editId)
+        {
+            var edit = await this.mediaEditRepo.All().FirstOrDefaultAsync(x => x.Id == editId);
+            this.mediaEditRepo.Delete(edit);
+            await this.mediaEditRepo.SaveChangesAsync();
         }
     }
 }

@@ -43,6 +43,12 @@
         public string CreatorId { get; set; }
 
         [Required]
+        public bool IsApproved { get; set; } = false;
+
+        [Required]
+        public string MediaType { get; set; }
+
+        [Required]
         public ApplicationUser Creator { get; set; }
 
         public string YoutubeTrailerUrl { get; set; }

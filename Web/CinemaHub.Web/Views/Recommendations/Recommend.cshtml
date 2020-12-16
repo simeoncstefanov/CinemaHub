@@ -27,13 +27,13 @@
 
                                         </div>
                                         <h1>
-                                            <a href="#">
+                                            <a asp-controller="Media" asp-action="@($"{@recommendation.MediaType}s")" asp-route-id="@recommendation.Id">
                                                 @recommendation.Title <span>@recommendation.ReleaseDate.Year</span>
                                             </a>
                                         </h1>
                                         <div class="social-btn">
                                             <a href="#" class="parent-btn"><i class="ion-play"></i> Watch Trailer</a>
-                                            <a href="#" class="parent-btn"><i class="ion-heart"></i> Add to Favorite</a>
+                                            <a href="#" class="parent-btn"><i class="ion-heart"></i> Add to Watchlist</a>
                                             <div class="hover-bnt">
                                                 <a href="#" class="parent-btn"><i class="ion-android-share-alt"></i>share</a>
                                                 <div class="hvr-item">
@@ -44,15 +44,15 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="mv-details">
+                                        <div class="mv-details"> 
                                             <p><i class="ion-android-star"></i><span>@recommendation.AverageRating</span> /10</p>
                                             <ul class="mv-infor">
                                                 <li><p style="font-size: 15px;">Release: @recommendation.ReleaseDate.ToString("D")</p></li>
                                             </ul>
                                         </div>
                                         <div class="btn-transform transform-vertical">
-                                            <div><a href="#" class="item item-1 redbtn">more detail</a></div>
-                                            <div><a href="#" class="item item-2 redbtn hvrbtn">more detail</a></div>
+                                            <div><a asp-controller="Media" asp-action="@($"{@recommendation.MediaType}s")" asp-route-id="@recommendation.Id" class="item item-1 redbtn">more detail</a></div>
+                                            <div><a asp-controller="Media" asp-action="@($"{@recommendation.MediaType}s")" asp-route-id="@recommendation.Id" class="item item-2 redbtn hvrbtn">more detail</a></div>
                                         </div>
                                     </div>
                                 </div>

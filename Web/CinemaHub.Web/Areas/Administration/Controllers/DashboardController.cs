@@ -6,9 +6,12 @@
     using CinemaHub.Web.ViewModels.Media;
     using CinemaHub.Web.ViewModels.MediaEdits;
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Threading.Tasks;
 
     [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
@@ -18,11 +21,13 @@
         private const int DefaultPerPage = 5;
         private readonly IMediaEditService mediaEditService;
         private readonly IMediaService mediaService;
+        private readonly IWebHostEnvironment webHostEnvironment;
 
-        public DashboardController(IMediaEditService mediaEditService, IMediaService mediaService)
+        public DashboardController(IMediaEditService mediaEditService, IMediaService mediaService, IWebHostEnvironment webHostEnvironment)
         {
             this.mediaEditService = mediaEditService;
             this.mediaService = mediaService;
+            this.webHostEnvironment = webHostEnvironment;
         }
 
         public async Task<IActionResult> Index()
@@ -37,7 +42,7 @@
 
             var viewModel = new MediaEditApprovePageViewModel()
             {
-                CurrentPage = 1,
+                CurrentPage = page,
                 TotalResults = await this.mediaEditService.GetEditsForApprovalCount(),
                 ElementsPerPage = DefaultPerPage,
                 ComparisonEdited = new List<Tuple<MediaDetailsInputModel, MediaDetailsInputModel>>(),
@@ -53,5 +58,37 @@
 
             return this.View(viewModel);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ApproveEdit(string editId, string isApproved, string keywordsList)
+        {
+            if (isApproved == "Approve")
+            {
+                var edit = await this.mediaEditService.GetAndApproveEdit<MediaDetailsInputModel>(editId);
+
+                if (edit.PosterPath != null)
+                {
+                    using (var fileStream = new FileStream(this.webHostEnvironment.WebRootPath + edit.PosterPath, FileMode.Open))
+                    {
+                        var formFile = new FormFile(fileStream, 0, fileStream.Length, "Poster", fileStream.Name);
+                        edit.PosterImageFile = formFile;
+                        edit.Keywords = keywordsList;
+                        await this.mediaService.EditDetailsAsync(edit, string.Empty, this.webHostEnvironment.WebRootPath);
+                    }
+                }
+                else
+                {
+                    edit.Keywords = keywordsList;
+                    await this.mediaService.EditDetailsAsync(edit, string.Empty, this.webHostEnvironment.WebRootPath);
+                }
+            }
+            else if (isApproved == "Reject")
+            {
+                await this.mediaEditService.RejectEdit(editId);
+            }
+
+            return this.RedirectToAction("EditsApproval");
+        }
+
     }
 }

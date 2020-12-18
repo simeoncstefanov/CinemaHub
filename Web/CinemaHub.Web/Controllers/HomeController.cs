@@ -18,6 +18,7 @@
         {
             this.mediaService = mediaService;
         }
+
         [Route("/")]
         public async Task<IActionResult> Index(string returnUrl = null)
         {

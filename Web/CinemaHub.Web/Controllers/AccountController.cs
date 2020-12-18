@@ -8,6 +8,7 @@
 
     using CinemaHub.Data.Models;
     using CinemaHub.Services.Data;
+    using CinemaHub.Services.Data.Models;
     using CinemaHub.Web.Filters.Action;
     using CinemaHub.Web.Filters.Action.ModelStateTransfer;
     using CinemaHub.Web.ViewModels.Account;
@@ -28,28 +29,32 @@
         private readonly ILogger<AccountController> logger;
         private readonly IUserService userService;
         private readonly IWebHostEnvironment webHostEnvironment;
+        private readonly IMediaService mediaService;
 
         public AccountController(
             SignInManager<ApplicationUser> signInManager,
             ILogger<AccountController> logger,
             UserManager<ApplicationUser> userManager,
             IUserService userService,
-            IWebHostEnvironment webHostEnvironment)
+            IWebHostEnvironment webHostEnvironment,
+            IMediaService mediaService)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.logger = logger;
             this.userService = userService;
             this.webHostEnvironment = webHostEnvironment;
+            this.mediaService = mediaService;
         }
 
         [AllowAnonymous]
         [Route("/login")]
         [HttpGet]
         [ImportModelState]
-        public IActionResult Login(string returnUrl = null)
+        public async Task<IActionResult> Login(string returnUrl = null)
         {
-            return this.View("~/Views/Home/Index.cshtml");
+            var result = await this.mediaService.GetPageAsync(new MediaQueryDTO() { Page = 1, ElementsPerPage = 10, SortType = "date-desc" });
+            return this.View("~/Views/Home/Index.cshtml", result);
         }
 
         [Route("/login")]

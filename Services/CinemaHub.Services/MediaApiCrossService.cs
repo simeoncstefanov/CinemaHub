@@ -30,14 +30,14 @@
 
                 foreach (var id in ids)
                 {
-                    var inputModel = await mediaApiService.GetDetailsFromApiAsync(id, "Show");
-                    if (inputModel == null)
-                    {
-                        continue;
-                    }
-
                     try
                     {
+                        var inputModel = await mediaApiService.GetDetailsFromApiAsync(id, "Show");
+                        if (inputModel == null)
+                        {
+                            continue;
+                        }
+
                         await mediaService.EditDetailsAsync(inputModel, string.Empty, rootPath);
                     }
                     catch (Exception)
@@ -59,14 +59,14 @@
 
                 foreach (var id in ids)
                 {
-                    var inputModel = await mediaApiService.GetDetailsFromApiAsync(id, "Movie");
-                    if (inputModel == null)
-                    {
-                        continue;
-                    }
-
                     try
                     {
+                        var inputModel = await mediaApiService.GetDetailsFromApiAsync(id, "Movie");
+                        if (inputModel == null)
+                        {
+                            continue;
+                        }
+
                         await mediaService.EditDetailsAsync(inputModel, string.Empty, rootPath);
                     }
                     catch (Exception)

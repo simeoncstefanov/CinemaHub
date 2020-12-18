@@ -180,8 +180,8 @@
             app.UseHangfireDashboard();
 
             // Seed media from Movie Db API
-            //backgroundJobClient.Enqueue<IMediaApiCrossService>(x => x.ScrapeMoviesFromApi(500, env.WebRootPath));
-            //backgroundJobClient.Enqueue<IMediaApiCrossService>(x => x.ScrapeShowsFromApi(500, env.WebRootPath));
+            backgroundJobClient.Enqueue<IMediaApiCrossService>(x => x.ScrapeMoviesFromApi(5, env.WebRootPath));
+            backgroundJobClient.Enqueue<IMediaApiCrossService>(x => x.ScrapeShowsFromApi(5, env.WebRootPath));
 
             app.UseEndpoints(
                 endpoints =>

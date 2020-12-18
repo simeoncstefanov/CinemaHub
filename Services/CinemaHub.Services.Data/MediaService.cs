@@ -33,8 +33,6 @@
 
         private readonly IRepository<MediaKeyword> mediaKeywordRepository;
 
-        private IQueryable<Media> mediaQuery;
-
         public MediaService(
             IRepository<Media> mediaRepository,
             IRepository<Genre> genreRepository,
@@ -45,19 +43,21 @@
             this.genreRepository = genreRepository;
             this.keywordRepository = keywordRepository;
             this.mediaKeywordRepository = mediaKeywordRepository;
-            this.mediaQuery = this.mediaRepository.All();
         }
 
         public async Task<MediaResultDTO> GetPageAsync(MediaQueryDTO query)
         {
             int paginationCount = (query.Page - 1) * query.ElementsPerPage;
 
-            this.mediaQuery = this.mediaQuery.Include(x => x.Ratings);
+            var mediaQuery = this.mediaRepository.AllAsNoTracking();
 
-            this.ApplyQueryAsync(query);
-            var resultsFound = this.mediaQuery.Count();
+            var filteredQuery = ApplyQuery(mediaQuery, query);
 
-            var medias = await this.mediaQuery.Skip(paginationCount).Take(query.ElementsPerPage).Select(
+            var resultsFound = await filteredQuery.CountAsync();
+
+            var results = await filteredQuery.ToListAsync();
+
+            var medias = await filteredQuery.Skip(paginationCount).Take(query.ElementsPerPage).Select(
                              x => new MediaGridDTO()
                                       {
                                           Id = x.Id,
@@ -68,7 +68,7 @@
                                           ImagePath =
                                               x.Images.FirstOrDefault(x => x.ImageType == ImageType.Poster).Path,
                                           MediaType = x.GetType().Name,
-                                          Rating = x.Ratings.DefaultIfEmpty().Average(x => x.Score),
+                                          Rating = x.Ratings.Select(x => x.Score).Average(x => x),
                                       }).ToListAsync();
 
             return new MediaResultDTO()
@@ -306,21 +306,21 @@
             return imageDb;
         }
 
-        private void ApplyQueryAsync(MediaQueryDTO query)
+        private static IQueryable<Media> ApplyQuery(IQueryable<Media> source, MediaQueryDTO query)
         {
             if (query.MediaType == nameof(Movie))
             {
-                this.mediaQuery = this.mediaQuery.OfType<Movie>();
+                source = source.OfType<Movie>();
             }
             else if (query.MediaType == nameof(Show))
             {
-                this.mediaQuery = this.mediaQuery.OfType<Show>();
+                source = source.OfType<Show>();
             }
 
             if (!string.IsNullOrWhiteSpace(query.Keywords))
             {
                 var keywords = query.Keywords.Split(", ").Select(x => int.Parse(x)).ToList();
-                this.mediaQuery = this.mediaQuery.Where(x =>
+                source = source.Where(x =>
                     x.Keywords.Any(y =>
                         keywords.Contains(y.KeywordId)));
             }
@@ -331,11 +331,8 @@
 
                 foreach(string genre in genres)
                 {
-                    this.mediaQuery = this.mediaQuery.Where(x => x.Genres.Select(x => x.Genre.Name).Contains(genre));
+                    source = source.Where(x => x.Genres.Select(x => x.Genre.Name).Contains(genre));
                 }
-
-                var test = this.mediaQuery.ToList();
-                ;
             }
 
             if(!string.IsNullOrWhiteSpace(query.WatchType))
@@ -346,31 +343,33 @@
                     throw new InvalidEnumArgumentException($"Watchtype {query.WatchType} is not valid!");
                 }
 
-                this.mediaQuery = this.mediaQuery.Where(
+                source = source.Where(
                     x => x.Watchers.Any(x => x.UserId == query.UserId && x.WatchType == watchType));
             }
 
             if (!query.AreNotWatched)
             {
-                this.mediaQuery = this.mediaQuery.Where(x => x.Watchers.Any(x => x.UserId != query.UserId));
+                source = source.Where(x => x.Watchers.Any(x => x.UserId != query.UserId));
             }
 
             if (query.SearchQuery != null)
             {
-                this.mediaQuery = this.mediaQuery.Where(x =>
+                source = source.Where(x =>
                     x.Title.Contains(query.SearchQuery ?? string.Empty));
             }
 
-            this.mediaQuery = query.SortType switch
+            source = query.SortType switch
                 {
-                    "popularity" => this.mediaQuery.Include(x => x.Watchers).OrderBy(x => x.Watchers.Count()),
-                    "popularity-desc" => this.mediaQuery.Include(x => x.Watchers).OrderByDescending(x => x.Watchers.Count()),
-                    "rating" => this.mediaQuery.OrderBy(x => x.Ratings.Average(x => x.Score)),
-                    "rating-desc" => this.mediaQuery.OrderByDescending(x => x.Ratings.Average(x => x.Score)),
-                    "date" => this.mediaQuery.OrderBy(x => x.ReleaseDate),
-                    "date-desc" => this.mediaQuery.OrderByDescending(x => x.ReleaseDate),
-                    _ => this.mediaQuery.OrderBy(x => x.Title),
+                    "popularity" => source.Include(x => x.Watchers).OrderBy(x => x.Watchers.Count()),
+                    "popularity-desc" => source.Include(x => x.Watchers).OrderByDescending(x => x.Watchers.Count()),
+                    "rating" => source.OrderBy(x => x.Ratings.Average(x => x.Score)),
+                    "rating-desc" => source.OrderByDescending(x => x.Ratings.Average(x => x.Score)),
+                    "date" => source.OrderBy(x => x.ReleaseDate),
+                    "date-desc" => source.OrderByDescending(x => x.ReleaseDate),
+                    _ => source.OrderBy(x => x.Title),
                 };
+
+            return source;
         }
     }
 }

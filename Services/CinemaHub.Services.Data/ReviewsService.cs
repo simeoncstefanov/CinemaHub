@@ -122,23 +122,8 @@
         {
             int pagination = (page - 1) * DefaultReviewsPerPage;
             var query = this.reviewRepository.AllAsNoTracking().Include(x => x.Rating)
-                .Where(x => x.Rating.MediaId == mediaId);
-
-            switch (sortType)
-            {
-                case "Oldest":
-                    query = query.OrderBy(x => x.CreatedOn);
-                    break;
-                case "Latest":
-                    query = query.OrderByDescending(x => x.CreatedOn);
-                    break;
-                case "Rating Ascending":
-                    query = query.OrderBy(x => x.Rating.Score);
-                    break;
-                case "Rating Descending":
-                    query = query.OrderByDescending(x => x.Rating.Score);
-                    break;
-            }
+                .Where(x => x.Rating.MediaId == mediaId)
+                .OrderByDescending(x => x.CreatedOn);
 
             var reviews = await query.Skip(pagination)
                               .Take(DefaultReviewsPerPage)

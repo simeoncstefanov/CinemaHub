@@ -1,7 +1,9 @@
 ﻿namespace CinemaHub.Web.Controllers
 {
     using System.Diagnostics;
-
+    using System.Threading.Tasks;
+    using CinemaHub.Services.Data;
+    using CinemaHub.Services.Data.Models;
     using CinemaHub.Web.Filters.Action.ModelStateTransfer;
     using CinemaHub.Web.ViewModels;
 
@@ -11,10 +13,16 @@
     [AllowAnonymous]
     public class HomeController : BaseController
     {
-        [Route("/")]
-        public IActionResult Index(string returnUrl = null)
+        private readonly IMediaService mediaService;
+        public HomeController(IMediaService mediaService)
         {
-            return this.View();
+            this.mediaService = mediaService;
+        }
+        [Route("/")]
+        public async Task<IActionResult> Index(string returnUrl = null)
+        {
+            var result = await this.mediaService.GetPageAsync(new MediaQueryDTO() { Page = 1, ElementsPerPage = 10, SortType = "date-desc" });
+            return this.View(result);
         }
 
         public IActionResult About()

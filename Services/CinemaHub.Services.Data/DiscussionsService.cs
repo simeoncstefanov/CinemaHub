@@ -160,7 +160,8 @@
 
         public async Task<string> GetDiscussionTitle(string discussionId)
         {
-            return await this.discussionRepo.AllAsNoTracking().Where(x => x.Id == discussionId).Select(x => x.Title).FirstOrDefaultAsync();
+            var title = await this.discussionRepo.AllAsNoTracking().Where(x => x.Id == discussionId).Select(x => x.Title).FirstOrDefaultAsync();
+            return title;
         }
 
         public async Task<string> GetDiscussionMedia(string discussionId)

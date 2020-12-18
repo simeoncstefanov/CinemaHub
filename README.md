@@ -4,7 +4,7 @@ Website for all movie and tv things (recommendations, watchlist, reviews, discus
 ![alt-text](https://i.ibb.co/tbsZGWz/first-page.png)
 
 ## Project Description
-This web application is made to organize your entertainment media life. You can search and query from a large selection of movies and tv series, add them to watchlist where you can track which movies and tv shows you have watched, want to watch, dropped or are currently watching. Every media can be rated by users, and moreover you can review it so you tell people what you think of it. Also, you can create discussions with fellow users and talk about the media or make any remarks. Based on your ratings and watchlist you are recommendeded more media - the more you rate and add to watchlist, the better the recommendations get.
+This web application is made to organize your entertainment media life. You can search and query from a large selection of movies and tv series, add them to watchlist where you can track which movies and tv shows you have watched, want to watch, dropped or are currently watching. Every media can be rated by users, and moreover you can review it so you tell people what you think of it. Also, you can create discussions with fellow users and talk about the media or make any remarks. Based on your ratings and watchlist you are recommended more media - the more you rate and add to watchlist, the better the recommendations get.
 
 
 ## Search media
@@ -47,14 +47,15 @@ In conclusion this is a very small IMDB clone site.
 - Newtonsoft.Json
 - SendGrid
 - Bootstrap
-- Tagify.js
-- Hangfire .NET
+- Tagify.js (keywords for media)
+- Hangfire .NET (seeding and training model)
 - ML.NET
 - AJAX
 - jQuery
 - JavaScript
 - xUnit
-- Rater.js
+- Rater.js (Ratings stars)
+- Mock.Queryable (Testing ToListAsync(), CountAsync(), etc.)
 
  ## Used Methods
 - POST-REDIRECT-GET Pattern

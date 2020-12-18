@@ -68,7 +68,7 @@
 
 
             var recommendedMovies = await this.mediaRepo.AllAsNoTracking()
-                .Where(x => !x.Watchers.Any(x => x.UserId == userId && (x.WatchType == WatchType.Completed || x.WatchType == WatchType.OnWatchlist)))
+                .Where(x => !x.Watchers.Any(x => x.UserId == userId))
                 .OrderByDescending(x => x.Keywords.Count(x => bestKeywordsUser.Contains(x.KeywordId)))
                 .Take(10)
                 .Select(x => x.Id)
@@ -77,12 +77,36 @@
             return recommendedMovies;
         }
 
-        public Task<IEnumerable<string>> GetMediaIdsBasedOnOtherUsers(string userId, string mediaId)
+        public async Task<IEnumerable<string>> GetMediaIdsBasedOnOtherUsers(string userId)
         {
-            throw new NotImplementedException();
+            var mediaSelection = await this.mediaRepo.AllAsNoTracking()
+                .Where(x => x.Ratings.Select(x => x.Id).Count() > 0)
+                .Where(x => !x.Watchers.Any(x => x.UserId == userId))
+                .Select(x => x.Id)
+                .ToListAsync();
+
+            var predictions = new List<MovieIdRating>();
+
+            foreach(var id in mediaSelection)
+            {
+                var score = this.GetSinglePrediction(userId, id);
+                
+                if (score == null)
+                {
+                    continue;
+                }
+
+                predictions.Add(new MovieIdRating()
+                {
+                    MediaId = id,
+                    Score = score.Score,
+                });
+            }
+
+            return predictions.OrderByDescending(x => x.Score).Where(x => x.Score != Double.NaN).Select(x => x.MediaId).Take(10);        
         }
 
-        public MovieRatingPrediction GetSinglePrediciton(string userId, string mediaId)
+        public MovieRatingPrediction GetSinglePrediction(string userId, string mediaId)
         {
             MovieRating rating = new MovieRating()
             {
@@ -90,9 +114,15 @@
                 movieId = mediaId,
             };
 
-            var prediction = Task.Run(() => this.predictionEnginePool.Predict(modelName: "MovieRecommendations", example: rating));
-
-            return prediction.Result;
+            try
+            {
+                var prediction = this.predictionEnginePool.Predict(modelName: "MovieRecommendation", example: rating);
+                return prediction;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public async Task TrainModel(string path)

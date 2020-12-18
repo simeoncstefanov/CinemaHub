@@ -47,15 +47,19 @@
     public class Startup
     {
         private readonly IConfiguration configuration;
+        private readonly IWebHostEnvironment webHostEnvironment;
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             this.configuration = configuration;
+            this.webHostEnvironment = webHostEnvironment;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddApplicationInsightsTelemetry();
+
             services.AddDbContext<ApplicationDbContext>(
                 options => options.UseSqlServer(this.configuration.GetConnectionString("DefaultConnection")));
 
@@ -74,7 +78,7 @@
                     DisableGlobalLocks = true,
                     PrepareSchemaIfNecessary = true,
                 }));
-            services.AddHangfireServer(options => options.WorkerCount = 3);
+            services.AddHangfireServer(options => options.WorkerCount = Environment.ProcessorCount * 5);
 
             services.AddDefaultIdentity<ApplicationUser>(IdentityOptionsProvider.GetIdentityOptions)
                 .AddRoles<ApplicationRole>().AddEntityFrameworkStores<ApplicationDbContext>();
@@ -123,7 +127,7 @@
 
             // Load ML.NET model
             services.AddPredictionEnginePool<MovieRating, MovieRatingPrediction>()
-                .FromFile(modelName: "MovieRecommendation", filePath: "MLModels/recommendation_model.zip", watchForChanges: true);
+                .FromFile(modelName: "MovieRecommendation", filePath: this.webHostEnvironment.WebRootPath + "\\ml.net\\recommendation_model.zip", watchForChanges: true);
 
             // Configuration
             services.AddSingleton(this.configuration);
@@ -198,11 +202,11 @@
             });
 
             // Seed media from Movie Db API
-            //backgroundJobClient.Enqueue<IMediaApiCrossService>(x => x.ScrapeMoviesFromApi(5, env.WebRootPath));
-            //backgroundJobClient.Enqueue<IMediaApiCrossService>(x => x.ScrapeShowsFromApi(5, env.WebRootPath));
+            backgroundJobClient.Enqueue<IMediaApiCrossService>(x => x.ScrapeMoviesFromApi(500, env.WebRootPath));
+            backgroundJobClient.Enqueue<IMediaApiCrossService>(x => x.ScrapeShowsFromApi(500, env.WebRootPath));
 
             // Re-train model every 6 hours
-            recurringJobClient.AddOrUpdate("TrainRecommendModel", Job.FromExpression<IRecommendService>(x => x.TrainModel(env.ContentRootPath + "\\MLModel\\")), Cron.HourInterval(6));
+            recurringJobClient.AddOrUpdate("TrainRecommendModel", Job.FromExpression<IRecommendService>(x => x.TrainModel(env.WebRootPath + "\\ml.net\\")), Cron.HourInterval(6));
 
             app.UseEndpoints(
                 endpoints =>

@@ -38,7 +38,10 @@
             var userId = this.userManager.GetUserId(this.User);
 
             var recommendedIds = await this.recommendService.GetMediaIdsBasedOnKeywords(userId);
-            var recommendedMovies = await this.mediaService.GetMediaBatch<MediaRecommendationViewModel>(recommendedIds);
+            var recommendedIdsOnModel = await this.recommendService.GetMediaIdsBasedOnOtherUsers(userId);
+
+            var mergedIds = recommendedIds.Union(recommendedIdsOnModel);
+            var recommendedMovies = await this.mediaService.GetMediaBatch<MediaRecommendationViewModel>(mergedIds);
 
             var viewModel = new RecommendationResponseViewModel()
                                 {

@@ -38,7 +38,6 @@ function autocomplete(inp, arr) {
             var indexStrong = title.toLowerCase().indexOf(val);
                 /*create a DIV element for each matching element:*/
             b = document.createElement("DIV");
-            b.innerHTML += '<img width="5%" height="5%"  src="' + arr[i].imagePath + '" />'
             b.innerHTML += " " + title.substr(0, indexStrong)
             b.innerHTML += "<strong>" + title.substr(indexStrong, val.length) + "</string>";
             b.innerHTML += title.substr(indexStrong + val.length, title.length - indexStrong + val.length);

@@ -19,12 +19,16 @@
     using CinemaHub.Services.Mapping;
     using CinemaHub.Services.Messaging;
     using CinemaHub.Services.Recommendations;
+    using CinemaHub.Services.Recommendations.Training;
+    using CinemaHub.Services.Recommendations.Training.Models;
     using CinemaHub.Web.Authorization;
+    using CinemaHub.Web.Filters.Authorization.Hangfire;
     using CinemaHub.Web.ViewModels;
     using CinemaHub.Web.ViewModels.Media;
 
     using ContactManager.Authorization;
     using Hangfire;
+    using Hangfire.Common;
     using Hangfire.SqlServer;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Builder;
@@ -36,6 +40,9 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.ML;
+    using Microsoft.ML;
+
 
     public class Startup
     {
@@ -114,6 +121,11 @@
             services.AddRazorPages()
                 .AddSessionStateTempDataProvider();
 
+            // Load ML.NET model
+            services.AddPredictionEnginePool<MovieRating, MovieRatingPrediction>()
+                .FromFile(modelName: "MovieRecommendation", filePath: "MLModels/recommendation_model.zip", watchForChanges: true);
+
+            // Configuration
             services.AddSingleton(this.configuration);
 
             // Data repositories
@@ -136,13 +148,16 @@
             services.AddTransient<IRecommendService, RecommendService>();
             services.AddTransient<IMediaEditService, MediaEditService>();
 
+            // ML.NET Recommendation Traienr
+            services.AddSingleton<IRecommendationModelTrainer, RecommendationModelTrainer>();
+
             // API Scraper
             services.AddScoped<IMediaApiCrossService, MediaApiCrossService>();
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IBackgroundJobClient backgroundJobClient)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IBackgroundJobClient backgroundJobClient, IRecurringJobManager recurringJobClient)
         {
             AutoMapperConfig.RegisterMappings(typeof(ErrorViewModel).GetTypeInfo().Assembly);
             AutoMapperConfig.RegisterMappings(typeof(MediaDetailsViewModel).GetTypeInfo().Assembly);
@@ -177,11 +192,17 @@
 
             app.UseSession();
 
-            app.UseHangfireDashboard();
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = new[] { new HangfireAuthorizationFilter() },
+            });
 
             // Seed media from Movie Db API
-            backgroundJobClient.Enqueue<IMediaApiCrossService>(x => x.ScrapeMoviesFromApi(5, env.WebRootPath));
-            backgroundJobClient.Enqueue<IMediaApiCrossService>(x => x.ScrapeShowsFromApi(5, env.WebRootPath));
+            //backgroundJobClient.Enqueue<IMediaApiCrossService>(x => x.ScrapeMoviesFromApi(5, env.WebRootPath));
+            //backgroundJobClient.Enqueue<IMediaApiCrossService>(x => x.ScrapeShowsFromApi(5, env.WebRootPath));
+
+            // Re-train model every 6 hours
+            recurringJobClient.AddOrUpdate("TrainRecommendModel", Job.FromExpression<IRecommendService>(x => x.TrainModel(env.ContentRootPath + "\\MLModel\\")), Cron.HourInterval(6));
 
             app.UseEndpoints(
                 endpoints =>

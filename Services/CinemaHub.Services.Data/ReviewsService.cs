@@ -136,5 +136,10 @@
             return await this.ratingRepository.All().Where(x => x.CreatorId == userId && x.MediaId == mediaId)
                                .Select(x => x.Score).FirstOrDefaultAsync();
         }
+
+        public async Task<int> GetRatingCount()
+        {
+            return await this.ratingRepository.AllAsNoTracking().CountAsync();
+        }
     }
 }

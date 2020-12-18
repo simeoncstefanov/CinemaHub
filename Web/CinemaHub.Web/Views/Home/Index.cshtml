@@ -14,6 +14,7 @@
     <div class="slider movie-items">
         <div class="container">
             <div class="row">
+                <h1 style="font-family: 'Dosis', sans-serif; color: whitesmoke;">Newest Releases:</h1>
                 <div class="social-link">
                     <p>Follow us: </p>
                     <a href="#"><i class="ion-social-facebook"></i></a>
@@ -29,9 +30,6 @@
                                 <a asp-controller="Media" asp-action="@($"{item.MediaType}s")" asp-route-id="@item.Id"><img src="@item.ImagePath" alt="" width="285" height="437"></a>
                             </div>
                             <div class="title-in">
-                                <div class="cate">
-                                    <span class="blue"><a href="#">Sci-fi</a></span>
-                                </div>
                                 <h6><a  asp-controller="Media" asp-action="@($"{item.MediaType}s")" asp-route-id="@item.Id">@item.Title</a></h6>
                                 <p><i class="ion-android-star"></i><span>@($"{item.Rating:F1}")</span> /10</p>
                             </div>
@@ -43,6 +41,6 @@
     </div>
 }
 
-<h1>Welcome to CinemaHub!</h1>
+<h1 style="font-family: 'Dosis', sans-serif; color: whitesmoke; font-size: 45px; text-align: center">Welcome to CinemaHub! For all your entertainment needs.</h1>
 
 

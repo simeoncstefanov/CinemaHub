@@ -20,5 +20,7 @@
         Task<int> GetReviewCount(string mediaId);
 
         Task<int> GetRatingForMedia(string userId, string mediaId);
+
+        Task<int> GetRatingCount();
     }
 }

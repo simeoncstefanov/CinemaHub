@@ -13,10 +13,12 @@
     public class MediaApiCrossService : IMediaApiCrossService
     {
         private readonly IServiceProvider serviceProvider;
+        private readonly IRepository<Rating> ratingRepo;
 
-        public MediaApiCrossService(IServiceProvider serviceProvider)
+        public MediaApiCrossService(IServiceProvider serviceProvider, IRepository<Rating> ratingRepo)
         {
             this.serviceProvider = serviceProvider;
+            this.ratingRepo = ratingRepo;
         }
 
         public async Task ScrapeShowsFromApi(int pages, string rootPath)

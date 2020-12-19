@@ -84,24 +84,6 @@
             await this.discussionRepo.SaveChangesAsync();
         }
 
-        public async Task VoteComment(string commentId, string userId, bool isUpvote)
-        {
-            var vote = await this.voteRepo.AllAsNoTracking()
-                .FirstOrDefaultAsync(x => x.CommentId == commentId && x.UserId == userId);
-
-            if (vote != null)
-            {
-                this.voteRepo.Delete(vote);
-            }
-            else
-            {
-                vote = new CommentVote() { CommentId = commentId, UserId = userId, IsUpvote = isUpvote, };
-                await this.voteRepo.AddAsync(vote);
-            }
-
-            await this.voteRepo.SaveChangesAsync();
-        }
-
         public async Task<IEnumerable<T>> GetDiscussions<T>(string mediaId, int page, int count)
         {
             int pagination = (page - 1) * count;

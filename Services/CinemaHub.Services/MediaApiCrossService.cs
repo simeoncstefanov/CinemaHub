@@ -14,17 +14,26 @@
     {
         private readonly IServiceProvider serviceProvider;
         private readonly IRepository<Rating> ratingRepo;
+        private readonly IRepository<Media> mediaRepository;
 
-        public MediaApiCrossService(IServiceProvider serviceProvider, IRepository<Rating> ratingRepo)
+        public MediaApiCrossService(IServiceProvider serviceProvider, IRepository<Rating> ratingRepo, IRepository<Media> mediaRepository)
         {
             this.serviceProvider = serviceProvider;
             this.ratingRepo = ratingRepo;
+            this.mediaRepository = mediaRepository;
         }
 
         public async Task ScrapeShowsFromApi(int pages, string rootPath)
         {
             var mediaApiService = this.serviceProvider.GetRequiredService<IMovieAPIService>();
             var mediaService = this.serviceProvider.GetRequiredService<IMediaService>();
+
+            var movieExists = this.mediaRepository.AllAsNoTracking().OfType<Movie>().FirstOrDefault();
+
+            if (movieExists != null)
+            {
+                return;
+            }
 
             for (int i = 1; i <= pages; i++)
             {
@@ -42,7 +51,7 @@
 
                         await mediaService.EditDetailsAsync(inputModel, string.Empty, rootPath);
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         continue;
                     }
@@ -54,6 +63,13 @@
         {
             var mediaApiService = this.serviceProvider.GetRequiredService<IMovieAPIService>();
             var mediaService = this.serviceProvider.GetRequiredService<IMediaService>();
+
+            var movieExists = this.mediaRepository.AllAsNoTracking().OfType<Show>().FirstOrDefault();
+
+            if (movieExists != null)
+            {
+                return;
+            }
 
             for (int i = 1; i <= pages; i++)
             {
@@ -71,7 +87,7 @@
 
                         await mediaService.EditDetailsAsync(inputModel, string.Empty, rootPath);
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         continue;
                     }

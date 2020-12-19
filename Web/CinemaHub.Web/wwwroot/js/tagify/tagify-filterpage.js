@@ -20,7 +20,7 @@ function onInput(e) {
         type: "GET",
         url: "/api/keywords?query=" + val + "&results=20",
         contentType: "application/json",
-        async: false,
+        async: true,
         success: function (data) {
             tagify1.settings.whitelist = data;
         }

@@ -18,8 +18,6 @@
 
         Task CreateComment(string inputModel, string userId, string discussionId);
 
-        Task VoteComment(string commentId, string userId, bool isUpvote);
-
         Task DeleteComment(string commentId);
 
         Task DeleteDiscussion(string discussionId);

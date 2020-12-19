@@ -78,7 +78,6 @@
             }
         }
 
-
         [JsonProperty("keywords")]
         public KeywordListApiDTO KeywordsListApi { get; set; }
 

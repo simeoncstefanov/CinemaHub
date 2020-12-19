@@ -55,7 +55,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\images\posters\" />
     <Folder Include="wwwroot\ml.net\" />
   </ItemGroup>
 </Project>

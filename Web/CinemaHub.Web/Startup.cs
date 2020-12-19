@@ -78,7 +78,7 @@
                     DisableGlobalLocks = true,
                     PrepareSchemaIfNecessary = true,
                 }));
-            services.AddHangfireServer(options => options.WorkerCount = Environment.ProcessorCount * 5);
+            services.AddHangfireServer(options => options.WorkerCount = 6);
 
             services.AddDefaultIdentity<ApplicationUser>(IdentityOptionsProvider.GetIdentityOptions)
                 .AddRoles<ApplicationRole>().AddEntityFrameworkStores<ApplicationDbContext>();
@@ -202,8 +202,8 @@
             });
 
             // Seed media from Movie Db API
-            backgroundJobClient.Enqueue<IMediaApiCrossService>(x => x.ScrapeMoviesFromApi(500, env.WebRootPath));
-            backgroundJobClient.Enqueue<IMediaApiCrossService>(x => x.ScrapeShowsFromApi(500, env.WebRootPath));
+            backgroundJobClient.Enqueue<IMediaApiCrossService>(x => x.ScrapeShowsFromApi(100, env.WebRootPath));
+            backgroundJobClient.Enqueue<IMediaApiCrossService>(x => x.ScrapeMoviesFromApi(100, env.WebRootPath));
 
             // Re-train model every 6 hours
             recurringJobClient.AddOrUpdate("TrainRecommendModel", Job.FromExpression<IRecommendService>(x => x.TrainModel(env.WebRootPath + "\\ml.net\\")), Cron.HourInterval(6));

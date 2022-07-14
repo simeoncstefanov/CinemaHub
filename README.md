@@ -1,6 +1,9 @@
 # CinemaHub
 Website for all movie and tv things (recommendations, watchlist, reviews, discussion) made with ASP.NET Core for Softuni C# Web - Project Defense September 2020
 
+## Azure Site Link
+May load slowly the first time you enter, because Azure turns off the app after inactivity and then turns it on when someone sends request. 
+https://thecinemahub.azurewebsites.net/
 ![alt-text](https://i.ibb.co/tbsZGWz/first-page.png)
 
 ## Project Description
@@ -61,9 +64,6 @@ In conclusion this is a very small IMDB clone site.
 - POST-REDIRECT-GET Pattern
 - Resource-based Authorization (users can manipulate only their content)
 - Automapping from template
-
-## Azure Site Link
-https://cinemahub.azurewebsites.net/
 
 ## Credits
 Author - Simeon Stefanov

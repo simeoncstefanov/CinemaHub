@@ -4,11 +4,11 @@ Website for all movie and tv things (recommendations, watchlist, reviews, discus
 ## Azure Site Link
 May load slowly the first time you enter, because Azure turns off the app after inactivity and then turns it on when someone sends request. 
 https://thecinemahub.azurewebsites.net/
-![alt-text](https://i.ibb.co/tbsZGWz/first-page.png)
+
 
 ## Project Description
 This web application is made to organize your entertainment media life. You can search and query from a large selection of movies and tv series, add them to watchlist where you can track which movies and tv shows you have watched, want to watch, dropped or are currently watching. Every media can be rated by users, and moreover you can review it so you tell people what you think of it. Also, you can create discussions with fellow users and talk about the media or make any remarks. Based on your ratings and watchlist you are recommended more media - the more you rate and add to watchlist, the better the recommendations get.
-
+![alt-text](https://i.ibb.co/tbsZGWz/first-page.png)
 
 ## Search media
 The page for Movies or TV Shows is where you search them by Title, Keywords and Genre and sort them by Release Date, Popularity or Rating. Alternatively for quick access you can use the search bar at top of the menu. 20000 movies and tv shows are seeded when you run the application for the first time from The Movie Database - https://www.themoviedb.org/
